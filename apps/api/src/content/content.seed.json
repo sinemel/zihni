@@ -1,0 +1,2213 @@
+{
+  "texts": [
+    {
+      "id": "r1",
+      "title": "Beynin Uyum Gücü",
+      "category": "Bilim",
+      "level": "Kolay",
+      "lang": "tr",
+      "lib": "genel",
+      "body": "İnsan beyni yaşam boyu değişebilen esnek bir yapıya sahiptir. Düzenli zihinsel egzersiz yapan kişilerde dikkat süresi uzar ve bilgiyi işleme hızı artar. Hızlı okuma çalışmaları da bu esnekliği kullanır: göz kasları yeni harekete alışır, görüş alanı genişler ve zihin kelime gruplarını tek bakışta algılamayı öğrenir. Sabırlı ve düzenli pratik, birkaç hafta içinde fark edilir bir gelişim sağlar.",
+      "wordCount": 57,
+      "questions": [
+        {
+          "q": "Metne göre hızlı okuma çalışmaları neyi kullanır?",
+          "options": [
+            "Beynin esnekliğini",
+            "Sesli okumayı",
+            "Ezber tekniklerini",
+            "Hafıza oyunlarını"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Gelişim için ne önerilmektedir?",
+          "options": [
+            "Tek seferde uzun çalışma",
+            "Sabırlı ve düzenli pratik",
+            "Sadece kitap okumak",
+            "Hızlı yazma egzersizi"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "id": "r2",
+      "title": "Odaklanmanın Değeri",
+      "category": "Kişisel Gelişim",
+      "level": "Kolay",
+      "lang": "tr",
+      "lib": "genel",
+      "body": "Dikkat sınırlı bir kaynaktır ve nereye yönlendirildiği sonucu belirler. Bildirimlerin sürekli böldüğü bir ortamda okumak, anlamayı belirgin biçimde düşürür. Kısa ama kesintisiz okuma blokları, uzun fakat bölünmüş oturumlardan çok daha verimlidir. Hızlı okuma yalnızca göz hareketi değil, aynı zamanda bir odak disiplinidir: zihin metinde kaldığı sürece hız ve anlama birlikte yükselir.",
+      "wordCount": 51,
+      "questions": [
+        {
+          "q": "Metne göre verimli okuma nasıl olur?",
+          "options": [
+            "Uzun ve bölünmüş oturumlarla",
+            "Kısa ama kesintisiz bloklarla",
+            "Sesli tekrar ederek",
+            "Not almadan"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Hızlı okuma aynı zamanda nedir?",
+          "options": [
+            "Bir ezber yöntemi",
+            "Bir yazma tekniği",
+            "Bir odak disiplini",
+            "Bir dinleme becerisi"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "r3",
+      "title": "Okuyan Beyin",
+      "category": "Bilim",
+      "level": "Orta",
+      "lang": "tr",
+      "lib": "genel",
+      "body": "Okuma, insan beyninin doğuştan bilmediği, sonradan öğrendiği en karmaşık becerilerden biridir. Gözlerimiz satır boyunca akıcı biçimde kayıyor gibi görünse de gerçekte kısa sıçramalarla ilerler ve her duraklamada birkaç kelimeyi birden yakalar. Deneyimli okuyucular bu duraklamaları azaltır, tek bakışta daha geniş bir alanı algılar ve gereksiz geri dönüşlerden kaçınır. Anlama ise hızın düşmanı değil, yol arkadaşıdır: zihin metnin akışına odaklandığında hız ve kavrama birlikte gelişir. Araştırmalar, düzenli okuma alışkanlığının kelime dağarcığını genişlettiğini, dikkat süresini uzattığını ve düşünme esnekliğini desteklediğini göstermektedir. Bu nedenle hızlı okuma çalışmalarının amacı yalnızca daha çok sayfa bitirmek değil, aynı sürede daha fazlasını gerçekten anlamaktır. Küçük ama düzenli adımlar, birkaç hafta içinde hem hızda hem de kavrayışta fark edilir bir gelişim sağlar.",
+      "wordCount": 114,
+      "questions": [
+        {
+          "q": "Metne göre gözler okuma sırasında nasıl hareket eder?",
+          "options": [
+            "Kesintisiz ve akıcı kayarak",
+            "Kısa sıçramalar ve duraklamalarla",
+            "Sürekli geri dönerek",
+            "Yalnızca satır başlarında durarak"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Metne göre anlama ile hız arasındaki ilişki nedir?",
+          "options": [
+            "Anlama hızın düşmanıdır",
+            "Hız arttıkça anlama mutlaka düşer",
+            "Odaklanınca hız ve kavrama birlikte gelişir",
+            "Anlama yalnızca yavaş okumayla mümkündür"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Hızlı okuma çalışmalarının asıl amacı nedir?",
+          "options": [
+            "Daha çok sayfa bitirmek",
+            "Göz kaslarını yormak",
+            "Aynı sürede daha fazlasını anlamak",
+            "Kelimeleri atlayarak okumak"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "r4",
+      "title": "Uykunun Görevi",
+      "category": "Bilim",
+      "level": "Orta",
+      "lang": "tr",
+      "lib": "genel",
+      "body": "Uyku, günün yalnızca pasif bir molası değildir. Beyin, uykunun derin evrelerinde gün içinde öğrenilen bilgileri yeniden oynatır ve kalıcı hafızaya taşır; bu sürece pekiştirme adı verilir. Yeterince uyumayan bir öğrencinin, aynı konuya daha fazla saat çalışan ama dinlenmiş bir akranından daha düşük performans göstermesi bu yüzden şaşırtıcı değildir. Araştırmacılar ayrıca uykunun, gün boyunca biriken zihinsel yorgunluğun temizlenmesine yardımcı olduğunu düşünmektedir. Kısacası verimli bir öğrenme planı, çalışma saatleri kadar uyku saatlerini de ciddiye almak zorundadır.",
+      "wordCount": 74,
+      "questions": [
+        {
+          "q": "Metne göre 'pekiştirme' nedir?",
+          "options": [
+            "Ders tekrarı yapmak",
+            "Öğrenilen bilgilerin uykuda kalıcı hafızaya taşınması",
+            "Not tutma tekniği",
+            "Kısa molalar vermek"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Verimli bir öğrenme planı neyi ciddiye almalıdır?",
+          "options": [
+            "Sadece çalışma saatlerini",
+            "Sadece beslenmeyi",
+            "Uyku saatlerini de",
+            "Sadece ders notlarını"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "r5",
+      "title": "Arıların Dansı",
+      "category": "Doğa",
+      "level": "Orta",
+      "lang": "tr",
+      "lib": "genel",
+      "body": "Bal arıları, buldukları besin kaynağının yerini kovandaki arkadaşlarına şaşırtıcı bir yöntemle anlatır: dans ederek. Sallanma dansı adı verilen bu harekette arının izlediği açı, güneşe göre gidilecek yönü; dansın süresi ise uzaklığı bildirir. Böylece tek bir kâşif arı, yüzlerce işçiyi hiç görmedikleri bir çiçek tarlasına yönlendirebilir. Bilim insanları bu sistemi, insan dili dışındaki en karmaşık iletişim biçimlerinden biri olarak kabul eder. Küçücük bir beynin böylesine hassas bir bilgi aktarımı başarması, doğanın zekâ tanımımızı sürekli genişlettiğini hatırlatır.",
+      "wordCount": 75,
+      "questions": [
+        {
+          "q": "Sallanma dansında arının izlediği açı neyi bildirir?",
+          "options": [
+            "Çiçeğin rengini",
+            "Güneşe göre gidilecek yönü",
+            "Kovanın sıcaklığını",
+            "Arı sayısını"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Dansın süresi neyi bildirir?",
+          "options": [
+            "Besinin tadını",
+            "Havanın durumunu",
+            "Kaynağın uzaklığını",
+            "Günün saatini"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "r6",
+      "title": "Yazının Doğuşu",
+      "category": "Tarih",
+      "level": "Zor",
+      "lang": "tr",
+      "lib": "genel",
+      "body": "Yazı, insanlık tarihinin en dönüştürücü buluşlarından biridir ve doğuşu şiirle değil muhasebeyle olmuştur. Yaklaşık beş bin yıl önce Mezopotamya'da yaşayan Sümerler, tapınak ambarlarındaki tahıl, hayvan ve kumaş kayıtlarını tutabilmek için kil tabletlere işaretler kazımaya başladı. Zamanla bu işaretler sadeleşti ve çivi yazısı adı verilen sisteme dönüştü. Başlangıçta yalnızca sayım için kullanılan semboller, yüzyıllar içinde sözleşmeleri, yasaları, mektupları ve nihayet destanları kaydedebilecek esnekliğe ulaştı. Yazının icadı, bilginin kuşaklar arasında bozulmadan aktarılmasını mümkün kılarak hafızayı bireyin ömründen bağımsız hale getirdi. Bugün okuduğumuz her satır, kil tablete vurulan o ilk işaretin uzak bir yankısıdır.",
+      "wordCount": 91,
+      "questions": [
+        {
+          "q": "Metne göre yazı ilk olarak hangi ihtiyaçtan doğmuştur?",
+          "options": [
+            "Destan yazmak",
+            "Kayıt ve sayım tutmak",
+            "Mektuplaşmak",
+            "Yasa yapmak"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Çivi yazısını hangi toplum geliştirmiştir?",
+          "options": [
+            "Mısırlılar",
+            "Hititler",
+            "Sümerler",
+            "Fenikeliler"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Yazının icadı neyi mümkün kılmıştır?",
+          "options": [
+            "Tarımın başlamasını",
+            "Bilginin kuşaklar arasında aktarılmasını",
+            "Şehirlerin kurulmasını",
+            "Ticaretin bitmesini"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "id": "r7",
+      "title": "Hareketin Beyne Etkisi",
+      "category": "Bilim",
+      "level": "Kolay",
+      "lang": "tr",
+      "lib": "genel",
+      "body": "Düzenli hareket yalnızca kasları değil beyni de güçlendirir. Yürüyüş gibi hafif tempolu bir egzersiz bile beyne giden kan akışını artırır, dikkat ve öğrenmeyle ilgili bölgeleri canlandırır. Araştırmalar, ders veya çalışma öncesi yapılan kısa yürüyüşlerin odaklanmayı belirgin biçimde desteklediğini göstermektedir. Üstelik bunun için maratona gerek yoktur; günde yirmi dakikalık tempolu bir yürüyüş, zihinsel tazelik için güçlü bir başlangıçtır.",
+      "wordCount": 57,
+      "questions": [
+        {
+          "q": "Hafif tempolu egzersiz beyinde neyi artırır?",
+          "options": [
+            "Kas kütlesini",
+            "Kan akışını",
+            "Uyku süresini",
+            "İştahı"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Metne göre odaklanmayı desteklemek için ne yeterlidir?",
+          "options": [
+            "Maraton koşmak",
+            "Ağır antrenman",
+            "Kısa tempolu yürüyüş",
+            "Uzun uyku"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "r8",
+      "title": "Küçük Alışkanlıkların Gücü",
+      "category": "Kişisel Gelişim",
+      "level": "Kolay",
+      "lang": "tr",
+      "lib": "genel",
+      "body": "Büyük hedefler çoğu zaman büyük adımlarla değil, küçük ama tekrarlanan alışkanlıklarla gerçekleşir. Günde on dakikalık okuma, yılda binlerce sayfaya; her sabah yazılan üç cümle, zamanla bir güncenin tamamına dönüşür. Alışkanlık oluşturmanın sırrı iradeyi zorlamak değil, başlangıcı kolaylaştırmaktır: kitabı yastığın yanına koymak, spor ayakkabıyı kapının önüne bırakmak gibi. Davranış küçüldükçe direnç azalır; direnç azaldıkça süreklilik gelir. Süreklilik ise yeteneğin sessiz mimarıdır.",
+      "wordCount": 60,
+      "questions": [
+        {
+          "q": "Metne göre alışkanlık oluşturmanın sırrı nedir?",
+          "options": [
+            "İradeyi zorlamak",
+            "Başlangıcı kolaylaştırmak",
+            "Büyük hedefler koymak",
+            "Ödül vermek"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Metne göre 'yeteneğin sessiz mimarı' nedir?",
+          "options": [
+            "Yetenek",
+            "Şans",
+            "Süreklilik",
+            "Motivasyon"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "r9",
+      "title": "Kayıp Şemsiye",
+      "category": "Hikâye",
+      "level": "Kolay",
+      "lang": "tr",
+      "lib": "cocuk",
+      "body": "Ela sabah okula giderken gökyüzü kapkaraydı. Annesi ona sarı şemsiyesini verdi. Teneffüste yağmur başladı ama Ela şemsiyesini bulamadı. Sınıfı, koridoru, hatta yemekhaneyi aradı. Sonunda şemsiyesini kapının yanında, küçük bir kedinin üzerinde buldu. Kedi yağmurdan korunmak için oraya sığınmıştı. Ela güldü ve eve dönerken şemsiyeyi ikisinin de üstünü örtecek şekilde tuttu. O gün Ela, paylaşmanın insanı yağmurdan bile daha çok ısıttığını öğrendi.",
+      "wordCount": 61,
+      "questions": [
+        {
+          "q": "Ela şemsiyesini nerede buldu?",
+          "options": [
+            "Sınıfta",
+            "Yemekhanede",
+            "Kapının yanında, kedinin üzerinde",
+            "Bahçede"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Ela o gün ne öğrendi?",
+          "options": [
+            "Yağmurda koşmayı",
+            "Paylaşmanın güzelliğini",
+            "Kedi beslemeyi",
+            "Erken kalkmayı"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "id": "r10",
+      "title": "Karıncaların Şehri",
+      "category": "Doğa",
+      "level": "Kolay",
+      "lang": "tr",
+      "lib": "cocuk",
+      "body": "Bahçedeki küçük toprak yığını aslında kocaman bir şehirdir. Karıncalar yerin altında odalar, yollar ve depolar kazar. Kimi karınca yiyecek taşır, kimi yavrulara bakar, kimi de yuvayı korur. Herkesin bir görevi vardır ve kimse işini bırakmaz. Bir karınca kendi ağırlığından kat kat ağır yükleri taşıyabilir. Bu minik canlılar bize birlikte çalışmanın gücünü gösterir: küçük adımlar bir araya gelince büyük işler başarılır.",
+      "wordCount": 60,
+      "questions": [
+        {
+          "q": "Karınca yuvasında neler bulunur?",
+          "options": [
+            "Sadece yiyecek",
+            "Odalar, yollar ve depolar",
+            "Sadece yumurtalar",
+            "Su birikintileri"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Karıncalar bize neyi gösterir?",
+          "options": [
+            "Hızlı koşmayı",
+            "Yalnız çalışmayı",
+            "Birlikte çalışmanın gücünü",
+            "Uyumanın önemini"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "r11",
+      "title": "Ayın Yüzü",
+      "category": "Bilim",
+      "level": "Kolay",
+      "lang": "tr",
+      "lib": "cocuk",
+      "body": "Geceleri gökyüzünde parlayan Ay, aslında kendi ışığını üretmez; Güneş'ten aldığı ışığı yansıtır. Ay, Dünya'nın çevresinde yaklaşık bir ayda dolanır. Bu yolculuk sırasında Güneş ışığını farklı açılardan aldığı için bazen incecik bir hilal, bazen de kocaman bir dolunay olarak görünür. Ay'ın üzerindeki koyu lekeler ise çok eski volkanların bıraktığı geniş düzlüklerdir. Yani her gece baktığımız o parlak yüz, bize uzayın sessiz bir hikâyesini anlatır.",
+      "wordCount": 63,
+      "questions": [
+        {
+          "q": "Ay'ın ışığı nereden gelir?",
+          "options": [
+            "Kendisi üretir",
+            "Yıldızlardan toplar",
+            "Güneş'ten yansır",
+            "Dünya'dan gider"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Ay'daki koyu lekeler nedir?",
+          "options": [
+            "Denizler",
+            "Eski volkanların bıraktığı düzlükler",
+            "Bulutlar",
+            "Ormanlar"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "id": "r12",
+      "title": "Bisiklet Günü",
+      "category": "Hikâye",
+      "level": "Kolay",
+      "lang": "tr",
+      "lib": "cocuk",
+      "body": "Deniz, bisiklet sürmeyi öğrenmek için haftalarca uğraştı. İlk gün üç kez düştü ve vazgeçmek istedi. Babası ona 'Düşmek, öğrenmenin bir parçasıdır' dedi. Deniz her gün biraz daha uzun süre dengede kaldı. Bir sabah, farkında bile olmadan bahçenin sonuna kadar hiç düşmeden sürdüğünü gördü. Sevinçle bağırdı. O günden sonra Deniz zor bir işle karşılaştığında hep aynı cümleyi hatırladı: denemeye devam edersen, bir sabah başarmış olursun.",
+      "wordCount": 64,
+      "questions": [
+        {
+          "q": "Babası Deniz'e ne söyledi?",
+          "options": [
+            "Bisikleti bırakmasını",
+            "Düşmenin öğrenmenin parçası olduğunu",
+            "Daha hızlı sürmesini",
+            "Kask takmasını"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Hikâyenin ana fikri nedir?",
+          "options": [
+            "Bisiklet tehlikelidir",
+            "Denemeye devam etmek başarı getirir",
+            "Bahçede oynamak eğlencelidir",
+            "Sabah erken kalkmak gerekir"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "id": "en1",
+      "title": "The Reading Brain",
+      "category": "Science",
+      "level": "Medium",
+      "lang": "en",
+      "lib": "genel",
+      "body": "Reading is one of the most complex skills the human brain ever learns, and it is not something we are born knowing. Although our eyes seem to glide smoothly along a line of text, they actually move in short jumps, capturing several words during each brief pause. Skilled readers make fewer pauses, take in a wider span of text at a single glance, and avoid unnecessary backtracking. Comprehension is not the enemy of speed but its companion: when the mind stays focused on the flow of the text, speed and understanding improve together. Research shows that regular reading expands vocabulary, lengthens attention span and supports flexible thinking. The goal of speed reading practice, then, is not simply to finish more pages, but to truly understand more in the same amount of time.",
+      "wordCount": 132,
+      "questions": [
+        {
+          "q": "According to the text, how do the eyes move while reading?",
+          "options": [
+            "In one smooth glide",
+            "In short jumps with brief pauses",
+            "Constantly moving backwards",
+            "Only stopping at line breaks"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "What is the relationship between comprehension and speed?",
+          "options": [
+            "They are enemies",
+            "Speed always reduces comprehension",
+            "They improve together when focused",
+            "Comprehension requires slow reading"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "What is the real goal of speed reading practice?",
+          "options": [
+            "Finishing more pages",
+            "Tiring the eye muscles",
+            "Understanding more in the same time",
+            "Skipping words"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "en2",
+      "title": "The Power of Small Habits",
+      "category": "Personal Growth",
+      "level": "Easy",
+      "lang": "en",
+      "lib": "genel",
+      "body": "Big goals are rarely achieved through big leaps; they grow out of small, repeated habits. Ten minutes of reading a day adds up to thousands of pages a year, and three sentences written every morning slowly become a complete journal. The secret of building a habit is not forcing willpower but making the start easier: placing the book next to your pillow, or leaving your running shoes by the door. As the behaviour gets smaller, resistance shrinks; as resistance shrinks, consistency grows. And consistency is the quiet architect of talent.",
+      "wordCount": 90,
+      "questions": [
+        {
+          "q": "According to the text, what is the secret of building a habit?",
+          "options": [
+            "Forcing willpower",
+            "Making the start easier",
+            "Setting bigger goals",
+            "Rewarding yourself"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "What does the text call 'the quiet architect of talent'?",
+          "options": [
+            "Talent",
+            "Luck",
+            "Consistency",
+            "Motivation"
+          ],
+          "answer": 2
+        }
+      ]
+    }
+  ],
+  "selfTests": [
+    {
+      "id": "personality",
+      "name": {
+        "tr": "Kişilik Eğilimleri (Kısa Form)",
+        "en": "Personality Tendencies (Short Form)"
+      },
+      "icon": "🧭",
+      "color": "#22C55E",
+      "duration": "~3 dk",
+      "desc": {
+        "tr": "Dünyayı nasıl algıladığınıza ve nasıl karar verdiğinize dair temel eğilimleriniz.",
+        "en": "Your core tendencies in how you perceive the world and make decisions."
+      },
+      "discover": {
+        "tr": [
+          "Baskın eğilim profiliniz",
+          "Güçlü yönleriniz",
+          "Size iyi gelen çalışma biçimi"
+        ],
+        "en": [
+          "Your dominant tendency profile",
+          "Your strengths",
+          "The work style that suits you"
+        ]
+      },
+      "type": "binary",
+      "dims": {
+        "energy": {
+          "a": {
+            "tr": "Dışa dönük",
+            "en": "Extraverted"
+          },
+          "b": {
+            "tr": "İçe dönük",
+            "en": "Introverted"
+          }
+        },
+        "info": {
+          "a": {
+            "tr": "Somut",
+            "en": "Concrete"
+          },
+          "b": {
+            "tr": "Sezgisel",
+            "en": "Intuitive"
+          }
+        },
+        "decision": {
+          "a": {
+            "tr": "Mantık odaklı",
+            "en": "Logic-driven"
+          },
+          "b": {
+            "tr": "Duygu odaklı",
+            "en": "Feeling-driven"
+          }
+        },
+        "order": {
+          "a": {
+            "tr": "Planlı",
+            "en": "Structured"
+          },
+          "b": {
+            "tr": "Esnek",
+            "en": "Flexible"
+          }
+        }
+      },
+      "questions": [
+        {
+          "t": {
+            "tr": "Yoğun bir haftanın ardından enerjinizi nasıl toplarsınız?",
+            "en": "How do you recharge after a busy week?"
+          },
+          "a": {
+            "tr": "Arkadaşlarımla buluşarak",
+            "en": "By meeting friends"
+          },
+          "b": {
+            "tr": "Kendi başıma vakit geçirerek",
+            "en": "By spending time alone"
+          },
+          "dim": "energy"
+        },
+        {
+          "t": {
+            "tr": "Kalabalık bir ortamda genellikle…",
+            "en": "In a crowded setting, you usually…"
+          },
+          "a": {
+            "tr": "Sohbeti ben başlatırım",
+            "en": "Start the conversation myself"
+          },
+          "b": {
+            "tr": "Bana gelinmesini beklerim",
+            "en": "Wait for others to approach me"
+          },
+          "dim": "energy"
+        },
+        {
+          "t": {
+            "tr": "Yeni bir konu öğrenirken…",
+            "en": "When learning something new…"
+          },
+          "a": {
+            "tr": "Somut örnekler isterim",
+            "en": "I want concrete examples"
+          },
+          "b": {
+            "tr": "Büyük resmi ve fikirleri merak ederim",
+            "en": "I'm curious about the big picture and ideas"
+          },
+          "dim": "info"
+        },
+        {
+          "t": {
+            "tr": "Bir işte en çok…",
+            "en": "In a task, you most enjoy…"
+          },
+          "a": {
+            "tr": "Adım adım ilerlemeyi severim",
+            "en": "Progressing step by step"
+          },
+          "b": {
+            "tr": "Yeni olasılıklar keşfetmeyi severim",
+            "en": "Exploring new possibilities"
+          },
+          "dim": "info"
+        },
+        {
+          "t": {
+            "tr": "Karar verirken önce…",
+            "en": "When deciding, you first…"
+          },
+          "a": {
+            "tr": "Mantıklı olanı düşünürüm",
+            "en": "Think about what's logical"
+          },
+          "b": {
+            "tr": "İnsanları nasıl etkileyeceğini düşünürüm",
+            "en": "Think about how it affects people"
+          },
+          "dim": "decision"
+        },
+        {
+          "t": {
+            "tr": "Bir tartışmada…",
+            "en": "In a disagreement…"
+          },
+          "a": {
+            "tr": "Doğru olanı savunurum",
+            "en": "I defend what's right"
+          },
+          "b": {
+            "tr": "Uyumu korumaya çalışırım",
+            "en": "I try to preserve harmony"
+          },
+          "dim": "decision"
+        },
+        {
+          "t": {
+            "tr": "Tatil planınız genellikle…",
+            "en": "Your holiday plans are usually…"
+          },
+          "a": {
+            "tr": "Önceden ayrıntılı planlanır",
+            "en": "Planned in detail beforehand"
+          },
+          "b": {
+            "tr": "Akışına bırakılır",
+            "en": "Left to unfold naturally"
+          },
+          "dim": "order"
+        },
+        {
+          "t": {
+            "tr": "Son teslim tarihleri…",
+            "en": "Deadlines…"
+          },
+          "a": {
+            "tr": "Erkenden bitiririm",
+            "en": "I finish early"
+          },
+          "b": {
+            "tr": "Son ana enerjiyle çalışırım",
+            "en": "I work with last-minute energy"
+          },
+          "dim": "order"
+        }
+      ]
+    },
+    {
+      "id": "attention-habits",
+      "name": {
+        "tr": "Dikkat Alışkanlıkları Öz Değerlendirmesi",
+        "en": "Attention Habits Self-Assessment"
+      },
+      "icon": "🎯",
+      "color": "#8B5CF6",
+      "duration": "~3 dk",
+      "desc": {
+        "tr": "Günlük yaşamda dikkatinizi nasıl yönettiğinize dair bir öz-farkındalık aracı. Tanı veya tarama testi değildir.",
+        "en": "A self-awareness tool about how you manage attention in daily life. Not a diagnostic or screening test."
+      },
+      "discover": {
+        "tr": [
+          "Dikkat dağınıklığı eğiliminiz",
+          "Sizi en çok bölen alışkanlıklar",
+          "Odak için pratik öneriler"
+        ],
+        "en": [
+          "Your distractibility tendency",
+          "The habits that interrupt you most",
+          "Practical focus tips"
+        ]
+      },
+      "type": "likert",
+      "questions": [
+        {
+          "tr": "Bir işe başladıktan kısa süre sonra dikkatim başka yöne kayar.",
+          "en": "My attention drifts shortly after starting a task."
+        },
+        {
+          "tr": "Uzun metinleri okurken aynı satırı tekrar okumak zorunda kalırım.",
+          "en": "When reading long texts, I have to re-read the same line."
+        },
+        {
+          "tr": "Telefon bildirimleri çalışmamı sık sık böler.",
+          "en": "Phone notifications frequently interrupt my work."
+        },
+        {
+          "tr": "Başladığım işleri yarım bırakma eğilimim var.",
+          "en": "I tend to leave tasks unfinished."
+        },
+        {
+          "tr": "Toplantı veya derslerde zihnim başka yerlere gider.",
+          "en": "My mind wanders during meetings or classes."
+        },
+        {
+          "tr": "Eşyalarımı nereye koyduğumu unuturum.",
+          "en": "I forget where I put my things."
+        },
+        {
+          "tr": "Aynı anda birden çok işe atlayıp hiçbirini bitiremem.",
+          "en": "I jump between several tasks and finish none."
+        },
+        {
+          "tr": "Plan yapmakta değil, planı sürdürmekte zorlanırım.",
+          "en": "My struggle isn't making plans but sticking to them."
+        }
+      ],
+      "bands": [
+        {
+          "min": 8,
+          "max": 16,
+          "label": {
+            "tr": "Düşük dağınıklık eğilimi",
+            "en": "Low distractibility"
+          },
+          "text": {
+            "tr": "Dikkatinizi gün içinde büyük ölçüde koruyabiliyorsunuz. Mevcut rutinleriniz sizin için çalışıyor görünüyor.",
+            "en": "You largely maintain your attention through the day. Your current routines seem to work for you."
+          }
+        },
+        {
+          "min": 17,
+          "max": 27,
+          "label": {
+            "tr": "Orta düzey dağınıklık eğilimi",
+            "en": "Moderate distractibility"
+          },
+          "text": {
+            "tr": "Bazı durumlarda dikkatiniz bölünüyor. Bildirimleri kapatmak ve tek-görev odaklı kısa çalışma blokları denemek işinize yarayabilir.",
+            "en": "Your attention gets divided in some situations. Turning off notifications and trying short single-task work blocks may help."
+          }
+        },
+        {
+          "min": 28,
+          "max": 40,
+          "label": {
+            "tr": "Belirgin dağınıklık eğilimi",
+            "en": "Notable distractibility"
+          },
+          "text": {
+            "tr": "Günlük yaşamda dikkat dağınıklığını sık deneyimliyor görünüyorsunuz. Bu bir tanı değildir; dikkatinizle ilgili süregelen bir endişeniz varsa bir uzmana danışmak en doğrusudur.",
+            "en": "You seem to experience frequent distraction in daily life. This is not a diagnosis; if you have an ongoing concern about your attention, consulting a professional is the right step."
+          }
+        }
+      ]
+    },
+    {
+      "id": "procrastination",
+      "name": {
+        "tr": "Erteleme Eğilimi Testi",
+        "en": "Procrastination Tendency"
+      },
+      "icon": "⏳",
+      "color": "#F59E0B",
+      "duration": "~2 dk",
+      "desc": {
+        "tr": "İşleri erteleme alışkanlıklarınıza dair bir öz-farkındalık aracı.",
+        "en": "A self-awareness tool about your task-postponing habits."
+      },
+      "discover": {
+        "tr": [
+          "Erteleme eğilim düzeyiniz",
+          "Ertelemeyi tetikleyen kalıplarınız",
+          "Başlamayı kolaylaştıran öneriler"
+        ],
+        "en": [
+          "Your procrastination level",
+          "Patterns that trigger delay",
+          "Tips that make starting easier"
+        ]
+      },
+      "type": "likert",
+      "questions": [
+        {
+          "tr": "Görevleri son ana bırakırım.",
+          "en": "I leave tasks until the last moment."
+        },
+        {
+          "tr": "Zor işlere başlamak için 'doğru anı' beklerim.",
+          "en": "I wait for the 'right moment' to start hard tasks."
+        },
+        {
+          "tr": "Küçük işlerle oyalanıp asıl işi ertelerim.",
+          "en": "I busy myself with small tasks and postpone the real one."
+        },
+        {
+          "tr": "Ertelediğim için sonradan pişmanlık duyarım.",
+          "en": "I later regret having procrastinated."
+        },
+        {
+          "tr": "Teslim tarihi baskısı olmadan motive olamam.",
+          "en": "I can't get motivated without deadline pressure."
+        },
+        {
+          "tr": "Ertelemek planlarımı aksatır.",
+          "en": "Procrastination disrupts my plans."
+        }
+      ],
+      "bands": [
+        {
+          "min": 6,
+          "max": 13,
+          "label": {
+            "tr": "Düşük erteleme eğilimi",
+            "en": "Low procrastination"
+          },
+          "text": {
+            "tr": "İşleri zamanında başlatma konusunda gücünüz var; bunu koruyun.",
+            "en": "Starting tasks on time is a strength of yours; keep it up."
+          }
+        },
+        {
+          "min": 14,
+          "max": 21,
+          "label": {
+            "tr": "Orta düzey erteleme eğilimi",
+            "en": "Moderate procrastination"
+          },
+          "text": {
+            "tr": "Zaman zaman erteliyorsunuz. Büyük işleri 10 dakikalık 'sadece başla' adımlarına bölmek etkili bir tekniktir.",
+            "en": "You procrastinate from time to time. Breaking big tasks into 10-minute 'just start' steps is an effective technique."
+          }
+        },
+        {
+          "min": 22,
+          "max": 30,
+          "label": {
+            "tr": "Yüksek erteleme eğilimi",
+            "en": "High procrastination"
+          },
+          "text": {
+            "tr": "Erteleme günlük akışınızı etkiliyor görünüyor. Görevleri küçültmek, ilk adımı önceden belirlemek ve dış hesap verebilirlik (birine söz vermek) işe yarayan yaklaşımlardır.",
+            "en": "Procrastination seems to affect your daily flow. Shrinking tasks, pre-deciding the first step and external accountability (promising someone) are approaches that work."
+          }
+        }
+      ]
+    },
+    {
+      "id": "stress-load",
+      "name": {
+        "tr": "Stres Yükü Öz Değerlendirmesi",
+        "en": "Stress Load Self-Assessment"
+      },
+      "icon": "🌊",
+      "color": "#06B6D4",
+      "duration": "~2 dk",
+      "desc": {
+        "tr": "Son dönemdeki stres yükünüze dair bir öz-farkındalık aracı. Klinik bir değerlendirme değildir.",
+        "en": "A self-awareness tool about your recent stress load. Not a clinical evaluation."
+      },
+      "discover": {
+        "tr": [
+          "Güncel stres yükü düzeyiniz",
+          "Yükü artıran alanlar",
+          "Kendinize alan açma önerileri"
+        ],
+        "en": [
+          "Your current stress load",
+          "Areas that add to the load",
+          "Tips for making space for yourself"
+        ]
+      },
+      "type": "likert",
+      "questions": [
+        {
+          "tr": "Son zamanlarda kendimi sürekli yorgun hissediyorum.",
+          "en": "Lately I feel constantly tired."
+        },
+        {
+          "tr": "Uykuya dalmakta veya dinlenmiş uyanmakta zorlanıyorum.",
+          "en": "I struggle to fall asleep or wake up rested."
+        },
+        {
+          "tr": "Küçük şeylere eskisinden daha çabuk sinirleniyorum.",
+          "en": "I get irritated by small things more quickly than before."
+        },
+        {
+          "tr": "Zihnimi meşgul eden kaygılar günlük işlerimi etkiliyor.",
+          "en": "Worries occupying my mind affect my daily tasks."
+        },
+        {
+          "tr": "Kendime ayıracak zaman bulamıyorum.",
+          "en": "I can't find time for myself."
+        },
+        {
+          "tr": "Sorumluluklarım bana ağır geliyor.",
+          "en": "My responsibilities feel heavy."
+        }
+      ],
+      "bands": [
+        {
+          "min": 6,
+          "max": 13,
+          "label": {
+            "tr": "Düşük stres yükü",
+            "en": "Low stress load"
+          },
+          "text": {
+            "tr": "Şu an dengeniz iyi görünüyor. Sizi besleyen rutinleri sürdürmeye devam edin.",
+            "en": "Your balance looks good right now. Keep the routines that nourish you."
+          }
+        },
+        {
+          "min": 14,
+          "max": 21,
+          "label": {
+            "tr": "Orta düzey stres yükü",
+            "en": "Moderate stress load"
+          },
+          "text": {
+            "tr": "Yükünüz hissedilir düzeyde. Gün içine küçük molalar ve hareket eklemek, yükü paylaşabileceğiniz birileriyle konuşmak iyi gelebilir.",
+            "en": "Your load is noticeable. Adding small breaks and movement to your day, and talking with someone you can share the load with, may help."
+          }
+        },
+        {
+          "min": 22,
+          "max": 30,
+          "label": {
+            "tr": "Yüksek stres yükü",
+            "en": "High stress load"
+          },
+          "text": {
+            "tr": "Son dönemde yükünüz yüksek görünüyor. Bu bir klinik değerlendirme değildir; kendinizi uzun süredir bunalmış hissediyorsanız güvendiğiniz biriyle konuşmak ve bir uzmandan destek almak iyi gelebilir.",
+            "en": "Your load has been high recently. This is not a clinical evaluation; if you've felt overwhelmed for a long time, talking to someone you trust and seeking professional support may help."
+          }
+        }
+      ]
+    },
+    {
+      "id": "mini-iq",
+      "name": {
+        "tr": "Zihinsel Beceriler Mini Testi",
+        "en": "Mental Skills Mini Test"
+      },
+      "icon": "🧩",
+      "color": "#EF4444",
+      "duration": "~4 dk",
+      "desc": {
+        "tr": "Mantık, örüntü ve sözel akıl yürütme sorularıyla kısa bir zihinsel egzersiz. IQ puanı vermez; doğruluk performansınızı gösterir.",
+        "en": "A short mental workout with logic, pattern and verbal reasoning questions. Does not produce an IQ score; it shows your accuracy performance."
+      },
+      "discover": {
+        "tr": [
+          "Doğru/yanlış dağılımınız",
+          "Genel doğruluk oranınız",
+          "Hangi soru tiplerinde zorlandığınız"
+        ],
+        "en": [
+          "Your correct/wrong distribution",
+          "Your overall accuracy",
+          "Which question types challenge you"
+        ]
+      },
+      "type": "quiz",
+      "questions": [
+        {
+          "t": {
+            "tr": "2, 6, 12, 20, 30, ? dizisinde sıradaki sayı hangisidir?",
+            "en": "What is the next number in the sequence 2, 6, 12, 20, 30, ?"
+          },
+          "options": {
+            "tr": [
+              "36",
+              "40",
+              "42",
+              "44"
+            ],
+            "en": [
+              "36",
+              "40",
+              "42",
+              "44"
+            ]
+          },
+          "answer": 2
+        },
+        {
+          "t": {
+            "tr": "KALEM : YAZMAK ise MAKAS : ?",
+            "en": "PEN : WRITING as SCISSORS : ?"
+          },
+          "options": {
+            "tr": [
+              "Kesmek",
+              "Dikmek",
+              "Ölçmek",
+              "Katlamak"
+            ],
+            "en": [
+              "Cutting",
+              "Sewing",
+              "Measuring",
+              "Folding"
+            ]
+          },
+          "answer": 0
+        },
+        {
+          "t": {
+            "tr": "Hangisi diğerlerinden farklıdır?",
+            "en": "Which one is different from the others?"
+          },
+          "options": {
+            "tr": [
+              "Elma",
+              "Armut",
+              "Havuç",
+              "Kiraz"
+            ],
+            "en": [
+              "Apple",
+              "Pear",
+              "Carrot",
+              "Cherry"
+            ]
+          },
+          "answer": 2
+        },
+        {
+          "t": {
+            "tr": "Saat tam 3'ü gösterirken akrep ile yelkovan arasındaki açı kaç derecedir?",
+            "en": "What is the angle between the hands of a clock at exactly 3 o'clock?"
+          },
+          "options": {
+            "tr": [
+              "90",
+              "60",
+              "45",
+              "120"
+            ],
+            "en": [
+              "90",
+              "60",
+              "45",
+              "120"
+            ]
+          },
+          "answer": 0
+        },
+        {
+          "t": {
+            "tr": "5 kişilik bir grupta herkes birbiriyle bir kez tokalaşırsa toplam kaç tokalaşma olur?",
+            "en": "If everyone in a group of 5 shakes hands once with each other, how many handshakes occur?"
+          },
+          "options": {
+            "tr": [
+              "10",
+              "15",
+              "20",
+              "25"
+            ],
+            "en": [
+              "10",
+              "15",
+              "20",
+              "25"
+            ]
+          },
+          "answer": 0
+        },
+        {
+          "t": {
+            "tr": "GÖZ : GÖRMEK ise KULAK : ?",
+            "en": "EYE : SEEING as EAR : ?"
+          },
+          "options": {
+            "tr": [
+              "Dinlemek",
+              "Duymak",
+              "Konuşmak",
+              "Anlamak"
+            ],
+            "en": [
+              "Listening",
+              "Hearing",
+              "Speaking",
+              "Understanding"
+            ]
+          },
+          "answer": 1
+        },
+        {
+          "t": {
+            "tr": "3, 9, 27, 81, ? dizisinde sıradaki sayı hangisidir?",
+            "en": "What is the next number in the sequence 3, 9, 27, 81, ?"
+          },
+          "options": {
+            "tr": [
+              "162",
+              "216",
+              "243",
+              "324"
+            ],
+            "en": [
+              "162",
+              "216",
+              "243",
+              "324"
+            ]
+          },
+          "answer": 2
+        },
+        {
+          "t": {
+            "tr": "Hangi kelime diğerlerinin üst kavramıdır?",
+            "en": "Which word is the umbrella term for the others?"
+          },
+          "options": {
+            "tr": [
+              "Masa",
+              "Sandalye",
+              "Mobilya",
+              "Dolap"
+            ],
+            "en": [
+              "Table",
+              "Chair",
+              "Furniture",
+              "Cabinet"
+            ]
+          },
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "big5",
+      "name": {
+        "tr": "Beş Boyutlu Kişilik Profili",
+        "en": "Five-Factor Personality Profile"
+      },
+      "icon": "🌟",
+      "color": "#0EA5E9",
+      "duration": "~3 dk",
+      "desc": {
+        "tr": "Beş temel kişilik boyutundaki eğilimlerinizin kısa bir profili.",
+        "en": "A short profile of your tendencies across five core personality dimensions."
+      },
+      "discover": {
+        "tr": [
+          "5 boyutta eğilim profiliniz",
+          "Öne çıkan güçlü yönleriniz",
+          "Boyut bazlı kısa yorumlar"
+        ],
+        "en": [
+          "Your profile across 5 dimensions",
+          "Your standout strengths",
+          "Short per-dimension insights"
+        ]
+      },
+      "type": "likert-dims",
+      "scale": {
+        "tr": [
+          "Hiç katılmıyorum",
+          "Katılmıyorum",
+          "Kararsızım",
+          "Katılıyorum",
+          "Tamamen katılıyorum"
+        ],
+        "en": [
+          "Strongly disagree",
+          "Disagree",
+          "Neutral",
+          "Agree",
+          "Strongly agree"
+        ]
+      },
+      "dims": {
+        "openness": {
+          "label": {
+            "tr": "Deneyime Açıklık",
+            "en": "Openness"
+          },
+          "high": {
+            "tr": "Yeni fikirler ve farklı bakış açıları sizi besliyor.",
+            "en": "New ideas and different perspectives nourish you."
+          },
+          "low": {
+            "tr": "Tanıdık ve kanıtlanmış yollar size güven veriyor.",
+            "en": "Familiar, proven paths give you confidence."
+          }
+        },
+        "consc": {
+          "label": {
+            "tr": "Sorumluluk",
+            "en": "Conscientiousness"
+          },
+          "high": {
+            "tr": "Plan ve düzen güçlü yanınız; işleri sonuca bağlarsınız.",
+            "en": "Planning and order are your strengths; you see things through."
+          },
+          "low": {
+            "tr": "Esnek ve spontane bir çalışma tarzınız var.",
+            "en": "You have a flexible, spontaneous working style."
+          }
+        },
+        "extra": {
+          "label": {
+            "tr": "Dışa Dönüklük",
+            "en": "Extraversion"
+          },
+          "high": {
+            "tr": "Sosyal etkileşim size enerji veriyor.",
+            "en": "Social interaction energizes you."
+          },
+          "low": {
+            "tr": "Enerjinizi sakin ve derin ortamlardan alıyorsunuz.",
+            "en": "You draw energy from calm, deep settings."
+          }
+        },
+        "agree": {
+          "label": {
+            "tr": "Uyumluluk",
+            "en": "Agreeableness"
+          },
+          "high": {
+            "tr": "İş birliği ve empati ilişkilerinizin merkezinde.",
+            "en": "Cooperation and empathy are central to your relationships."
+          },
+          "low": {
+            "tr": "Fikirlerinizi net savunur, gerektiğinde rekabetten çekinmezsiniz.",
+            "en": "You defend your views clearly and don't shy from competition."
+          }
+        },
+        "sensitivity": {
+          "label": {
+            "tr": "Duygusal Hassasiyet",
+            "en": "Emotional Sensitivity"
+          },
+          "high": {
+            "tr": "Duygularınızı yoğun yaşıyorsunuz; öz bakım rutinleri size iyi gelir.",
+            "en": "You feel emotions intensely; self-care routines serve you well."
+          },
+          "low": {
+            "tr": "Baskı altında sakin kalma eğilimindesiniz.",
+            "en": "You tend to stay calm under pressure."
+          }
+        }
+      },
+      "questions": [
+        {
+          "t": {
+            "tr": "Yeni fikirleri ve farklı bakış açılarını keşfetmekten keyif alırım.",
+            "en": "I enjoy exploring new ideas and different perspectives."
+          },
+          "dim": "openness"
+        },
+        {
+          "t": {
+            "tr": "Sanat, müzik veya edebiyat beni derinden etkiler.",
+            "en": "Art, music or literature moves me deeply."
+          },
+          "dim": "openness"
+        },
+        {
+          "t": {
+            "tr": "Planlarıma sadık kalır, işlerimi zamanında bitiririm.",
+            "en": "I stick to my plans and finish my work on time."
+          },
+          "dim": "consc"
+        },
+        {
+          "t": {
+            "tr": "Ayrıntılara özen gösteririm.",
+            "en": "I pay attention to details."
+          },
+          "dim": "consc"
+        },
+        {
+          "t": {
+            "tr": "Kalabalık ortamlarda enerjim yükselir.",
+            "en": "My energy rises in lively, crowded settings."
+          },
+          "dim": "extra"
+        },
+        {
+          "t": {
+            "tr": "Yeni insanlarla tanışmaktan keyif alırım.",
+            "en": "I enjoy meeting new people."
+          },
+          "dim": "extra"
+        },
+        {
+          "t": {
+            "tr": "İnsanların ihtiyaçlarını fark eder ve önemserim.",
+            "en": "I notice and care about people's needs."
+          },
+          "dim": "agree"
+        },
+        {
+          "t": {
+            "tr": "Çatışma yerine iş birliğini tercih ederim.",
+            "en": "I prefer cooperation over conflict."
+          },
+          "dim": "agree"
+        },
+        {
+          "t": {
+            "tr": "Küçük aksilikler modumu kolayca etkiler.",
+            "en": "Small setbacks easily affect my mood."
+          },
+          "dim": "sensitivity"
+        },
+        {
+          "t": {
+            "tr": "Endişelenmeye yatkınımdır.",
+            "en": "I am prone to worrying."
+          },
+          "dim": "sensitivity"
+        }
+      ]
+    },
+    {
+      "id": "overthinking",
+      "name": {
+        "tr": "Aşırı Düşünme Eğilimi",
+        "en": "Overthinking Tendency"
+      },
+      "icon": "🔁",
+      "color": "#10B981",
+      "duration": "~2 dk",
+      "desc": {
+        "tr": "Zihinsel geviş getirme (tekrar tekrar düşünme) alışkanlıklarınıza dair bir öz-farkındalık aracı.",
+        "en": "A self-awareness tool about rumination (repetitive thinking) habits."
+      },
+      "discover": {
+        "tr": [
+          "Aşırı düşünme düzeyiniz",
+          "Zihni meşgul eden döngüler",
+          "Döngüyü kırma önerileri"
+        ],
+        "en": [
+          "Your overthinking level",
+          "The loops occupying your mind",
+          "Tips for breaking the loop"
+        ]
+      },
+      "type": "likert",
+      "questions": [
+        {
+          "tr": "Verdiğim kararları sonrasında defalarca sorgularım.",
+          "en": "I repeatedly question decisions after making them."
+        },
+        {
+          "tr": "Geçmiş konuşmaları zihnimde tekrar tekrar oynatırım.",
+          "en": "I replay past conversations in my mind over and over."
+        },
+        {
+          "tr": "Olabilecek en kötü senaryoları detaylıca kurarım.",
+          "en": "I construct worst-case scenarios in detail."
+        },
+        {
+          "tr": "Basit seçimler bile bende uzun iç tartışmalara dönüşür.",
+          "en": "Even simple choices turn into long inner debates."
+        },
+        {
+          "tr": "Uykuya dalarken zihnim düşüncelerle dolar.",
+          "en": "My mind fills with thoughts as I try to fall asleep."
+        },
+        {
+          "tr": "Düşünmekten harekete geçmeye sıra gelmez.",
+          "en": "I never get from thinking to acting."
+        }
+      ],
+      "bands": [
+        {
+          "min": 6,
+          "max": 13,
+          "label": {
+            "tr": "Düşük eğilim",
+            "en": "Low tendency"
+          },
+          "text": {
+            "tr": "Düşüncelerinizle sağlıklı bir mesafeniz var; karar verip ilerleyebiliyorsunuz.",
+            "en": "You keep a healthy distance from your thoughts; you can decide and move on."
+          }
+        },
+        {
+          "min": 14,
+          "max": 21,
+          "label": {
+            "tr": "Orta düzey eğilim",
+            "en": "Moderate tendency"
+          },
+          "text": {
+            "tr": "Zaman zaman düşünce döngülerine kapılıyorsunuz. Karar için kendinize süre sınırı koymak ve düşünceleri kâğıda dökmek işe yarayan tekniklerdir.",
+            "en": "You occasionally get caught in thought loops. Setting a time limit for decisions and writing thoughts down are techniques that work."
+          }
+        },
+        {
+          "min": 22,
+          "max": 30,
+          "label": {
+            "tr": "Yüksek eğilim",
+            "en": "High tendency"
+          },
+          "text": {
+            "tr": "Zihinsel döngüler enerjinizi alıyor görünüyor. 'Endişe saati' (günde 15 dk sınırlı düşünme zamanı) ve dikkat egzersizleri döngüyü kırmaya yardımcı olabilir.",
+            "en": "Mental loops seem to drain your energy. A 'worry hour' (15 minutes of contained thinking per day) and attention exercises can help break the loop."
+          }
+        }
+      ]
+    },
+    {
+      "id": "burnout",
+      "name": {
+        "tr": "Enerji ve Tükenmişlik Öz Değerlendirmesi",
+        "en": "Energy & Burnout Self-Assessment"
+      },
+      "icon": "🔋",
+      "color": "#F97316",
+      "duration": "~2 dk",
+      "desc": {
+        "tr": "Son dönem enerji düzeyinize dair bir öz-farkındalık aracı. Klinik bir değerlendirme değildir.",
+        "en": "A self-awareness tool about your recent energy level. Not a clinical evaluation."
+      },
+      "discover": {
+        "tr": [
+          "Güncel enerji düzeyiniz",
+          "Enerjiyi tüketen alanlar",
+          "Toparlanma önerileri"
+        ],
+        "en": [
+          "Your current energy level",
+          "What drains your energy",
+          "Recovery suggestions"
+        ]
+      },
+      "type": "likert",
+      "questions": [
+        {
+          "tr": "Sabahları güne başlamakta zorlanıyorum.",
+          "en": "I struggle to start the day in the mornings."
+        },
+        {
+          "tr": "İşim/okulum bittiğinde kendimde hiç enerji kalmıyor.",
+          "en": "I have no energy left when work/school ends."
+        },
+        {
+          "tr": "Eskiden keyif aldığım şeyler artık yorucu geliyor.",
+          "en": "Things I used to enjoy now feel exhausting."
+        },
+        {
+          "tr": "Hafta sonu dinlensem de toparlanamıyorum.",
+          "en": "Even after resting on weekends, I don't recover."
+        },
+        {
+          "tr": "Kendimi işlerime karşı mesafeli ve isteksiz hissediyorum.",
+          "en": "I feel distant and unmotivated toward my work."
+        },
+        {
+          "tr": "Verimliliğimin düştüğünü fark ediyorum.",
+          "en": "I notice my productivity has dropped."
+        }
+      ],
+      "bands": [
+        {
+          "min": 6,
+          "max": 13,
+          "label": {
+            "tr": "Enerji düzeyi iyi",
+            "en": "Energy level good"
+          },
+          "text": {
+            "tr": "Şu an enerjiniz dengede görünüyor. Dinlenme rutinlerinizi korumaya devam edin.",
+            "en": "Your energy seems balanced right now. Keep protecting your rest routines."
+          }
+        },
+        {
+          "min": 14,
+          "max": 21,
+          "label": {
+            "tr": "Enerji azalıyor",
+            "en": "Energy declining"
+          },
+          "text": {
+            "tr": "Yorgunluk birikiyor olabilir. Küçük molalar, hareket ve iş dışı keyif alanları toparlanmayı destekler.",
+            "en": "Fatigue may be accumulating. Small breaks, movement and enjoyable non-work activities support recovery."
+          }
+        },
+        {
+          "min": 22,
+          "max": 30,
+          "label": {
+            "tr": "Belirgin tükenmişlik hissi",
+            "en": "Notable burnout feeling"
+          },
+          "text": {
+            "tr": "Uzun süredir böyle hissediyorsanız bu yükü tek başınıza taşımak zorunda değilsiniz; güvendiğiniz biriyle konuşmak ve bir uzmandan destek almak iyi gelebilir. Bu değerlendirme klinik bir tanı aracı değildir.",
+            "en": "If you've felt this way for a long time, you don't have to carry this weight alone; talking to someone you trust and seeking professional support may help. This assessment is not a clinical diagnostic tool."
+          }
+        }
+      ]
+    },
+    {
+      "id": "impostor",
+      "name": {
+        "tr": "Kendinden Şüphe (Impostor) Eğilimi",
+        "en": "Self-Doubt (Impostor) Tendency"
+      },
+      "icon": "🎭",
+      "color": "#64748B",
+      "duration": "~2 dk",
+      "desc": {
+        "tr": "Başarılarınızı sahiplenme biçiminize dair bir öz-farkındalık aracı.",
+        "en": "A self-awareness tool about how you own your achievements."
+      },
+      "discover": {
+        "tr": [
+          "Kendinden şüphe düzeyiniz",
+          "Başarıyı nasıl açıkladığınız",
+          "Öz-değer önerileri"
+        ],
+        "en": [
+          "Your self-doubt level",
+          "How you explain success",
+          "Self-worth suggestions"
+        ]
+      },
+      "type": "likert",
+      "questions": [
+        {
+          "tr": "Başarılarımı şansa veya tesadüfe bağlarım.",
+          "en": "I attribute my successes to luck or coincidence."
+        },
+        {
+          "tr": "İnsanların bir gün 'aslında yetersiz olduğumu' anlayacağından endişelenirim.",
+          "en": "I worry people will one day discover I'm 'actually inadequate'."
+        },
+        {
+          "tr": "Övgü aldığımda hak etmediğimi düşünürüm.",
+          "en": "When praised, I feel I don't deserve it."
+        },
+        {
+          "tr": "Hatalarım yeteneksizliğimin kanıtı gibi gelir.",
+          "en": "My mistakes feel like proof of incompetence."
+        },
+        {
+          "tr": "Kendimi çevremdekilerden daha az yetkin hissederim.",
+          "en": "I feel less competent than the people around me."
+        },
+        {
+          "tr": "Yeni bir işe başlamadan önce başarısız olacağımı varsayarım.",
+          "en": "Before starting something new, I assume I'll fail."
+        }
+      ],
+      "bands": [
+        {
+          "min": 6,
+          "max": 13,
+          "label": {
+            "tr": "Düşük eğilim",
+            "en": "Low tendency"
+          },
+          "text": {
+            "tr": "Başarılarınızı büyük ölçüde sahiplenebiliyorsunuz — değerli bir beceri.",
+            "en": "You largely own your achievements — a valuable skill."
+          }
+        },
+        {
+          "min": 14,
+          "max": 21,
+          "label": {
+            "tr": "Orta düzey eğilim",
+            "en": "Moderate tendency"
+          },
+          "text": {
+            "tr": "Zaman zaman kendinizden şüphe ediyorsunuz. Başarılarınızı somut kanıtlarla (bitirdiğiniz işlerin listesi gibi) görünür kılmak dengeyi destekler.",
+            "en": "You doubt yourself from time to time. Making your successes visible with concrete evidence (like a list of finished work) supports balance."
+          }
+        },
+        {
+          "min": 22,
+          "max": 30,
+          "label": {
+            "tr": "Yüksek eğilim",
+            "en": "High tendency"
+          },
+          "text": {
+            "tr": "Kendinden şüphe sık tekrarlıyor görünüyor. Bu yaygın bir deneyimdir ve yetersizliğin kanıtı değildir; başarı kayıtları tutmak ve güvendiğiniz kişilerden gerçekçi geri bildirim almak yardımcı olabilir.",
+            "en": "Self-doubt seems to recur often. This is a common experience and not proof of inadequacy; keeping success records and getting realistic feedback from people you trust can help."
+          }
+        }
+      ]
+    },
+    {
+      "id": "life-satisfaction",
+      "name": {
+        "tr": "Yaşam Doyumu Öz Değerlendirmesi",
+        "en": "Life Satisfaction Self-Assessment"
+      },
+      "icon": "🌤️",
+      "color": "#38BDF8",
+      "duration": "~2 dk",
+      "desc": {
+        "tr": "Yaşamınızdan aldığınız genel doyuma dair bir öz-farkındalık aracı. Klinik bir değerlendirme değildir.",
+        "en": "A self-awareness tool about your overall life satisfaction. Not a clinical evaluation."
+      },
+      "discover": {
+        "tr": [
+          "Güncel doyum düzeyiniz",
+          "Sizi besleyen alanlar",
+          "Küçük iyileştirme önerileri"
+        ],
+        "en": [
+          "Your current satisfaction level",
+          "The areas that nourish you",
+          "Small improvement tips"
+        ]
+      },
+      "type": "likert",
+      "questions": [
+        {
+          "tr": "Hayatımdan genel olarak memnunum.",
+          "en": "Overall, I am satisfied with my life."
+        },
+        {
+          "tr": "Günlük yaşamımda bana keyif veren şeyler var.",
+          "en": "There are things in my daily life that bring me joy."
+        },
+        {
+          "tr": "Kendimi enerjik ve motive hissediyorum.",
+          "en": "I feel energetic and motivated."
+        },
+        {
+          "tr": "İlişkilerimde desteklendiğimi hissediyorum.",
+          "en": "I feel supported in my relationships."
+        },
+        {
+          "tr": "Geleceğe umutla bakıyorum.",
+          "en": "I look to the future with hope."
+        },
+        {
+          "tr": "Şu anki yaşamım, olmasını istediğim yaşama yakın.",
+          "en": "My current life is close to the life I want."
+        }
+      ],
+      "bands": [
+        {
+          "min": 6,
+          "max": 13,
+          "label": {
+            "tr": "Düşük yaşam doyumu",
+            "en": "Low life satisfaction"
+          },
+          "text": {
+            "tr": "Son dönemde doyumunuz düşük görünüyor. Bu bir klinik değerlendirme değildir; gün içine küçük keyif anları eklemek ve güvendiğiniz biriyle konuşmak iyi gelebilir. Bu his uzun süredir devam ediyorsa bir uzmandan destek almayı düşünebilirsiniz.",
+            "en": "Your satisfaction seems low lately. This is not a clinical evaluation; adding small moments of joy to your day and talking to someone you trust may help. If this feeling has persisted for a long time, consider seeking professional support."
+          }
+        },
+        {
+          "min": 14,
+          "max": 21,
+          "label": {
+            "tr": "Orta düzey yaşam doyumu",
+            "en": "Moderate life satisfaction"
+          },
+          "text": {
+            "tr": "Bazı alanlar sizi besliyor, bazıları geliştirilebilir görünüyor. Sizi iyi hissettiren aktiviteleri bilinçli olarak takviminize eklemek dengeyi güçlendirir.",
+            "en": "Some areas nourish you; others look improvable. Deliberately scheduling activities that make you feel good strengthens the balance."
+          }
+        },
+        {
+          "min": 22,
+          "max": 30,
+          "label": {
+            "tr": "Yüksek yaşam doyumu",
+            "en": "High life satisfaction"
+          },
+          "text": {
+            "tr": "Yaşamınızla aranız iyi görünüyor. Sizi besleyen rutinleri ve ilişkileri korumaya devam edin.",
+            "en": "You seem on good terms with your life. Keep protecting the routines and relationships that nourish you."
+          }
+        }
+      ]
+    },
+    {
+      "id": "anger",
+      "name": {
+        "tr": "Öfke Eğilimi Öz Değerlendirmesi",
+        "en": "Anger Tendency Self-Assessment"
+      },
+      "icon": "🔥",
+      "color": "#F43F5E",
+      "duration": "~2 dk",
+      "desc": {
+        "tr": "Öfkeyi deneyimleme ve ifade etme biçiminize dair bir öz-farkındalık aracı. Klinik bir değerlendirme değildir.",
+        "en": "A self-awareness tool about how you experience and express anger. Not a clinical evaluation."
+      },
+      "discover": {
+        "tr": [
+          "Öfke eğilim düzeyiniz",
+          "Sizi tetikleyen durum kalıpları",
+          "Sakinleşme önerileri"
+        ],
+        "en": [
+          "Your anger tendency level",
+          "The situations that trigger you",
+          "Calming suggestions"
+        ]
+      },
+      "type": "likert",
+      "questions": [
+        {
+          "tr": "Küçük aksiliklerde bile öfkemin yükseldiğini hissederim.",
+          "en": "I feel my anger rise even at small setbacks."
+        },
+        {
+          "tr": "Öfkelendiğimde sonradan pişman olacağım sözler söylerim.",
+          "en": "When angry, I say things I later regret."
+        },
+        {
+          "tr": "Sinirlendiğimde sakinleşmem uzun sürer.",
+          "en": "It takes me a long time to calm down once upset."
+        },
+        {
+          "tr": "Trafikte veya sırada beklerken tahammülüm hızla tükenir.",
+          "en": "My patience runs out fast in traffic or queues."
+        },
+        {
+          "tr": "Öfkemi içimde biriktirir, sonra bir anda patlarım.",
+          "en": "I bottle up anger, then explode all at once."
+        },
+        {
+          "tr": "Öfkem ilişkilerimi veya işimi olumsuz etkiliyor.",
+          "en": "My anger negatively affects my relationships or work."
+        }
+      ],
+      "bands": [
+        {
+          "min": 6,
+          "max": 13,
+          "label": {
+            "tr": "Düşük öfke eğilimi",
+            "en": "Low anger tendency"
+          },
+          "text": {
+            "tr": "Öfkenizle aranızda sağlıklı bir mesafe var; tetiklenmeleri büyük ölçüde yönetebiliyorsunuz.",
+            "en": "You keep a healthy distance from your anger; you largely manage your triggers."
+          }
+        },
+        {
+          "min": 14,
+          "max": 21,
+          "label": {
+            "tr": "Orta düzey öfke eğilimi",
+            "en": "Moderate anger tendency"
+          },
+          "text": {
+            "tr": "Bazı durumlar öfkenizi hızla yükseltiyor. Tetikleyici günlüğü tutmak, tepki vermeden önce kısa bir mola vermek ve yavaş nefes egzersizleri işe yarayan tekniklerdir.",
+            "en": "Some situations raise your anger quickly. Keeping a trigger journal, taking a short pause before reacting and slow breathing exercises are techniques that work."
+          }
+        },
+        {
+          "min": 22,
+          "max": 30,
+          "label": {
+            "tr": "Belirgin öfke eğilimi",
+            "en": "Notable anger tendency"
+          },
+          "text": {
+            "tr": "Öfke günlük yaşamınızı etkiliyor görünüyor. Bu bir klinik değerlendirme değildir; öfkeniz ilişkilerinize veya işinize zarar veriyorsa bir uzmanla çalışmak somut fayda sağlayabilir.",
+            "en": "Anger seems to affect your daily life. This is not a clinical evaluation; if anger is harming your relationships or work, working with a professional can bring concrete benefits."
+          }
+        }
+      ]
+    },
+    {
+      "id": "communication-style",
+      "name": {
+        "tr": "İletişim Tarzı Profili",
+        "en": "Communication Style Profile"
+      },
+      "icon": "🗣️",
+      "color": "#8B5CF6",
+      "duration": "~3 dk",
+      "desc": {
+        "tr": "Kendinizi ifade etme biçiminizin üç eksendeki (açık, pasif, baskın) kısa bir profili.",
+        "en": "A short profile of how you express yourself across three axes (assertive, passive, dominant)."
+      },
+      "discover": {
+        "tr": [
+          "Baskın iletişim tarzınız",
+          "Eksen bazlı eğilim yüzdeleri",
+          "İlişkileri rahatlatan öneriler"
+        ],
+        "en": [
+          "Your dominant communication style",
+          "Per-axis tendency percentages",
+          "Tips that ease relationships"
+        ]
+      },
+      "type": "likert-dims",
+      "scale": {
+        "tr": [
+          "Hiç katılmıyorum",
+          "Katılmıyorum",
+          "Kararsızım",
+          "Katılıyorum",
+          "Tamamen katılıyorum"
+        ],
+        "en": [
+          "Strongly disagree",
+          "Disagree",
+          "Neutral",
+          "Agree",
+          "Strongly agree"
+        ]
+      },
+      "dims": {
+        "assertive": {
+          "label": {
+            "tr": "Açık (Atılgan) İletişim",
+            "en": "Assertive Communication"
+          },
+          "high": {
+            "tr": "İhtiyaçlarınızı saygılı ve net ifade ediyorsunuz — sağlıklı iletişimin temeli.",
+            "en": "You express your needs clearly and respectfully — the foundation of healthy communication."
+          },
+          "low": {
+            "tr": "Açık ifade kasınızı güçlendirmek ilişkilerinizi rahatlatabilir; 'ben dili' iyi bir başlangıçtır.",
+            "en": "Strengthening your clear-expression muscle can ease your relationships; 'I statements' are a good start."
+          }
+        },
+        "passive": {
+          "label": {
+            "tr": "Pasif İletişim",
+            "en": "Passive Communication"
+          },
+          "high": {
+            "tr": "Çatışmadan kaçınmak için kendi ihtiyaçlarınızı sık geri plana atıyor olabilirsiniz; küçük konularda fikir belirterek başlayabilirsiniz.",
+            "en": "You may often set your needs aside to avoid conflict; start by voicing opinions on small matters."
+          },
+          "low": {
+            "tr": "Kendi ihtiyaçlarınızı geri plana atma eğiliminiz düşük.",
+            "en": "Your tendency to set your own needs aside is low."
+          }
+        },
+        "dominant": {
+          "label": {
+            "tr": "Baskın İletişim",
+            "en": "Dominant Communication"
+          },
+          "high": {
+            "tr": "Haklılığınızı korurken karşı tarafın alanını daraltıyor olabilirsiniz; yumuşatıcı dil ve dinleme molaları dengeyi kurar.",
+            "en": "You may narrow the other side's space while defending your point; softening language and listening pauses restore balance."
+          },
+          "low": {
+            "tr": "Baskın üslup eğiliminiz düşük.",
+            "en": "Your tendency toward a dominant tone is low."
+          }
+        }
+      },
+      "questions": [
+        {
+          "t": {
+            "tr": "Bir şey beni rahatsız ettiğinde bunu saygılı bir dille dile getiririm.",
+            "en": "When something bothers me, I voice it respectfully."
+          },
+          "dim": "assertive"
+        },
+        {
+          "t": {
+            "tr": "Hayır demem gerektiğinde gerekçemi açıklayarak hayır derim.",
+            "en": "When I need to say no, I say it and explain why."
+          },
+          "dim": "assertive"
+        },
+        {
+          "t": {
+            "tr": "Eleştiri alırken savunmaya geçmeden dinleyebilirim.",
+            "en": "I can listen to criticism without getting defensive."
+          },
+          "dim": "assertive"
+        },
+        {
+          "t": {
+            "tr": "Karşımdakini kırmamak için kendi isteğimden vazgeçerim.",
+            "en": "I give up what I want so as not to upset the other person."
+          },
+          "dim": "passive"
+        },
+        {
+          "t": {
+            "tr": "Rahatsız olsam da 'önemli değil' der geçerim.",
+            "en": "Even when bothered, I say 'it's fine' and move on."
+          },
+          "dim": "passive"
+        },
+        {
+          "t": {
+            "tr": "Grup kararlarında fikrimi söylemek yerine çoğunluğa uyarım.",
+            "en": "In group decisions, I follow the majority instead of voicing my view."
+          },
+          "dim": "passive"
+        },
+        {
+          "t": {
+            "tr": "Tartışmalarda sesim hızla yükselir.",
+            "en": "My voice rises quickly in arguments."
+          },
+          "dim": "dominant"
+        },
+        {
+          "t": {
+            "tr": "Haksız olduğunu düşündüğüm kişinin sözünü keserim.",
+            "en": "I interrupt people I think are wrong."
+          },
+          "dim": "dominant"
+        },
+        {
+          "t": {
+            "tr": "İstediğimi elde etmek için sert bir üslup kullanabilirim.",
+            "en": "I can use a harsh tone to get what I want."
+          },
+          "dim": "dominant"
+        }
+      ]
+    }
+  ],
+  "testCatalog": [
+    {
+      "id": "sustained-attention",
+      "name": {
+        "tr": "Sürdürülebilir Dikkat",
+        "en": "Sustained Attention"
+      },
+      "desc": {
+        "tr": "Yalnızca mavi daire hedefine dokunun.",
+        "en": "Tap only the blue circle target."
+      },
+      "duration": "~1 dk",
+      "measures": [
+        "Dikkat",
+        "Tutarlılık"
+      ],
+      "difficulty": "Kolay",
+      "type": "target-detection",
+      "trials": 16
+    },
+    {
+      "id": "go-nogo",
+      "name": {
+        "tr": "Tepki Hızı (Go / No-Go)",
+        "en": "Reaction Speed (Go / No-Go)"
+      },
+      "desc": {
+        "tr": "Yeşilde dokunun, kırmızıda dokunmayın.",
+        "en": "Tap on green, don't tap on red."
+      },
+      "duration": "~1 dk",
+      "measures": [
+        "Dürtü Kontrolü",
+        "Hız"
+      ],
+      "difficulty": "Orta",
+      "type": "go-nogo",
+      "trials": 16
+    },
+    {
+      "id": "stroop",
+      "name": {
+        "tr": "Stroop Benzeri Görev",
+        "en": "Stroop-like Task"
+      },
+      "desc": {
+        "tr": "Kelimeyi değil, yazının rengini seçin.",
+        "en": "Choose the ink color, not the word."
+      },
+      "duration": "~1 dk",
+      "measures": [
+        "Bilişsel Esneklik",
+        "Dikkat"
+      ],
+      "difficulty": "Orta",
+      "type": "stroop",
+      "trials": 12
+    },
+    {
+      "id": "working-memory",
+      "name": {
+        "tr": "Çalışma Belleği",
+        "en": "Working Memory"
+      },
+      "desc": {
+        "tr": "Sayı dizisini hatırlayın ve sırasıyla girin.",
+        "en": "Remember the growing digit sequence."
+      },
+      "duration": "~2 dk",
+      "measures": [
+        "Bellek"
+      ],
+      "difficulty": "Orta",
+      "type": "digit-span",
+      "trials": 8
+    },
+    {
+      "id": "visual-search",
+      "name": {
+        "tr": "Görsel Dikkat",
+        "en": "Visual Attention"
+      },
+      "desc": {
+        "tr": "Işaretlenen hedef sembolü ızgara içinde bulun.",
+        "en": "Find the target symbol in the grid."
+      },
+      "duration": "~2 dk",
+      "measures": [
+        "Görsel Dikkat",
+        "Hız"
+      ],
+      "difficulty": "Orta",
+      "type": "visual-search",
+      "trials": 10
+    },
+    {
+      "id": "auditory",
+      "name": {
+        "tr": "İşitsel Dikkat",
+        "en": "Auditory Attention"
+      },
+      "desc": {
+        "tr": "Yüksek tonda dokunun, kalın tonda dokunmayın.",
+        "en": "React to the target sound."
+      },
+      "duration": "~2 dk",
+      "measures": [
+        "İşitsel Dikkat",
+        "Dürtü Kontrolü"
+      ],
+      "difficulty": "Zor",
+      "type": "auditory",
+      "trials": 14
+    },
+    {
+      "id": "distractor-cpt",
+      "name": {
+        "tr": "Çeldiricili Dikkat Testi",
+        "en": "Distractor Attention Test"
+      },
+      "desc": {
+        "tr": "Görsel ve işitsel çeldiriciler altında hedefe odaklanın; 4 bloklu akış.",
+        "en": "Stay on target under visual and auditory distractors; a 4-block flow."
+      },
+      "duration": "~3 dk",
+      "measures": [
+        "Dikkat",
+        "Çeldirici Direnci"
+      ],
+      "difficulty": "Zor",
+      "type": "distractor-cpt",
+      "trials": 32
+    },
+    {
+      "id": "cognitive-flexibility",
+      "name": {
+        "tr": "Bilişsel Esneklik",
+        "en": "Cognitive Flexibility"
+      },
+      "desc": {
+        "tr": "Değişen kurala (renk / şekil) uyum sağlayın.",
+        "en": "Adapt to the changing rule."
+      },
+      "duration": "~3 dk",
+      "measures": [
+        "Esneklik",
+        "Hız"
+      ],
+      "difficulty": "Zor",
+      "type": "cognitive-flexibility",
+      "trials": 16
+    }
+  ],
+  "ageGroups": [
+    {
+      "id": "6-9",
+      "label": {
+        "tr": "6-9 yaş",
+        "en": "Ages 6-9"
+      },
+      "emoji": "🧒",
+      "color": "#FF6B35",
+      "desc": {
+        "tr": "Basitleştirilmiş görevler, daha uzun yanıt süreleri",
+        "en": "Simplified tasks, longer response windows"
+      },
+      "trialFactor": 0.7,
+      "windowFactor": 1.6,
+      "rtBaselineShift": 250,
+      "spanStart": 2,
+      "spanMax": 6
+    },
+    {
+      "id": "10-13",
+      "label": {
+        "tr": "10-13 yaş",
+        "en": "Ages 10-13"
+      },
+      "emoji": "🧑",
+      "color": "#06B6D4",
+      "desc": {
+        "tr": "Orta yoğunlukta görevler, geniş yanıt penceresi",
+        "en": "Moderate task load, wide response window"
+      },
+      "trialFactor": 0.85,
+      "windowFactor": 1.3,
+      "rtBaselineShift": 150,
+      "spanStart": 3,
+      "spanMax": 7
+    },
+    {
+      "id": "14-17",
+      "label": {
+        "tr": "14-17 yaş",
+        "en": "Ages 14-17"
+      },
+      "emoji": "🧑‍🎓",
+      "color": "#F59E0B",
+      "desc": {
+        "tr": "Standarda yakın görev yapısı",
+        "en": "Near-standard task structure"
+      },
+      "trialFactor": 1,
+      "windowFactor": 1.15,
+      "rtBaselineShift": 60,
+      "spanStart": 3,
+      "spanMax": 8
+    },
+    {
+      "id": "adult",
+      "label": {
+        "tr": "Yetişkin",
+        "en": "Adult"
+      },
+      "emoji": "🧠",
+      "color": "#8B5CF6",
+      "desc": {
+        "tr": "Tam kapsamlı standart testler",
+        "en": "Full standard tests"
+      },
+      "trialFactor": 1,
+      "windowFactor": 1,
+      "rtBaselineShift": 0,
+      "spanStart": 3,
+      "spanMax": 9
+    }
+  ],
+  "levelPools": {
+    "Başlangıç": [
+      "eye",
+      "growshape",
+      "schulte",
+      "match",
+      "benzer",
+      "number-memory",
+      "synonym",
+      "pattern"
+    ],
+    "Orta": [
+      "eye",
+      "flash",
+      "oddeven",
+      "schulte",
+      "benzer",
+      "peripheral",
+      "block-reading",
+      "growshape",
+      "arithmetic",
+      "synonym",
+      "number-memory",
+      "pattern"
+    ],
+    "İleri": [
+      "flash",
+      "oddeven",
+      "peripheral",
+      "block-reading",
+      "rsvp",
+      "reading-test",
+      "schulte",
+      "eye",
+      "arithmetic",
+      "synonym",
+      "pattern"
+    ]
+  }
+}

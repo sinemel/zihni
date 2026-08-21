@@ -1,0 +1,282 @@
+// Kognita — starter Prisma schema
+// Place at prisma/schema.prisma in the monorepo. Refine field types/constraints as needed.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  EXPERT
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum SessionState {
+  NOT_STARTED
+  INSTRUCTIONS
+  COUNTDOWN
+  RUNNING
+  PAUSED
+  COMPLETED
+  ABORTED
+}
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+  EXPERT
+  ENTERPRISE
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  role          Role           @default(USER)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  profile       Profile?
+  expertProfile Expert?
+  testSessions  TestSession[]
+  notifications Notification[]
+  subscription  Subscription?
+  consents      Consent[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName String
+  lastName  String
+  phone     String?
+  birthYear Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+model Expert {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?
+  clients   Client[]
+  createdAt DateTime @default(now())
+
+  @@map("experts")
+}
+
+model Client {
+  id          String       @id @default(cuid())
+  expertId    String
+  expert      Expert       @relation(fields: [expertId], references: [id], onDelete: Cascade)
+  firstName   String
+  lastName    String
+  email       String?
+  phone       String?
+  birthDate   DateTime?
+  assignments Assignment[]
+  reports     Report[]
+  createdAt   DateTime     @default(now())
+
+  @@map("clients")
+}
+
+model Test {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  description String
+  difficulty  String
+  config      Json
+  isActive    Boolean       @default(true)
+  versions    TestVersion[]
+  assignments Assignment[]
+  createdAt   DateTime      @default(now())
+
+  @@map("tests")
+}
+
+model TestVersion {
+  id        String        @id @default(cuid())
+  testId    String
+  test      Test          @relation(fields: [testId], references: [id], onDelete: Cascade)
+  version   Int
+  config    Json
+  createdAt DateTime      @default(now())
+  sessions  TestSession[]
+
+  @@unique([testId, version])
+  @@map("test_versions")
+}
+
+model TestSession {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testVersionId String
+  testVersion   TestVersion  @relation(fields: [testVersionId], references: [id])
+  assignmentId  String?
+  assignment    Assignment?  @relation(fields: [assignmentId], references: [id])
+  state         SessionState @default(NOT_STARTED)
+  startedAt     DateTime?
+  completedAt   DateTime?
+  events        TestEvent[]
+  result        TestResult?
+  createdAt     DateTime     @default(now())
+
+  @@index([userId])
+  @@map("test_sessions")
+}
+
+model TestEvent {
+  id           String      @id @default(cuid())
+  sessionId    String
+  session      TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  timestamp    BigInt
+  eventType    String
+  stimulus     String
+  response     String?
+  reactionTime Int?
+  correct      Boolean?
+  errorType    String?
+  createdAt    DateTime    @default(now())
+
+  @@index([sessionId])
+  @@map("test_events")
+}
+
+model TestResult {
+  id        String         @id @default(cuid())
+  sessionId String         @unique
+  session   TestSession    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  overall   Int
+  metrics   ResultMetric[]
+  reports   Report[]
+  createdAt DateTime       @default(now())
+
+  @@map("test_results")
+}
+
+model ResultMetric {
+  id       String     @id @default(cuid())
+  resultId String
+  result   TestResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  key      String
+  value    Float
+
+  @@map("result_metrics")
+}
+
+model Report {
+  id         String      @id @default(cuid())
+  resultId   String
+  result     TestResult  @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  clientId   String?
+  client     Client?     @relation(fields: [clientId], references: [id])
+  expertNote String?
+  pdfUrl     String?
+  createdAt  DateTime    @default(now())
+
+  @@map("reports")
+}
+
+model Assignment {
+  id         String        @id @default(cuid())
+  clientId   String
+  client     Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  testId     String
+  test       Test          @relation(fields: [testId], references: [id])
+  dueDate    DateTime?
+  note       String?
+  status     String        @default("PENDING")
+  sessions   TestSession[]
+  createdAt  DateTime      @default(now())
+
+  @@map("assignments")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+model Subscription {
+  id                     String             @id @default(cuid())
+  userId                 String             @unique
+  user                   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                   SubscriptionPlan   @default(FREE)
+  status                 SubscriptionStatus @default(ACTIVE)
+  providerCustomerId     String?
+  providerSubscriptionId String?            @unique
+  currentPeriodStart     DateTime           @default(now())
+  currentPeriodEnd       DateTime?
+  canceledAt             DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  @@map("subscriptions")
+}
+
+// Ham webhook olayları — idempotency ve denetim için saklanır
+model PaymentEvent {
+  id         String   @id @default(cuid())
+  provider   String   @default("iyzico")
+  eventType  String
+  externalId String?  @unique
+  payload    Json
+  processed  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@map("payment_events")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model Consent {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String
+  accepted   Boolean
+  acceptedAt DateTime @default(now())
+  version    String
+
+  @@map("consents")
+}

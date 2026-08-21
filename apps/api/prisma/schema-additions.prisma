@@ -1,0 +1,105 @@
+// ============================================================
+// schema.prisma'ya EKLENECEK modeller (mevcut 16 tabloya ilave)
+// Not: Mevcut şemada TestSession benzeri bir model varsa alan
+// adlarını buradakiyle hizalayın; yoksa bu blokları aynen ekleyin.
+// User modeline karşı ilişkiler: aşağıdaki her modelde userId alanı
+// mevcut User.id'ye FK olarak bağlanmalıdır.
+// ============================================================
+
+model ReadingText {
+  id         String   @id            // "r1".."r12", "en1", "en2" — seed anahtarı
+  title      String
+  category   String
+  level      String                  // Kolay|Orta|Zor|Easy|Medium|Hard
+  lang       String   @default("tr") // tr|en
+  lib        String   @default("genel") // genel|cocuk
+  body       String   @db.Text
+  wordCount  Int
+  questions  Json                    // [{q, options[], answer}]
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  @@index([lang, lib])
+  @@map("reading_texts")
+}
+
+model SelfTestDef {
+  id        String   @id             // "personality".."impostor"
+  config    Json                     // tam test tanımı: name{tr,en}, type, questions, bands/dims...
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@map("self_test_defs")
+}
+
+model SelfTestResult {
+  id          String   @id @default(cuid())
+  userId      String
+  selfTestId  String
+  lang        String   @default("tr")
+  answers     Json                   // ham cevaplar
+  outcome     Json                   // sunucuda hesaplanan sonuç (band/sides/dims/acc)
+  summaryText String
+  createdAt   DateTime @default(now())
+
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  selfTest SelfTestDef @relation(fields: [selfTestId], references: [id])
+
+  @@index([userId, createdAt])
+  @@map("self_test_results")
+}
+
+model CognitiveSession {
+  id         String   @id @default(cuid())
+  userId     String
+  testId     String                  // TEST_CATALOG id'si
+  testType   String
+  ageGroupId String
+  lang       String   @default("tr")
+  events     Json                    // ham olay dizisi (RT bütünlüğü için istemciden toplu)
+  overall    Int
+  subscores  Json
+  stats      Json
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("cognitive_sessions")
+}
+
+model TrainingSession {
+  id         String   @id @default(cuid())
+  userId     String
+  exerciseId String                  // TRAINING_CATALOG id'si
+  score      Int
+  detail     String?
+  wpm        Int?                    // okuma egzersizlerinde
+  comp       Int?                    // anlama %
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("training_sessions")
+}
+
+model UserProgram {
+  userId         String   @id
+  level          String                 // Başlangıç|Orta|İleri
+  day            Int      @default(1)   // 1..21
+  completedToday String[] @default([])  // bugün biten egzersiz id'leri
+  completedDays  Int      @default(0)
+  lastActivityAt DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_programs")
+}
+
+// User modeline eklenecek ters ilişkiler:
+//   cognitiveSessions CognitiveSession[]
+//   trainingSessions  TrainingSession[]
+//   selfTestResults   SelfTestResult[]
+//   program           UserProgram?

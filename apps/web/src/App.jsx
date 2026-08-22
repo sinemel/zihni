@@ -32,6 +32,49 @@ const C = {
 
 const BRAND = "Kognita";
 
+/* ============================================================
+   API İSTEMCİSİ — "değer sunucuda" bağlantı katmanı
+   API erişilebilirse sunucu sonuçları kullanılır; erişilemezse
+   prototip yerel hesaplamayla kesintisiz çalışmaya devam eder.
+   ============================================================ */
+const API_BASE = (typeof window !== "undefined" && window.KOGNITA_API_URL) || "http://localhost:3000";
+let API_TOKEN = null; // Üretimde: Supabase Auth oturumundan JWT
+
+async function apiFetch(path, options = {}) {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        ...(API_TOKEN ? { Authorization: `Bearer ${API_TOKEN}` } : {}),
+        ...(options.headers || {}),
+      },
+    });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null; // Ağ yok / API kapalı → yerel akış devam eder
+  }
+}
+
+const api = {
+  // Bilişsel test: ham event'leri gönder, sunucu skorunu al
+  submitSession: (testId, testType, age, events) =>
+    apiFetch("/sessions", { method: "POST", body: JSON.stringify({ testId, testType, age, events }) }),
+  // Egzersiz sonucu kaydet (fire-and-forget)
+  submitTraining: (exerciseId, score, detail, wpm) =>
+    apiFetch("/trainings", { method: "POST", body: JSON.stringify({ exerciseId, score, detail, wpm }) }),
+  // Öz değerlendirme yanıtlarını gönder
+  submitSelfTest: (id, answers) =>
+    apiFetch(`/self-tests/${id}/submit`, { method: "POST", body: JSON.stringify({ answers }) }),
+  // Metin kütüphanesi (varsa sunucudan)
+  getTexts: (lang) => apiFetch(`/texts?lang=${lang}`),
+};
+
 /* Demo kullanıcılar — üretimde JWT/Supabase Auth ile değişir */
 let MOCK_USERS = [
   { email: "user@demo.com",   password: "Demo123!", role: "user",   name: "Sinem Kullanıcı" },
@@ -3971,7 +4014,7 @@ const SelfTestRunner = ({ test, onExit }) => {
       : test.type === "quiz" ? (lang === "en" ? `${outcome.acc}% accuracy (${outcome.correct}/${total})` : `%${outcome.acc} doğruluk (${outcome.correct}/${total})`)
       : test.type === "likert-dims" ? (() => { const top = [...outcome.dims].sort((a, b) => b.pct - a.pct)[0]; return lang === "en" ? `Most prominent: ${top.label} (${top.pct}%)` : `En belirgin: ${top.label} (%${top.pct})`; })()
       : L(outcome.band.label, lang);
-    const summary = { id: uid(), testId: test.id, name: L(test.name, lang), icon: test.icon, color: test.color, date: new Date().toISOString(), summaryText };
+    const summary = { id: uid(), testId: test.id, name: L(test.name, lang), icon: test.icon, color: test.color, date: new Date().toISOString(), summaryText, answers };
     return (
       <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
         <Card className="w-full max-w-md text-center" style={{ animation: "kg-countup 0.4s ease" }}>
@@ -5878,8 +5921,17 @@ export default function App() {
 
   useEffect(() => {
     if (screen === "processing") {
-      const t = setTimeout(() => {
-        const r = computeResult(activeTest, lastEvents);
+      let cancelled = false;
+      (async () => {
+        const t0 = performance.now();
+        // Önce sunucudan skorlamayı dene ("değer sunucuda")
+        const server = await api.submitSession(activeTest.id, activeTest.type, activeTest.age, lastEvents);
+        // Minimum 900ms "hesaplanıyor" ekranı (yerel fallback göz kırpmasın)
+        await new Promise((res) => setTimeout(res, Math.max(0, 900 - (performance.now() - t0))));
+        if (cancelled) return;
+        const r = server && server.overall != null
+          ? { id: server.id || uid(), testId: activeTest.id, testName: activeTest.name, date: server.date || new Date().toISOString(), overall: server.overall, subscores: server.subscores, stats: server.stats, blockStats: server.blockStats ?? null, source: "api" }
+          : { ...computeResult(activeTest, lastEvents), source: "local" };
         setResult(r);
         setSessions((s) => [...s, r]);
         addNotification(lang === "en" ? "Your test result is ready." : "Test sonucunuz oluşturuldu.");
@@ -5889,8 +5941,8 @@ export default function App() {
           setTimeout(() => setTrialPromo(true), 2500);
         }
         setScreen("results");
-      }, 900);
-      return () => clearTimeout(t);
+      })();
+      return () => { cancelled = true; };
     }
   }, [screen]);
 
@@ -6021,6 +6073,7 @@ export default function App() {
 
       {screen === "training-run" && activeTraining && (() => {
         const finish = (r) => {
+          api.submitTraining(activeTraining.id, r.score, r.detail, r.wpm); // fire-and-forget
           setTrainings((prev) => [...prev, { id: uid(), exerciseId: activeTraining.id, name: activeTraining.name, date: new Date().toISOString(), ...r }]);
           markActivity();
           setLibraryText(null);
@@ -6086,6 +6139,7 @@ export default function App() {
           test={activeSelfTest}
           onExit={(summary) => {
             if (summary && summary.id) {
+              if (summary.answers) api.submitSelfTest(summary.testId, summary.answers); // fire-and-forget
               setSelfResults((prev) => [...prev, summary]);
               addNotification(lang === "en" ? "Your self-assessment result was saved." : "Öz değerlendirme sonucunuz kaydedildi.");
             }

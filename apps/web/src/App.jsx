@@ -32,6 +32,13 @@ const C = {
 
 const BRAND = "Kognita";
 
+/* Demo kullanıcılar — üretimde JWT/Supabase Auth ile değişir */
+let MOCK_USERS = [
+  { email: "user@demo.com",   password: "Demo123!", role: "user",   name: "Sinem Kullanıcı" },
+  { email: "expert@demo.com", password: "Demo123!", role: "expert", name: "Dr. Ayşe Uzman" },
+  { email: "admin@demo.com",  password: "Demo123!", role: "admin",  name: "Admin" },
+];
+
 /* ============================================================
    i18n — dil altyapısı (TR/EN)
    ============================================================ */
@@ -768,129 +775,232 @@ const FAQ_ITEMS = [
 
 const Landing = ({ onStart, onExpert }) => {
   const { lang, t } = useT();
-  const FEATURE_COLORS = [C.primary, C.secondary, C.accent1, C.accent2, C.accent3, C.warning];
   const [openFaq, setOpenFaq] = useState(null);
+  const [hoveredFeature, setHoveredFeature] = useState(null);
+
+  const STATS = [
+    { n: "8", label: { tr: "Bilişsel Test", en: "Cognitive Tests" } },
+    { n: "12", label: { tr: "Öz Değerlendirme", en: "Self Assessments" } },
+    { n: "15", label: { tr: "Zihinsel Egzersiz", en: "Mental Exercises" } },
+    { n: "3", label: { tr: "Dakika Ortalama Süre", en: "Min. Avg. Duration" } },
+  ];
+
+  const FEATURES = [
+    { icon: "🎯", title: { tr: "Hedefli Ölçüm", en: "Targeted Measurement" }, text: { tr: "Dikkat, tepki hızı, dürtü kontrolü ve bilişsel esnekliği ayrı ayrı ölçen bilimsel paradigmalara dayalı görevler.", en: "Tasks based on scientific paradigms that separately measure attention, reaction speed, impulse control and cognitive flexibility." }, color: C.primary },
+    { icon: "📈", title: { tr: "Kişisel Gelişim Takibi", en: "Personal Progress Tracking" }, text: { tr: "Her testten sonra radar, zaman çizgisi ve hata analizi grafikleriyle görsel performans raporu.", en: "Visual performance report with radar, timeline and error analysis charts after every test." }, color: C.secondary },
+    { icon: "🧠", title: { tr: "Adaptif Antrenman", en: "Adaptive Training" }, text: { tr: "Okuma hızınıza göre belirlenen seviyede 21 günlük egzersiz programı; zorlandıkça hız otomatik ayarlanır.", en: "21-day exercise program at a level calibrated to your reading speed; pacing adjusts as you improve." }, color: C.accent1 },
+    { icon: "🗣️", title: { tr: "Uzman Bağlantısı", en: "Expert Connection" }, text: { tr: "Psikolog ve eğitimciler size test atayabilir, sonuçlarınızı inceleyip PDF rapor oluşturabilir.", en: "Psychologists and educators can assign tests, review your results and generate PDF reports." }, color: C.accent2 },
+    { icon: "🔒", title: { tr: "Gizlilik Önce", en: "Privacy First" }, text: { tr: "KVKK uyumlu veri yönetimi. Verileriniz yalnızca sizindir — dilediğinizde indirin veya silin.", en: "KVKK/GDPR-compliant data management. Your data belongs only to you — download or delete anytime." }, color: "#8B5CF6" },
+    { icon: "⚕️", title: { tr: "Klinik Değil, Farkındalık", en: "Awareness, Not Diagnosis" }, text: { tr: "Bu platform tıbbi tanı koymaz. Sonuçlar klinik değerlendirmenin yerini tutmaz; öz-farkındalık aracıdır.", en: "This platform does not provide medical diagnosis. Results do not replace clinical evaluation; they are a self-awareness tool." }, color: C.warning },
+  ];
+
   return (
-  <div style={{ background: C.bg, minHeight: "100%", position: "relative", overflow: "hidden" }}>
-    <div className="kg-blob" style={{ width: 340, height: 340, background: C.primary, top: -80, left: -100, animation: "kg-float 11s ease-in-out infinite" }} />
-    <div className="kg-blob" style={{ width: 280, height: 280, background: C.accent2, top: 40, right: -80, animation: "kg-float-slow 9s ease-in-out infinite" }} />
-    <div className="kg-blob" style={{ width: 220, height: 220, background: C.secondary, bottom: 0, left: "35%", animation: "kg-float 13s ease-in-out infinite" }} />
+    <div style={{ background: C.bg, minHeight: "100%", fontFamily: "Inter, sans-serif" }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(247,248,252,0.85)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${C.border}` }}>
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div style={{ width: 32, height: 32, borderRadius: 10, background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "#fff", fontSize: 16, fontWeight: 700 }}>K</span>
+            </div>
+            <span style={{ fontWeight: 700, fontSize: 18, color: C.text, letterSpacing: "-0.3px" }}>{BRAND}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={onExpert} style={{ fontSize: 14, color: C.textMuted, background: "none", border: "none", cursor: "pointer", padding: "6px 12px", borderRadius: 8 }}>
+              {t("expertBtn")}
+            </button>
+            <button onClick={onStart} style={{ fontSize: 14, fontWeight: 600, color: "#fff", background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})`, border: "none", cursor: "pointer", padding: "9px 20px", borderRadius: 10, boxShadow: `0 4px 14px ${C.primary}40` }}>
+              {t("startTest")} →
+            </button>
+          </div>
+        </div>
+      </nav>
 
-    <header className="flex items-center justify-between px-6 py-5 max-w-5xl mx-auto relative">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg" style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})` }} />
-        <span className="font-semibold text-lg" style={{ color: C.text }}>{BRAND}</span>
-      </div>
-      <div className="flex gap-2">
-        <Button variant="ghost" onClick={onExpert}>{t("expertBtn")}</Button>
-        <Button onClick={onStart}>{t("startTest")}</Button>
-      </div>
-    </header>
+      <section style={{ maxWidth: 760, margin: "0 auto", padding: "80px 24px 60px", textAlign: "center", position: "relative" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: `${C.primary}12`, border: `1px solid ${C.primary}30`, borderRadius: 100, padding: "6px 14px", marginBottom: 28 }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: C.success, display: "inline-block" }} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: C.primary, letterSpacing: "0.4px" }}>
+            {lang === "en" ? "DEMO · PROTOTYPE · NON-CLINICAL" : "DEMO · PROTOTİP · KLİNİK OLMAYAN"}
+          </span>
+        </div>
 
-    <section className="max-w-3xl mx-auto text-center px-6 pt-10 pb-16 relative">
-      <h1 className="text-4xl font-semibold mt-5 leading-tight" style={{ color: C.text }}>
-        {t("heroA")}<br />
-        <span style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1}, ${C.accent2})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundSize: "200% auto" }} className="kg-gradient-anim">
-          {t("heroB")}
-        </span>
-      </h1>
-      <p className="mt-4" style={{ color: C.textMuted }}>
-        {t("heroDesc")}
-      </p>
-      <div className="flex justify-center gap-3 mt-7">
-        <Button onClick={onStart}>{t("startTest")} <ChevronRight size={16} className="inline ml-1" /></Button>
-        <Button variant="ghost" onClick={onExpert}>{t("expertBtn")}</Button>
-      </div>
-    </section>
+        <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 800, color: C.text, lineHeight: 1.12, letterSpacing: "-1.5px", margin: "0 0 20px" }}>
+          {lang === "en" ? <>Measure your<br />
+            <span style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1}, ${C.accent2})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>cognitive performance</span>
+          </> : <>Bilişsel performansınızı<br />
+            <span style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1}, ${C.accent2})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>ölçün ve geliştirin</span>
+          </>}
+        </h1>
 
-    <section className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-4 pb-16 relative">
-      {[
-        { icon: <ClipboardList size={18} />, title: { tr: "Nasıl Çalışır?", en: "How It Works" }, text: { tr: "Kısa bir hazırlıktan sonra 1-3 dakikalık interaktif görevleri tamamlarsınız.", en: "After a short preparation you complete 1-3 minute interactive tasks." } },
-        { icon: <BarChart3 size={18} />, title: { tr: "Hangi Alanları Ölçüyoruz?", en: "What We Measure" }, text: { tr: "Dikkat, tepki hızı, dürtü kontrolü, işlemleme hızı ve bilişsel esneklik.", en: "Attention, reaction speed, impulse control, processing speed and cognitive flexibility." } },
-        { icon: <FileText size={18} />, title: { tr: "Raporlama", en: "Reporting" }, text: { tr: "Sonuçlar görsel grafiklerle ve sade bir dille özetlenir.", en: "Results are summarized with visual charts in plain language." } },
-        { icon: <Users size={18} />, title: { tr: "Uzmanlar İçin", en: "For Experts" }, text: { tr: "Danışan yönetimi, test atama ve PDF raporlama araçları.", en: "Client management, test assignment and PDF reporting tools." } },
-        { icon: <Shield size={18} />, title: { tr: "Güvenlik", en: "Security" }, text: { tr: "KVKK uyumlu veri yönetimi, rıza ve erişim kontrolleri.", en: "KVKK/GDPR-compliant data management, consent and access controls." } },
-        { icon: <AlertCircle size={18} />, title: { tr: "Önemli Not", en: "Important Note" }, text: { tr: "Bu platform tıbbi tanı koymaz; klinik değerlendirmenin yerine geçmez.", en: "This platform does not provide medical diagnosis; it does not replace clinical evaluation." } },
-      ].map((f, i) => (
-        <Card key={i}>
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ background: `${FEATURE_COLORS[i % FEATURE_COLORS.length]}1F`, color: FEATURE_COLORS[i % FEATURE_COLORS.length] }}>{f.icon}</div>
-          <h3 className="font-medium mb-1" style={{ color: C.text }}>{L(f.title, lang)}</h3>
-          <p className="text-sm" style={{ color: C.textMuted }}>{L(f.text, lang)}</p>
-        </Card>
-      ))}
-    </section>
+        <p style={{ fontSize: 17, color: C.textMuted, lineHeight: 1.65, maxWidth: 560, margin: "0 auto 36px" }}>
+          {lang === "en"
+            ? "Interactive cognitive tasks, self-assessments and a personalised 21-day mental training programme — all in one platform."
+            : "İnteraktif bilişsel görevler, öz değerlendirmeler ve kişiselleştirilmiş 21 günlük zihinsel antrenman — hepsi tek platformda."}
+        </p>
 
-    <section className="max-w-3xl mx-auto px-6 pb-16 relative">
-      <h2 className="text-2xl font-semibold text-center mb-6" style={{ color: C.text }}>{t("faqTitle")}</h2>
-      <div className="flex flex-col gap-2">
-        {FAQ_ITEMS.map((f, i) => {
-          const open = openFaq === i;
-          return (
-            <Card key={i} className="!p-0" style={{ padding: 0 }}>
-              <button
-                onClick={() => setOpenFaq(open ? null : i)}
-                className="w-full flex items-center justify-between px-5 py-4 text-left"
-              >
-                <span className="text-sm font-medium" style={{ color: open ? C.primary : C.text }}>{L(f.q, lang)}</span>
-                <ChevronRight
-                  size={16}
-                  style={{ color: C.textMuted, transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.25s ease", flexShrink: 0 }}
-                />
-              </button>
-              {open && (
-                <p className="text-sm px-5 pb-4" style={{ color: C.textMuted, animation: "kg-countup 0.3s ease" }}>{L(f.a, lang)}</p>
-              )}
-            </Card>
-          );
-        })}
-      </div>
-    </section>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <button onClick={onStart} style={{ fontSize: 15, fontWeight: 700, color: "#fff", background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})`, border: "none", cursor: "pointer", padding: "14px 32px", borderRadius: 12, boxShadow: `0 6px 24px ${C.primary}45` }}>
+            {lang === "en" ? "Start Free →" : "Ücretsiz Başla →"}
+          </button>
+          <button onClick={onExpert} style={{ fontSize: 15, fontWeight: 600, color: C.text, background: C.surface, border: `1.5px solid ${C.border}`, cursor: "pointer", padding: "14px 28px", borderRadius: 12 }}>
+            {lang === "en" ? "For Experts" : "Uzmanlar İçin"}
+          </button>
+        </div>
+      </section>
 
-    <footer className="text-center text-xs pb-8 relative" style={{ color: C.textMuted }}>
-      © 2026 {BRAND} — {t("footer")}
-    </footer>
-  </div>
+      <section style={{ background: C.surface, borderTop: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 0 }}>
+          {STATS.map((st, i) => (
+            <div key={i} style={{ textAlign: "center", padding: "0 16px", borderRight: i < STATS.length - 1 ? `1px solid ${C.border}` : "none" }}>
+              <div style={{ fontSize: 36, fontWeight: 800, color: C.primary, letterSpacing: "-1px", lineHeight: 1 }}>{st.n}</div>
+              <div style={{ fontSize: 12, color: C.textMuted, marginTop: 4, fontWeight: 500 }}>{L(st.label, lang)}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "72px 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: C.primary, letterSpacing: "1.2px", marginBottom: 10 }}>
+            {lang === "en" ? "PLATFORM CAPABILITIES" : "PLATFORM KAPASİTESİ"}
+          </p>
+          <h2 style={{ fontSize: 32, fontWeight: 800, color: C.text, letterSpacing: "-0.8px", margin: 0 }}>
+            {lang === "en" ? "Everything in one place" : "Her şey tek yerde"}
+          </h2>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
+          {FEATURES.map((f, i) => (
+            <div key={i}
+              onMouseEnter={() => setHoveredFeature(i)}
+              onMouseLeave={() => setHoveredFeature(null)}
+              style={{ background: C.surface, borderRadius: 16, padding: "28px 24px", border: `1.5px solid ${hoveredFeature === i ? f.color + "60" : C.border}`, transition: "border-color 0.25s, transform 0.25s, box-shadow 0.25s", transform: hoveredFeature === i ? "translateY(-3px)" : "none", boxShadow: hoveredFeature === i ? `0 8px 30px ${f.color}18` : "0 1px 3px rgba(23,25,35,0.05)" }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: `${f.color}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 16 }}>{f.icon}</div>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: C.text, marginBottom: 8, letterSpacing: "-0.2px" }}>{L(f.title, lang)}</h3>
+              <p style={{ fontSize: 13.5, color: C.textMuted, lineHeight: 1.6, margin: 0 }}>{L(f.text, lang)}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ margin: "0 24px 72px", maxWidth: 1032, marginLeft: "auto", marginRight: "auto" }}>
+        <div style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.accent1} 60%, ${C.accent2})`, borderRadius: 20, padding: "52px 40px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", top: -40, right: -40, width: 180, height: 180, borderRadius: "50%", background: "rgba(255,255,255,0.07)" }} />
+          <div style={{ position: "absolute", bottom: -30, left: 40, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
+          <h2 style={{ fontSize: 28, fontWeight: 800, color: "#fff", letterSpacing: "-0.6px", margin: "0 0 12px", position: "relative" }}>
+            {lang === "en" ? "Ready to discover your cognitive profile?" : "Bilişsel profilinizi keşfetmeye hazır mısınız?"}
+          </h2>
+          <p style={{ fontSize: 15, color: "rgba(255,255,255,0.8)", margin: "0 0 28px", position: "relative" }}>
+            {lang === "en" ? "First test takes 1–3 minutes. No credit card required." : "İlk test 1–3 dakika. Kredi kartı gerekmez."}
+          </p>
+          <button onClick={onStart} style={{ fontSize: 15, fontWeight: 700, color: C.primary, background: "#fff", border: "none", cursor: "pointer", padding: "13px 30px", borderRadius: 11, boxShadow: "0 4px 16px rgba(0,0,0,0.15)" }}>
+            {lang === "en" ? "Begin Now →" : "Hemen Başla →"}
+          </button>
+        </div>
+      </section>
+
+      <section style={{ maxWidth: 680, margin: "0 auto", padding: "0 24px 72px" }}>
+        <h2 style={{ fontSize: 26, fontWeight: 800, color: C.text, textAlign: "center", letterSpacing: "-0.5px", marginBottom: 28 }}>{t("faqTitle")}</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {FAQ_ITEMS.map((f, i) => {
+            const open = openFaq === i;
+            return (
+              <div key={i} style={{ background: C.surface, borderRadius: 12, border: `1.5px solid ${open ? C.primary + "50" : C.border}`, overflow: "hidden", transition: "border-color 0.2s" }}>
+                <button onClick={() => setOpenFaq(open ? null : i)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: open ? C.primary : C.text }}>{L(f.q, lang)}</span>
+                  <span style={{ color: C.textMuted, fontSize: 18, transform: open ? "rotate(45deg)" : "none", transition: "transform 0.25s", flexShrink: 0, marginLeft: 12 }}>+</span>
+                </button>
+                {open && <p style={{ fontSize: 13.5, color: C.textMuted, padding: "0 20px 16px", lineHeight: 1.65, margin: 0, animation: "kg-countup 0.2s ease" }}>{L(f.a, lang)}</p>}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <footer style={{ borderTop: `1px solid ${C.border}`, padding: "28px 24px", textAlign: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 8 }}>
+          <div style={{ width: 24, height: 24, borderRadius: 7, background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>K</span>
+          </div>
+          <span style={{ fontSize: 13, fontWeight: 600, color: C.textMuted }}>{BRAND}</span>
+        </div>
+        <p style={{ fontSize: 12, color: C.textMuted, margin: 0 }}>
+          © 2026 {BRAND} · {lang === "en" ? "Results do not replace clinical evaluation." : "Sonuçlar klinik değerlendirmenin yerini tutmaz."}
+        </p>
+      </footer>
+    </div>
   );
 };
 
-/* ============================================================
-   AUTH (mock)
-   ============================================================ */
-const AuthScreen = ({ onDone, onBack }) => {
-  const [mode, setMode] = useState("register");
+const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
+  const { lang } = useT();
+  const [mode, setMode] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  const handleSubmit = () => {
+    setError("");
+    if (mode === "login") {
+      const found = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+      if (!found) { setError(lang === "en" ? "Wrong e-mail or password." : "E-posta veya şifre hatalı."); return; }
+      onDone("login", found.role, found.name);
+    } else {
+      if (!email || !password) { setError(lang === "en" ? "Please fill in all fields." : "Tüm alanları doldurun."); return; }
+      const exists = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (exists) { setError(lang === "en" ? "This e-mail is already registered. Please sign in." : "Bu e-posta zaten kayıtlı. Giriş yapın."); return; }
+      const name = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ") || email.split("@")[0];
+      MOCK_USERS = [...MOCK_USERS, { email, password, role: "user", name }];
+      onDone("register", "user", name);
+    }
+  };
   return (
     <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
       <div className="w-full max-w-sm">
         <div className="h-1.5 rounded-full mb-3 kg-gradient-anim" style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1}, ${C.accent2})`, backgroundSize: "200% 100%" }} />
         <Card>
         <button onClick={onBack} className="text-xs flex items-center gap-1 mb-4" style={{ color: C.textMuted }}>
-          <ArrowLeft size={14} /> Geri
+          <ArrowLeft size={14} /> {lang === "en" ? "Back" : "Geri"}
         </button>
+        {expertMode && (
+          <div className="flex items-center gap-2 mb-4 p-3 rounded-xl" style={{ background: "#EEF0FF" }}>
+            <Shield size={16} style={{ color: C.primary }} />
+            <span className="text-xs font-medium" style={{ color: C.primary }}>
+              {lang === "en" ? "Expert / Admin Login" : "Uzman / Admin Girişi"}
+            </span>
+          </div>
+        )}
         <div className="flex gap-2 mb-5">
           <button onClick={() => setMode("login")} className="flex-1 py-2 rounded-lg text-sm font-medium"
-            style={mode === "login" ? { background: C.primary, color: "#fff" } : { background: "#F3F4F6", color: C.textMuted }}>Giriş Yap</button>
+            style={mode === "login" ? { background: C.primary, color: "#fff" } : { background: "#F3F4F6", color: C.textMuted }}>{lang === "en" ? "Sign In" : "Giriş Yap"}</button>
           <button onClick={() => setMode("register")} className="flex-1 py-2 rounded-lg text-sm font-medium"
-            style={mode === "register" ? { background: C.primary, color: "#fff" } : { background: "#F3F4F6", color: C.textMuted }}>Kayıt Ol</button>
+            style={mode === "register" ? { background: C.primary, color: "#fff" } : { background: "#F3F4F6", color: C.textMuted }}>{lang === "en" ? "Register" : "Kayıt Ol"}</button>
         </div>
         <div className="flex flex-col gap-3">
           {mode === "register" && (
             <div className="grid grid-cols-2 gap-3">
-              <input placeholder="Ad" className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: C.border }} />
-              <input placeholder="Soyad" className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: C.border }} />
+              <input placeholder={lang === "en" ? "First name" : "Ad"} value={firstName} onChange={e => setFirstName(e.target.value)} className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: C.border }} />
+              <input placeholder={lang === "en" ? "Last name" : "Soyad"} value={lastName} onChange={e => setLastName(e.target.value)} className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: C.border }} />
             </div>
           )}
-          <input placeholder="E-posta" defaultValue="user@example.com" className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: C.border }} />
-          <input placeholder="Şifre" type="password" defaultValue="Demo123!" className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: C.border }} />
+          <input placeholder={lang === "en" ? "E-mail" : "E-posta"} value={email} onChange={e => { setEmail(e.target.value); setError(""); }} className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: error ? C.danger : C.border }} />
+          <input placeholder={lang === "en" ? "Password" : "Şifre"} type="password" value={password} onChange={e => { setPassword(e.target.value); setError(""); }} className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: error ? C.danger : C.border }} />
+          {error && <p className="text-xs" style={{ color: C.danger }}>{error}</p>}
           {mode === "register" && (
             <label className="flex items-start gap-2 text-xs" style={{ color: C.textMuted }}>
               <input type="checkbox" defaultChecked className="mt-0.5" /> KVKK aydınlatma metnini okudum ve onaylıyorum.
             </label>
           )}
-          <Button onClick={() => onDone(mode)} className="w-full mt-1">{mode === "login" ? "Giriş Yap" : "Hesap Oluştur"}</Button>
+          <Button onClick={handleSubmit} className="w-full mt-1">{mode === "login" ? (lang === "en" ? "Sign In" : "Giriş Yap") : (lang === "en" ? "Create Account" : "Hesap Oluştur")}</Button>
           <div className="flex gap-2">
-            <Button variant="ghost" className="flex-1" onClick={() => onDone(mode)}>Google</Button>
-            <Button variant="ghost" className="flex-1" onClick={() => onDone(mode)}>Apple</Button>
+            <Button variant="ghost" className="flex-1" onClick={handleSubmit}>Google</Button>
+            <Button variant="ghost" className="flex-1" onClick={handleSubmit}>Apple</Button>
           </div>
+          {mode === "login" && (
+            <p className="text-xs text-center mt-1" style={{ color: C.textMuted }}>
+              {lang === "en" ? "Demo: user / expert / admin @demo.com · password: Demo123!" : "Demo: user / expert / admin @demo.com · şifre: Demo123!"}
+            </p>
+          )}
         </div>
       </Card>
       </div>
@@ -1052,7 +1162,7 @@ const DailyPlan = ({ goals, streak }) => {
 /* ============================================================
    USER: DASHBOARD
    ============================================================ */
-const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, onGoTraining, onGoLibrary, onGoSubscription }) => {
+const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, onGoTraining, onGoLibrary, onGoSubscription, currentUser }) => {
   const { lang, t } = useT();
   const last = sessions[sessions.length - 1];
   const todayStr = new Date().toDateString();
@@ -1069,7 +1179,7 @@ const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, on
   return (
     <div className="p-5 max-w-3xl mx-auto pb-24">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-semibold" style={{ color: C.text }}>{t("hello")} Sinem 👋</h1>
+        <h1 className="text-xl font-semibold" style={{ color: C.text }}>{t("hello")} {currentUser?.name?.split(" ")[0] || "Sinem"} 👋</h1>
         {streak && streak.count > 0 && (
           <span className="px-3 py-1.5 rounded-full text-sm font-semibold" style={{ background: `${C.warning}1F`, color: C.warning }}>
             🔥 {streak.count} gün
@@ -1684,6 +1794,36 @@ const LibraryScreen = ({ ageGroup, onBack, onStartExercise }) => {
     </div>
   );
 };
+
+/* Yaş < 10 için oyunlaştırılmış egzersiz temaları */
+const KID_CATALOG = {
+  "eye":           { icon: "🦉", color: "#FF6B35", name: { tr: "Baykuşun Bakışları",  en: "Owl Eyes"          }, desc: { tr: "Hedefi gözlerinle takip et — baykuş gibi keskin bak!", en: "Follow the target — sharp like an owl!" } },
+  "growshape":     { icon: "🫧", color: "#22D3EE", name: { tr: "Büyüyen Baloncuklar", en: "Growing Bubbles"    }, desc: { tr: "Ortadan büyüyen baloncuğun kenarını gözlerinle izle!", en: "Follow the edge of the growing bubble!" } },
+  "benzer":        { icon: "🐾", color: "#A855F7", name: { tr: "Farklı Pati Bul",     en: "Odd Paw Out"        }, desc: { tr: "Bir kelime farklı — hangisi? Hızlıca seç!", en: "One word is different — pick it fast!" } },
+  "oddeven":       { icon: "🌟", color: "#F59E0B", name: { tr: "Tek mi Çift mi?",     en: "Odd or Even?"       }, desc: { tr: "Yıldız sayısı tek mi çift mi? Hızla söyle!", en: "Is the star count odd or even? Quick!" } },
+  "schulte":       { icon: "🎈", color: "#5B5CE2", name: { tr: "Balon Sayı Avı",      en: "Balloon Number Hunt"}, desc: { tr: "1'den 25'e baloncuklara sırayla dokun!", en: "Tap the balloons 1 to 25 in order!" } },
+  "flash":         { icon: "⚡", color: "#F97316", name: { tr: "Kelime Şimşeği",      en: "Word Lightning"     }, desc: { tr: "Bir kelime şimşek gibi geçecek — gördüğünü seç!", en: "A word flashes by — pick what you saw!" } },
+  "match":         { icon: "🐣", color: "#10B981", name: { tr: "Hayvan Eşleştirme",  en: "Animal Match"       }, desc: { tr: "Aynı hayvanları eşleştir — en az hamlede bitir!", en: "Match the animals in as few moves!" } },
+  "peripheral":    { icon: "🎯", color: "#EC4899", name: { tr: "Kenar Sayı Yakalama", en: "Edge Number Catch"  }, desc: { tr: "Ortaya bak — kenarlardaki sayıları topla!", en: "Look at the center — add the edge numbers!" } },
+  "arithmetic":    { icon: "🍕", color: "#EF4444", name: { tr: "Pizza Matematik",     en: "Pizza Math"         }, desc: { tr: "Pizzaları, elmaları say — doğru cevabı seç!", en: "Count the pizzas and fruits — pick the answer!" } },
+  "synonym":       { icon: "🦊", color: "#F97316", name: { tr: "Tilkinin Kelime Oyunu",en: "Fox Word Game"     }, desc: { tr: "Aynı anlamlı kelimeyi bul!", en: "Find the word that means the same!" } },
+  "number-memory": { icon: "🐘", color: "#6366F1", name: { tr: "Fil Hafızası",        en: "Elephant Memory"    }, desc: { tr: "Filler hiç unutmaz! Sen de sayıları aklında tut.", en: "Elephants never forget! Remember the numbers." } },
+  "pattern":       { icon: "🧩", color: "#0EA5E9", name: { tr: "Bulmaca Tamamla",     en: "Finish the Puzzle"  }, desc: { tr: "Şekil kuralını bul, eksik parçayı tamamla!", en: "Find the shape rule and complete the puzzle!" } },
+  "block-reading": { icon: "📖", color: "#84CC16", name: { tr: "Parlayan Kelime Treni",en: "Glowing Word Train" }, desc: { tr: "Parlayan kelime trenini takip ederek oku!", en: "Read along the glowing word train!" } },
+  "rsvp":          { icon: "🚀", color: "#00B8A9", name: { tr: "Uçan Kelimeler",      en: "Flying Words"       }, desc: { tr: "Kelimeler uçarak geçecek — hepsini yakala!", en: "Words fly past — catch them all!" } },
+  "reading-test":  { icon: "⏱️", color: "#F43F5E", name: { tr: "Okuma Yarışı",        en: "Reading Race"       }, desc: { tr: "Metni oku ve sorulara cevap ver — ne kadar hızlısın?", en: "Read and answer — how fast are you?" } },
+};
+
+function exTheme(ex, ageGroup, lang) {
+  if (!ageGroup || ageGroup.id !== "6-9") return ex;
+  const k = KID_CATALOG[ex.id];
+  if (!k) return ex;
+  const L2 = (v) => (v && typeof v === "object" && !Array.isArray(v)) ? (v[lang] ?? v.tr) : v;
+  return { ...ex, icon: k.icon, color: k.color, name: L2(k.name), desc: L2(k.desc) };
+}
+
+/* Eşleştirme: çocuklar için hayvan emojileri */
+const MATCH_EMOJIS_KID = ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐸","🐧","🦋"];
 
 const TRAINING_CATALOG = [
   { id: "eye", name: { tr: "Göz Antrenmanı", en: "Eye Training" }, desc: { tr: "Hedefi gözlerinizle takip edin; süre, tempo ve desenleri siz ayarlayın.", en: "Follow the target with your eyes; you set the duration, tempo and patterns." }, icon: "👀", color: "#8B5CF6", duration: "Ayarlanabilir", cat: "egzersiz" },
@@ -2380,10 +2520,11 @@ const EyeTrainingExercise = ({ ex, onFinish, onBack }) => {
 /* --- Eşleştirme Oyunu (görsel hafıza — çift bulma) --- */
 const MATCH_EMOJIS = ["🎁", "🎹", "⚽", "🎟️", "🛷", "🍪", "🎯", "🔬"];
 
-const MatchExercise = ({ ex, onFinish, onBack }) => {
+const MatchExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   const { lang } = useT();
+  const EMOJIS = ageGroup?.id === "6-9" ? MATCH_EMOJIS_KID : MATCH_EMOJIS;
   const [cards] = useState(() => {
-    const arr = [...MATCH_EMOJIS, ...MATCH_EMOJIS].map((e, i) => ({ id: i, emoji: e }));
+    const arr = [...EMOJIS, ...EMOJIS].map((e, i) => ({ id: i, emoji: e }));
     for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
     return arr;
   });
@@ -2399,7 +2540,7 @@ const MatchExercise = ({ ex, onFinish, onBack }) => {
     lines={[{ tr: "Kartlar kapalı başlar; ikisini açıp eşleştirin.", en: "Cards start face down; flip two to match." }, { tr: "Eşleşmeyenler kısa süre sonra tekrar kapanır — yerlerini aklınızda tutun.", en: "Non-matches flip back shortly — remember their positions." }, { tr: "En az hamlede ve en hızlı bitirmeye çalışın.", en: "Try to finish fastest with the fewest moves." }]} />;
 
   if (done) return <TrainingResult title={ex.name} score={done.score}
-    stats={[[{ tr: "Süre", en: "Time" }, `${done.secs} sn`], [{ tr: "Hamle", en: "Moves" }, done.moves], [{ tr: "Çift", en: "Pairs" }, MATCH_EMOJIS.length]]}
+    stats={[[{ tr: "Süre", en: "Time" }, `${done.secs} sn`], [{ tr: "Hamle", en: "Moves" }, done.moves], [{ tr: "Çift", en: "Pairs" }, EMOJIS.length]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.moves} moves · ${done.secs} s` : `${done.moves} hamle · ${done.secs} sn` })} />;
 
   const tap = (card) => {
@@ -2426,7 +2567,7 @@ const MatchExercise = ({ ex, onFinish, onBack }) => {
     }
   };
 
-  const remaining = MATCH_EMOJIS.length - matched.length / 2;
+  const remaining = EMOJIS.length - matched.length / 2;
 
   return (
     <div className="min-h-full flex flex-col items-center justify-center gap-4 p-6" style={{ background: C.bg }}>
@@ -2524,6 +2665,7 @@ const SimilarWordsExercise = ({ ex, onFinish, onBack }) => {
 /* --- Tek mi? Çift mi? (hızlı karar) --- */
 const OddEvenExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   const { lang } = useT();
+  const isKid = ageGroup?.id === "6-9";
   const TOTAL = 12;
   const [started, setStarted] = useState(false);
   const [round, setRound] = useState(0);
@@ -2574,7 +2716,12 @@ const OddEvenExercise = ({ ex, ageGroup, onFinish, onBack }) => {
       <p className="text-xs" style={{ color: C.textMuted }}>{lang === "en" ? "Round" : "Tur"} {Math.min(round + 1, TOTAL)}/{TOTAL} · {lang === "en" ? "Duration" : "Süre"}: {duration} ms</p>
       <div className="h-20 flex items-center justify-center">
         {phase === "fix" && <span className="text-3xl font-bold" style={{ color: C.textMuted }}>+</span>}
-        {phase === "flash" && <span className="text-6xl font-bold" style={{ color: C.text }}>{num}</span>}
+        {phase === "flash" && (isKid
+              ? <div style={{ display:"flex",flexWrap:"wrap",gap:6,justifyContent:"center",maxWidth:200 }}>
+                  {Array.from({length:num}).map((_,i)=><span key={i} style={{fontSize:28}}>⭐</span>)}
+                </div>
+              : <span className="text-6xl font-bold" style={{ color: C.text }}>{num}</span>
+            )}
         {phase === "choose" && <span className="text-sm" style={{ color: C.textMuted }}>{lang === "en" ? "Was the number odd or even?" : "Sayı tek miydi, çift miydi?"}</span>}
       </div>
       <div className="flex gap-3" style={{ opacity: phase === "choose" ? 1 : 0.25, pointerEvents: phase === "choose" ? "auto" : "none" }}>
@@ -2587,8 +2734,10 @@ const OddEvenExercise = ({ ex, ageGroup, onFinish, onBack }) => {
 
 
 /* --- Zihinsel Aritmetik Sprint (adaptif işlem hızı) --- */
+const FRUIT_EMOJIS = ["🍎","🍊","🍋","🍇","🍓","🫐","🥝","🍒"];
 const ArithmeticSprintExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   const { lang } = useT();
+  const isKid = ageGroup?.id === "6-9";
   const TOTAL = 12;
   const [started, setStarted] = useState(false);
   const [round, setRound] = useState(0);
@@ -2602,9 +2751,12 @@ const ArithmeticSprintExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   const answeredRef = useRef(false);
 
   const makeProblem = () => {
-    const kind = Math.floor(Math.random() * 3);
+    const kind = isKid ? Math.floor(Math.random() * 2) : Math.floor(Math.random() * 3);
     let a, b, ans, label;
-    if (kind === 0) { a = 12 + Math.floor(Math.random() * 78); b = 12 + Math.floor(Math.random() * 78); ans = a + b; label = `${a} + ${b}`; }
+    if (isKid) {
+      a = 1 + Math.floor(Math.random() * 9); b = 1 + Math.floor(Math.random() * 9);
+      if (kind === 0) { ans = a + b; label = "+"; } else { if (a < b) [a, b] = [b, a]; ans = a - b; label = "-"; }
+    } else if (kind === 0) { a = 12 + Math.floor(Math.random() * 78); b = 12 + Math.floor(Math.random() * 78); ans = a + b; label = `${a} + ${b}`; }
     else if (kind === 1) { a = 30 + Math.floor(Math.random() * 69); b = 11 + Math.floor(Math.random() * (a - 12)); ans = a - b; label = `${a} − ${b}`; }
     else { a = 3 + Math.floor(Math.random() * 10); b = 3 + Math.floor(Math.random() * 7); ans = a * b; label = `${a} × ${b}`; }
     const opts = new Set([ans]);
@@ -2658,7 +2810,22 @@ const ArithmeticSprintExercise = ({ ex, ageGroup, onFinish, onBack }) => {
       <p className="text-xs" style={{ color: C.textMuted }}>{lang === "en" ? "Round" : "Tur"} {Math.min(round + 1, TOTAL)}/{TOTAL} · {lang === "en" ? "Window" : "Süre"}: {(windowMs / 1000).toFixed(1)} sn</p>
       {problem && (
         <>
-          <span key={round} className="text-5xl font-bold" style={{ color: C.text, animation: "kg-pop 0.3s ease" }}>{problem.label} = ?</span>
+          {isKid ? (
+              <div key={round} style={{ display:"flex",alignItems:"center",gap:12,flexWrap:"wrap",justifyContent:"center",animation:"kg-pop 0.3s ease" }}>
+                <div style={{ display:"flex",flexWrap:"wrap",gap:4,maxWidth:100,justifyContent:"center" }}>
+                  {Array.from({length:Math.min(a,9)}).map((_,i)=><span key={i} style={{fontSize:24}}>{FRUIT_EMOJIS[a%FRUIT_EMOJIS.length]}</span>)}
+                  {a>9&&<span style={{fontSize:14,color:C.textMuted}}>+{a-9}</span>}
+                </div>
+                <span style={{fontSize:32,fontWeight:800,color:C.primary}}>{problem.label}</span>
+                <div style={{ display:"flex",flexWrap:"wrap",gap:4,maxWidth:100,justifyContent:"center" }}>
+                  {Array.from({length:Math.min(b,9)}).map((_,i)=><span key={i} style={{fontSize:24}}>{FRUIT_EMOJIS[(b+2)%FRUIT_EMOJIS.length]}</span>)}
+                  {b>9&&<span style={{fontSize:14,color:C.textMuted}}>+{b-9}</span>}
+                </div>
+                <span style={{fontSize:28,fontWeight:800,color:C.textMuted}}>= ?</span>
+              </div>
+            ) : (
+              <span key={round} className="text-5xl font-bold" style={{ color: C.text, animation: "kg-pop 0.3s ease" }}>{problem.label} = ?</span>
+            )}
           <div className="grid grid-cols-2 gap-3">
             {problem.options.map((o) => (
               <button key={o} onClick={() => answer(o)} className="px-8 py-4 rounded-2xl text-xl font-bold kg-btn-pop"
@@ -3390,7 +3557,7 @@ const TrainingCatalog = ({ trainings, ageGroup, program, onStartLevelTest, onSel
       <div key={g.id}>
         <h3 className="text-sm font-medium mb-2" style={{ color: C.text }}>{L(g.title, lang)}</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-          {TRAINING_CATALOG.filter((e) => e.cat === g.id).map((ex) => (
+          {TRAINING_CATALOG.filter((e) => e.cat === g.id).map((rawEx) => { const ex = exTheme(rawEx, ageGroup, lang); return (
         <Card key={ex.id} className="flex flex-col gap-2" style={{ borderTop: `3px solid ${ex.color}` }}>
           <span className="font-medium text-sm flex items-center gap-2" style={{ color: C.text }}>
             <span style={{ fontSize: 18 }}>{ex.icon}</span>{L(ex.name, lang)}
@@ -3405,7 +3572,8 @@ const TrainingCatalog = ({ trainings, ageGroup, program, onStartLevelTest, onSel
             <Play size={14} /> {t("start")}
           </Button>
         </Card>
-          ))}
+          );
+            })}
         </div>
       </div>
     ))}
@@ -4915,14 +5083,13 @@ const TopNav = ({ role, setRole, screen, setScreen, hideDuringTest, notification
               </>
             )}
           </div>
-          <div className="hidden sm:flex gap-1 p-1 rounded-lg" style={{ background: C.bg }}>
-            {["user", "expert", "admin"].map((r) => (
-              <button key={r} onClick={() => { setRole(r); setScreen(r === "user" ? "dashboard" : r === "expert" ? "expert-dashboard" : "admin-dashboard"); }}
-                className="px-3 py-1.5 rounded-md text-xs font-medium capitalize"
-                style={role === r ? { background: C.primary, color: "#fff" } : { color: C.textMuted }}>
-                {r === "user" ? "Kullanıcı" : r === "expert" ? "Uzman" : "Admin"} Modu
-              </button>
-            ))}
+          <div className="hidden sm:flex gap-1 p-1 rounded-lg items-center" style={{ background: C.bg }}>
+            <span className="px-3 py-1.5 rounded-md text-xs font-medium" style={{ background: C.primary, color: "#fff" }}>
+              {role === "user" ? (lang === "en" ? "User" : "Kullanıcı") : role === "expert" ? (lang === "en" ? "Expert" : "Uzman") : "Admin"}
+            </span>
+            <button onClick={() => setScreen("landing")} className="px-3 py-1.5 rounded-md text-xs font-medium" style={{ color: C.textMuted }}>
+              {lang === "en" ? "Switch account" : "Hesap değiştir"}
+            </button>
           </div>
         </div>
       </div>
@@ -5669,6 +5836,7 @@ const AdminDashboard = ({ setToast }) => {
 export default function App() {
   const [lang, setLang] = useState("tr");
   const [role, setRole] = useState("user");
+  const [currentUser, setCurrentUser] = useState(null);
   const [screen, setScreen] = useState("landing");
   const [activeTest, setActiveTest] = useState(null);
   const [lastEvents, setLastEvents] = useState(null);
@@ -5742,11 +5910,22 @@ export default function App() {
       )}
 
       {screen === "landing" && (
-        <Landing onStart={() => setScreen("auth")} onExpert={() => { setRole("expert"); setScreen("expert-dashboard"); }} />
+        <Landing onStart={() => setScreen("auth")} onExpert={() => setScreen("auth-expert")} />
       )}
 
-      {screen === "auth" && (
-        <AuthScreen onBack={() => setScreen("landing")} onDone={(mode) => setScreen(mode === "register" ? "onboarding" : "dashboard")} />
+      {(screen === "auth" || screen === "auth-expert") && (
+        <AuthScreen
+          expertMode={screen === "auth-expert"}
+          onBack={() => setScreen("landing")}
+          onDone={(mode, detectedRole, name) => {
+            setCurrentUser({ name, role: detectedRole });
+            setRole(detectedRole);
+            if (mode === "register") { setScreen("onboarding"); return; }
+            if (detectedRole === "expert") setScreen("expert-dashboard");
+            else if (detectedRole === "admin") setScreen("admin-dashboard");
+            else setScreen("dashboard");
+          }}
+        />
       )}
 
       {screen === "onboarding" && <Onboarding onFinish={() => { setAgeReturn("dashboard"); setScreen("age-select"); }} />}
@@ -5757,6 +5936,7 @@ export default function App() {
 
       {screen === "dashboard" && (
         <UserDashboard
+          currentUser={currentUser}
           sessions={sessions}
           trainings={trainings}
           plan={plan}
@@ -5861,7 +6041,7 @@ export default function App() {
           setToast(lang === "en" ? `${activeTraining.name} completed — Score ${r.score}/100` : `${activeTraining.name} tamamlandı — Skor ${r.score}/100`);
         };
         const back = () => { setLibraryText(null); setScreen("training"); };
-        const props = { ex: activeTraining, onFinish: finish, onBack: back, ageGroup, initialText: libraryText };
+        const props = { ex: exTheme(activeTraining, ageGroup, lang), onFinish: finish, onBack: back, ageGroup, initialText: libraryText };
         if (activeTraining.id === "eye") return <EyeTrainingExercise {...props} />;
         if (activeTraining.id === "growshape") return <GrowShapeExercise {...props} />;
         if (activeTraining.id === "benzer") return <SimilarWordsExercise {...props} />;

@@ -4570,7 +4570,7 @@ const TestRunner = ({ test, onFinish, onAbort }) => {
         {test.type === "target-detection" && (
           <button key={trial.id} onClick={() => handleResponse("tap")} className="flex flex-col items-center gap-4" style={{ animation: "kg-pop 0.35s ease" }}>
             <span style={{ fontSize: 90, color: COLOR_HEX[trial.color], lineHeight: 1 }}>{SHAPE_GLYPH[trial.shape]}</span>
-            <span className="text-xs" style={{ color: C.textMuted }}>Sadece MAVİ DAİRE'ye dokunun</span>
+            <span className="text-xs" style={{ color: C.textMuted }}>{lang === "en" ? "Tap ONLY the BLUE CIRCLE" : "Sadece MAVİ DAİRE'ye dokunun"}</span>
           </button>
         )}
 
@@ -4580,7 +4580,7 @@ const TestRunner = ({ test, onFinish, onAbort }) => {
               className="w-32 h-32 rounded-full"
               style={{ background: trial.go ? C.success : C.danger, animation: trial.go ? "kg-glow 1.1s ease-in-out infinite" : "none" }}
             />
-            <span className="text-xs" style={{ color: C.textMuted }}>Yeşil = dokun · Kırmızı = dokunma</span>
+            <span className="text-xs" style={{ color: C.textMuted }}>{lang === "en" ? "Green = tap · Red = don't tap" : "Yeşil = dokun · Kırmızı = dokunma"}</span>
           </button>
         )}
 
@@ -4593,14 +4593,14 @@ const TestRunner = ({ test, onFinish, onAbort }) => {
                   className="w-14 h-14 rounded-xl border-2" style={{ background: COLOR_HEX[c.color], borderColor: "#fff" }} />
               ))}
             </div>
-            <span className="text-xs" style={{ color: C.textMuted }}>Kelimenin YAZI RENGİNİ seçin</span>
+            <span className="text-xs" style={{ color: C.textMuted }}>{lang === "en" ? "Pick the INK COLOR of the word" : "Kelimenin YAZI RENGİNİ seçin"}</span>
           </div>
         )}
 
         {test.type === "visual-search" && (
           <div className="flex flex-col items-center gap-4">
             <span className="text-xs" style={{ color: C.textMuted }}>
-              Hedefi bulun:{" "}
+              {lang === "en" ? "Find the target:" : "Hedefi bulun:"}{" "}
               <span style={{ color: COLOR_HEX[trial.targetColor], fontWeight: 600, fontSize: 16 }}>
                 {SHAPE_GLYPH[trial.targetShape]}
               </span>
@@ -4628,14 +4628,14 @@ const TestRunner = ({ test, onFinish, onAbort }) => {
             >
               <span style={{ fontSize: 40 }}>🔊</span>
             </div>
-            <span className="text-xs" style={{ color: C.textMuted }}>Yüksek tonda dokunun, kalın tonda dokunmayın</span>
+            <span className="text-xs" style={{ color: C.textMuted }}>{lang === "en" ? "Tap on the high tone, not the low tone" : "Yüksek tonda dokunun, kalın tonda dokunmayın"}</span>
           </button>
         )}
 
         {test.type === "cognitive-flexibility" && (
           <div className="flex flex-col items-center gap-5">
             <Badge tone={trial.rule === "color" ? "default" : "success"}>
-              {trial.rule === "color" ? "Kurala göre: RENK" : "Kurala göre: ŞEKİL"}
+              {trial.rule === "color" ? (lang === "en" ? "Rule: COLOR" : "Kurala göre: RENK") : (lang === "en" ? "Rule: SHAPE" : "Kurala göre: ŞEKİL")}
             </Badge>
             <span style={{ fontSize: 70, color: COLOR_HEX[trial.color], lineHeight: 1 }}>{SHAPE_GLYPH[trial.shape]}</span>
             <div className="flex gap-3">
@@ -4646,7 +4646,7 @@ const TestRunner = ({ test, onFinish, onAbort }) => {
                   className="px-4 py-2 rounded-xl border text-sm font-medium"
                   style={{ borderColor: C.border, color: C.text }}
                 >
-                  {trial.rule === "color" ? (opt === "red" ? "Kırmızı" : "Mavi") : (opt === "circle" ? "Daire" : "Kare")}
+                  {trial.rule === "color" ? (opt === "red" ? (lang === "en" ? "Red" : "Kırmızı") : (lang === "en" ? "Blue" : "Mavi")) : (opt === "circle" ? (lang === "en" ? "Circle" : "Daire") : (lang === "en" ? "Square" : "Kare"))}
                 </button>
               ))}
             </div>
@@ -4662,6 +4662,7 @@ const TestRunner = ({ test, onFinish, onAbort }) => {
    flow from the trial-based engine: study → recall → adapt)
    ============================================================ */
 const MemoryTestRunner = ({ test, onFinish, onAbort }) => {
+  const { lang } = useT();
   const MAX_ROUNDS = Math.max(5, Math.round(8 * ((test.age && test.age.trialFactor) || 1)));
   const SPAN_MAX = (test.age && test.age.spanMax) || 9;
   const [round, setRound] = useState(0);
@@ -4755,14 +4756,14 @@ const MemoryTestRunner = ({ test, onFinish, onAbort }) => {
       <div className="flex-1 flex flex-col items-center justify-center gap-6">
         {phase === "show" && (
           <div className="flex flex-col items-center gap-3">
-            <span className="text-xs" style={{ color: C.textMuted }}>Dizi bellekte tutuluyor…</span>
+            <span className="text-xs" style={{ color: C.textMuted }}>{lang === "en" ? "Memorize the sequence…" : "Dizi bellekte tutuluyor…"}</span>
             <span className="text-7xl font-bold" style={{ color: C.text }}>{sequence[revealIndex]}</span>
           </div>
         )}
 
         {phase === "input" && (
           <div className="flex flex-col items-center gap-5">
-            <span className="text-xs" style={{ color: C.textMuted }}>Gördüğünüz sırayla girin</span>
+            <span className="text-xs" style={{ color: C.textMuted }}>{lang === "en" ? "Enter in the order you saw" : "Gördüğünüz sırayla girin"}</span>
             <div className="flex gap-2">
               {sequence.map((_, i) => (
                 <span key={i} style={{ fontSize: 20, color: i < entered.length ? C.primary : C.border }}>●</span>

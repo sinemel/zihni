@@ -1362,7 +1362,8 @@ const DailyPlan = ({ goals, streak }) => {
 /* ============================================================
    USER: DASHBOARD
    ============================================================ */
-const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, onGoTraining, onGoLibrary, onGoSubscription, currentUser }) => {
+const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, onGoTraining, onGoLibrary, onGoSubscription, currentUser, ageGroup }) => {
+  const isKid = ageGroup?.id === "6-9";
   const { lang, t } = useT();
   const last = sessions[sessions.length - 1];
   const todayStr = new Date().toDateString();
@@ -1386,6 +1387,11 @@ const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, on
           </span>
         )}
       </div>
+      {isKid && (
+        <div className="flex justify-center mb-4">
+          <PenguMascot state="greet" size={100} bubble={{ tr: sessions.length === 0 ? "Merhaba! Bugün beraber oynayalım mı? 🐧" : "Tekrar hoş geldin! Bugün ne oynuyoruz? 🐧", en: sessions.length === 0 ? "Hi! Shall we play together today? 🐧" : "Welcome back! What are we playing today? 🐧" }} />
+        </div>
+      )}
       <div
         className="h-1.5 rounded-full mb-4 kg-gradient-anim"
         style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1}, ${C.accent2}, ${C.secondary})`, backgroundSize: "300% 100%" }}
@@ -6280,6 +6286,7 @@ export default function App() {
       {screen === "dashboard" && (
         <UserDashboard
           currentUser={currentUser}
+          ageGroup={ageGroup}
           sessions={sessions}
           trainings={trainings}
           plan={plan}

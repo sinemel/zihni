@@ -295,6 +295,14 @@ const GlobalMotionStyles = () => (
     @keyframes kg-shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
     @keyframes core-pulse { 0%,100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 4px rgba(124,111,240,0.55)); } 50% { transform: scale(1.12) rotate(45deg); filter: drop-shadow(0 0 14px rgba(124,111,240,0.95)); } }
     @keyframes core-orbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes pengu-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes pengu-waddle { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+    @keyframes pengu-bounce { 0%,100% { transform: translateY(0) scale(1); } 30% { transform: translateY(-15px) scale(1.05); } 55% { transform: translateY(0) scale(0.96); } 72% { transform: translateY(-6px) scale(1.02); } }
+    @keyframes pengu-tilt { 0%,100% { transform: rotate(0deg); } 45% { transform: rotate(-7deg); } }
+    @keyframes pengu-wave { 0%,100% { transform: rotate(0deg); } 30% { transform: rotate(-32deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(-26deg); } }
+    @keyframes pengu-blink { 0%, 91%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+    @keyframes pengu-spark { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-20px) scale(0.4); opacity: 0; } }
+    @keyframes pengu-scarf { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(5deg); } }
     @keyframes kg-grow { 0% { transform: scale(0.12); opacity: 1; } 100% { transform: scale(1); opacity: 0.12; } }
     .kg-card-hover { transition: transform 0.25s ease, box-shadow 0.25s ease; }
     .kg-card-hover:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(91,92,226,0.16), 0 4px 10px rgba(23,25,35,0.06); }
@@ -2037,6 +2045,82 @@ const NovaCore = ({ size = 56, spinning = true }) => (
   </div>
 );
 
+/* ============================================================
+   PENGU — özgün penguen maskot (animasyonlu SVG)
+   Durumlar: idle · greet · thinking · celebrate · encourage
+   Yalnızca 6-9 yaş modunda görünür (dozaj kuralı).
+   ============================================================ */
+const PenguMascot = ({ state = "idle", size = 96, bubble = null, className = "" }) => {
+  const { lang } = useT();
+  const bodyAnim =
+    state === "celebrate" ? "pengu-bounce 0.95s ease infinite" :
+    state === "greet"     ? "pengu-waddle 1.6s ease-in-out infinite" :
+    state === "thinking"  ? "pengu-tilt 2.8s ease-in-out infinite" :
+                            "pengu-bob 3s ease-in-out infinite";
+  const mouth =
+    state === "celebrate" ? "M 60 74 Q 70 84 80 74" :
+    state === "encourage" ? "M 62 77 Q 70 80 78 77" :
+                            "M 62 75 Q 70 81 78 75";
+  const eyeR = state === "thinking" ? 2.8 : 3.6;
+  const leftWingAnim = (state === "greet" || state === "celebrate")
+    ? { animation: "pengu-wave 1.1s ease-in-out infinite", transformOrigin: "38px 80px" } : {};
+  const rightWingAnim = state === "celebrate"
+    ? { animation: "pengu-wave 1.1s 0.12s ease-in-out infinite reverse", transformOrigin: "102px 80px" } : {};
+  return (
+    <div className={`inline-flex flex-col items-center ${className}`} style={{ lineHeight: 1 }}>
+      {bubble && (
+        <div className="px-3 py-1.5 rounded-2xl text-xs font-medium mb-1.5"
+          style={{ background: C.surface, color: C.text, border: `1.5px solid ${C.border}`, boxShadow: "0 2px 10px rgba(23,25,35,0.08)", maxWidth: 200, animation: "kg-pop 0.35s ease" }}>
+          {typeof bubble === "object" ? L(bubble, lang) : bubble}
+        </div>
+      )}
+      <svg width={size} height={size} viewBox="10 6 120 130" style={{ animation: bodyAnim, transformOrigin: "50% 85%", overflow: "visible" }} aria-hidden="true">
+        {state === "celebrate" && (
+          <g>
+            <circle cx="26" cy="40" r="2.6" fill="#F6C94A" style={{ animation: "pengu-spark 1s ease-out infinite" }} />
+            <circle cx="114" cy="34" r="2.2" fill={C.secondary} style={{ animation: "pengu-spark 1.2s 0.3s ease-out infinite" }} />
+            <circle cx="70" cy="18" r="2" fill={C.primary} style={{ animation: "pengu-spark 0.9s 0.15s ease-out infinite" }} />
+          </g>
+        )}
+        {/* gölge */}
+        <ellipse cx="70" cy="130" rx="32" ry="5" fill={C.primary} opacity="0.15" />
+        {/* tepe tüyü */}
+        <path d="M 62 22 Q 66 12 74 16" stroke="#262A47" strokeWidth="3" fill="none" strokeLinecap="round" />
+        {/* gövde */}
+        <ellipse cx="70" cy="80" rx="38" ry="46" fill="#262A47" />
+        <ellipse cx="70" cy="90" rx="26" ry="32" fill="#F4F5FF" />
+        {/* kanatlar */}
+        <g style={leftWingAnim}><ellipse cx="35" cy="84" rx="9" ry="20" fill="#262A47" transform="rotate(18 35 84)" /></g>
+        <g style={rightWingAnim}><ellipse cx="105" cy="84" rx="9" ry="20" fill="#262A47" transform="rotate(-18 105 84)" /></g>
+        {/* gözler */}
+        <circle cx="58" cy="60" r="7" fill="#fff" />
+        <circle cx="82" cy="60" r="7" fill="#fff" />
+        <g style={{ animation: "pengu-blink 4.6s ease-in-out infinite", transformOrigin: "70px 60px" }}>
+          <circle cx={state === "thinking" ? 60.5 : 59.5} cy={state === "thinking" ? 58 : 61} r={eyeR} fill="#262A47" />
+          <circle cx={state === "thinking" ? 81.5 : 80.5} cy={state === "thinking" ? 58 : 61} r={eyeR} fill="#262A47" />
+          <circle cx="60.8" cy="59.4" r="1.2" fill="#fff" />
+          <circle cx="81.8" cy="59.4" r="1.2" fill="#fff" />
+        </g>
+        {/* gaga */}
+        <polygon points="70,66 64,73 76,73" fill="#F6A94A" />
+        {/* ağız */}
+        <path d={mouth} stroke="#8B7DFF" strokeWidth="2" fill="none" strokeLinecap="round" />
+        {/* atkı — marka moru */}
+        <g style={{ animation: "pengu-scarf 3.4s ease-in-out infinite", transformOrigin: "70px 98px" }}>
+          <path d="M 44 96 Q 70 105 96 96 L 96 105 Q 70 114 44 105 Z" fill={C.primary} />
+          <rect x="87" y="98" width="10" height="18" rx="5" fill={C.primary} />
+          <rect x="87" y="112" width="10" height="4" rx="2" fill={C.accent1 || "#7C6FF0"} />
+        </g>
+        {/* yıldız rozeti */}
+        <path d="M 104 44 l 2.6 -6 l 2.6 6 l 6 2.6 l -6 2.6 l -2.6 6 l -2.6 -6 l -6 -2.6 Z" fill="#8B7DFF" />
+        {/* ayaklar */}
+        <polygon points="60,122 53,130 67,130" fill="#F6A94A" />
+        <polygon points="80,122 73,130 87,130" fill="#F6A94A" />
+      </svg>
+    </div>
+  );
+};
+
 function exTheme(ex, ageGroup, lang) {
   if (!ageGroup || ageGroup.id !== "6-9") return ex;
   const k = KID_CATALOG[ex.id];
@@ -2091,7 +2175,19 @@ const TrainingResult = ({ title, score, stats, stars, maxStars = 5, mandatoryPas
   return (
   <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
     <Card className="w-full max-w-sm text-center" style={{ animation: "kg-countup 0.4s ease" }}>
-      <Check size={32} className="mx-auto mb-2" style={{ color: C.success }} />
+      {kid ? (
+        <div className="mb-1">
+          <PenguMascot
+            state={score >= 60 ? "celebrate" : "encourage"}
+            size={100}
+            bubble={score >= 60
+              ? { tr: "Harika iş çıkardın! 🎉", en: "You did great! 🎉" }
+              : { tr: "Güzel deneme! Bir daha oynayalım mı?", en: "Nice try! Play again?" }}
+          />
+        </div>
+      ) : (
+        <Check size={32} className="mx-auto mb-2" style={{ color: C.success }} />
+      )}
       <h2 className="font-semibold text-lg mb-3" style={{ color: C.text }}>{title} {lang === "en" ? "completed" : "tamamlandı"}</h2>
       <div className="inline-flex items-baseline gap-1 px-4 py-2 rounded-2xl mb-3" style={{ background: `linear-gradient(135deg, ${C.primary}14, ${C.accent1}14)` }}>
         <span className="text-4xl font-bold" style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{score}</span>
@@ -2127,7 +2223,13 @@ const TrainingReady = ({ ex, lines, onStart, onBack }) => {
   return (
   <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
     <Card className="w-full max-w-sm text-center">
-      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: `linear-gradient(135deg, ${ex.color}, ${C.accent1})`, fontSize: 26 }}>{ex.icon}</div>
+      {ex.kid ? (
+        <div className="mb-2">
+          <PenguMascot state="greet" size={92} bubble={{ tr: "Hazır mısın? Birlikte oynayalım!", en: "Ready? Let's play together!" }} />
+        </div>
+      ) : (
+        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: `linear-gradient(135deg, ${ex.color}, ${C.accent1})`, fontSize: 26 }}>{ex.icon}</div>
+      )}
       <h2 className="font-semibold text-lg mb-2" style={{ color: C.text }}>{ex.name}</h2>
       <div className="text-left text-sm rounded-xl p-3 mb-4" style={{ background: C.bg, color: C.textMuted }}>
         {lines.map((l, i) => <p key={i}>• {L(l, lang)}</p>)}
@@ -3681,6 +3783,11 @@ const TrainingCatalog = ({ trainings, ageGroup, program, onStartLevelTest, onSel
   const isKid = ageGroup?.id === "6-9";
   return (
   <div className="p-5 max-w-3xl mx-auto pb-24">
+    {isKid && (
+      <div className="flex justify-center mb-3">
+        <PenguMascot state="greet" size={96} bubble={{ tr: "Merhaba! Bugün hangi oyunu oynayalım? 🐧", en: "Hi! Which game shall we play today? 🐧" }} />
+      </div>
+    )}
     <div className="flex items-center justify-between mb-1">
       <h1 className="text-xl font-semibold" style={{ color: C.text }}>{t("trainingTitle")}</h1>
       {ageGroup && (

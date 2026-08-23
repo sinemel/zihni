@@ -85,6 +85,90 @@ const api = {
 
 function setApiToken(token) { API_TOKEN = token || null; }
 
+/* ============================================================
+   KVKK METİNLERİ — TASLAK
+   ⚠️ Bu metinler hukuki bilgi amaçlı hazırlanmış TASLAKTIR;
+   yayına alınmadan önce KVKK alanında uzman bir avukat tarafından
+   incelenmeli ve [KÖŞELİ PARANTEZLİ] alanlar doldurulmalıdır.
+   ============================================================ */
+const LEGAL_TEXTS = {
+  disclosure: {
+    title: { tr: "Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni", en: "Privacy Notice on the Processing of Personal Data" },
+    sections: [
+      { h: { tr: "1. Veri Sorumlusu", en: "1. Data Controller" },
+        p: { tr: "İşbu Aydınlatma Metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"KVKK\") uyarınca, veri sorumlusu sıfatıyla [ŞİRKET UNVANI] (\"Platform\") tarafından hazırlanmıştır. Adres: [ADRES] · E-posta: [KVKK E-POSTA ADRESİ]",
+           en: "This notice is issued under Turkish Data Protection Law No. 6698 (\"KVKK\") by [COMPANY NAME] (\"Platform\") acting as data controller. Address: [ADDRESS] · E-mail: [DPO E-MAIL]" } },
+      { h: { tr: "2. İşlenen Kişisel Veriler", en: "2. Personal Data Processed" },
+        p: { tr: "Kimlik ve iletişim bilgileri (ad, soyad, e-posta); hesap bilgileri; yaş grubu; uygulama kullanım verileri; bilişsel değerlendirme ve egzersiz oturumlarına ait performans verileri (tepki süreleri, doğruluk oranları, skorlar) ve öz değerlendirme yanıtları. Bu veriler tıbbi tanı amacı taşımaz; ancak niteliği gereği sağlıkla ilişkilendirilebilecek özel nitelikli kişisel veri kapsamında değerlendirilebilir ve yalnızca açık rızanızla işlenir.",
+           en: "Identity and contact details (name, e-mail); account details; age group; app usage data; performance data from cognitive assessment and exercise sessions (reaction times, accuracy, scores) and self-assessment answers. These are not used for medical diagnosis; however, given their nature they may qualify as special-category data related to health and are processed only with your explicit consent." } },
+      { h: { tr: "3. İşleme Amaçları", en: "3. Purposes of Processing" },
+        p: { tr: "Hesabınızın oluşturulması ve yönetilmesi; değerlendirme ve egzersiz sonuçlarınızın hesaplanması, saklanması ve size raporlanması; gelişim takibinizin sunulması; talebiniz hâlinde sonuçlarınızın yetkilendirdiğiniz uzmanla paylaşılması; hizmet güvenliğinin sağlanması ve yasal yükümlülüklerin yerine getirilmesi.",
+           en: "Creating and managing your account; computing, storing and reporting your assessment and exercise results; providing progress tracking; sharing results with an expert you authorise upon your request; ensuring service security and meeting legal obligations." } },
+      { h: { tr: "4. Hukuki Sebepler", en: "4. Legal Bases" },
+        p: { tr: "KVKK m.5/2 uyarınca sözleşmenin kurulması ve ifası, hukuki yükümlülük ve meşru menfaat; performans ve öz değerlendirme verileri bakımından KVKK m.6 uyarınca açık rızanız.",
+           en: "Under KVKK Art. 5/2: performance of a contract, legal obligation and legitimate interest; for performance and self-assessment data, your explicit consent under KVKK Art. 6." } },
+      { h: { tr: "5. Aktarım", en: "5. Transfers" },
+        p: { tr: "Verileriniz, barındırma ve altyapı hizmeti alınan iş ortaklarına (ör. bulut veri tabanı sağlayıcısı) yalnızca hizmetin sunulması amacıyla ve gerekli güvenlik tedbirleriyle aktarılabilir. Sunucuların yurt dışında bulunması hâlinde aktarım, KVKK m.9'daki şartlara uygun olarak yapılır. Verileriniz üçüncü kişilere pazarlama amacıyla satılmaz.",
+           en: "Data may be transferred to infrastructure partners (e.g. cloud database provider) solely to deliver the service, with appropriate safeguards. Where servers are located abroad, transfers comply with KVKK Art. 9. Your data is never sold for marketing purposes." } },
+      { h: { tr: "6. Saklama Süresi", en: "6. Retention" },
+        p: { tr: "Verileriniz üyeliğiniz süresince ve ilgili mevzuattaki zamanaşımı süreleri boyunca saklanır. Hesabınızı sildiğinizde kişisel verileriniz, yasal saklama yükümlülükleri saklı kalmak üzere silinir veya anonim hâle getirilir.",
+           en: "Data is retained for the duration of your membership and statutory limitation periods. Upon account deletion, personal data is erased or anonymised, subject to legal retention duties." } },
+      { h: { tr: "7. KVKK m.11 Kapsamındaki Haklarınız", en: "7. Your Rights under KVKK Art. 11" },
+        p: { tr: "Kişisel verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, işlenme amacını öğrenme, aktarıldığı üçüncü kişileri bilme, düzeltilmesini veya silinmesini isteme, otomatik sistemlerle analiz sonucu aleyhinize bir sonucun ortaya çıkmasına itiraz etme ve zararın giderilmesini talep etme haklarına sahipsiniz. Uygulama içindeki \"Verilerimi İndir\" ve \"Hesabımı Sil\" araçlarını da her zaman kullanabilirsiniz.",
+           en: "You may learn whether your data is processed, request information, learn the purpose, know third-party recipients, request rectification or erasure, object to outcomes produced solely by automated analysis, and claim damages. In-app \"Download My Data\" and \"Delete My Account\" tools are always available." } },
+      { h: { tr: "8. Başvuru", en: "8. Applications" },
+        p: { tr: "Taleplerinizi [KVKK E-POSTA ADRESİ] adresine veya [ADRES] adresine yazılı olarak iletebilirsiniz. Başvurular en geç 30 gün içinde ücretsiz sonuçlandırılır.",
+           en: "Requests may be sent to [DPO E-MAIL] or in writing to [ADDRESS]. Applications are resolved free of charge within 30 days at the latest." } },
+    ],
+  },
+  consent: {
+    title: { tr: "Açık Rıza Metni", en: "Explicit Consent Statement" },
+    sections: [
+      { h: { tr: "Performans ve Öz Değerlendirme Verileri", en: "Performance & Self-Assessment Data" },
+        p: { tr: "Bilişsel değerlendirme, egzersiz ve öz değerlendirme oturumlarımda üretilen performans verilerimin (tepki süreleri, doğruluk, skorlar, yanıtlar) Aydınlatma Metni'nde açıklanan amaçlarla işlenmesine; bu verilerin sağlıkla ilişkilendirilebilecek özel nitelikli veri sayılabileceği bilgisiyle, KVKK m.6 uyarınca AÇIK RIZA veriyorum. Bu rızayı dilediğim zaman, hiçbir gerekçe göstermeksizin geri alabileceğimi biliyorum.",
+           en: "I give my EXPLICIT CONSENT under KVKK Art. 6 to the processing of performance data generated in my cognitive assessment, exercise and self-assessment sessions (reaction times, accuracy, scores, answers) for the purposes described in the Privacy Notice, acknowledging such data may qualify as special-category data related to health. I know I may withdraw this consent at any time without giving any reason." } },
+      { h: { tr: "Önemli Not", en: "Important Note" },
+        p: { tr: "Platform tıbbi tanı koymaz; sonuçlar klinik değerlendirmenin yerine geçmez ve yalnızca öz-farkındalık amaçlıdır.",
+           en: "The Platform does not provide medical diagnosis; results do not replace clinical evaluation and are for self-awareness only." } },
+    ],
+  },
+};
+
+const LegalModal = ({ doc = "disclosure", onClose }) => {
+  const { lang } = useT();
+  const [active, setActive] = useState(doc);
+  const data = LEGAL_TEXTS[active];
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(23,25,35,0.55)" }} onClick={onClose}>
+      <div className="w-full max-w-lg rounded-2xl flex flex-col" style={{ background: C.surface, maxHeight: "84vh" }} onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 pt-4 pb-2">
+          <div className="flex gap-2">
+            {[["disclosure", { tr: "Aydınlatma", en: "Notice" }], ["consent", { tr: "Açık Rıza", en: "Consent" }]].map(([k, lbl]) => (
+              <button key={k} onClick={() => setActive(k)} className="px-3 py-1.5 rounded-lg text-xs font-medium"
+                style={active === k ? { background: C.primary, color: "#fff" } : { background: "#F3F4F6", color: C.textMuted }}>
+                {L(lbl, lang)}
+              </button>
+            ))}
+          </div>
+          <button onClick={onClose} aria-label="Kapat"><X size={18} style={{ color: C.textMuted }} /></button>
+        </div>
+        <div className="px-5 pb-5 overflow-y-auto">
+          <h2 className="text-sm font-semibold mb-3" style={{ color: C.text }}>{L(data.title, lang)}</h2>
+          {data.sections.map((sec, i) => (
+            <div key={i} className="mb-3">
+              <p className="text-xs font-semibold mb-1" style={{ color: C.primary }}>{L(sec.h, lang)}</p>
+              <p className="text-xs leading-relaxed" style={{ color: C.textMuted }}>{L(sec.p, lang)}</p>
+            </div>
+          ))}
+          <p className="text-[10px] mt-2 italic" style={{ color: C.textMuted }}>
+            {lang === "en" ? "Draft — subject to legal review. Last updated: 2026." : "Taslak — hukuki incelemeye tabidir. Son güncelleme: 2026."}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 /* Demo kullanıcılar — üretimde JWT/Supabase Auth ile değişir */
 let MOCK_USERS = [
   { email: "user@demo.com",   password: "Demo123!", role: "user",   name: "Sinem Kullanıcı" },
@@ -832,6 +916,7 @@ const Landing = ({ onStart, onExpert }) => {
   const { lang, t } = useT();
   const [openFaq, setOpenFaq] = useState(null);
   const [hoveredFeature, setHoveredFeature] = useState(null);
+  const [legalDoc, setLegalDoc] = useState(null);
 
   const STATS = [
     { n: "8", label: { tr: "Bilişsel Test", en: "Cognitive Tests" } },
@@ -979,8 +1064,13 @@ const Landing = ({ onStart, onExpert }) => {
         </div>
         <p style={{ fontSize: 12, color: C.textMuted, margin: 0 }}>
           © 2026 {BRAND} · {lang === "en" ? "Results do not replace clinical evaluation." : "Sonuçlar klinik değerlendirmenin yerini tutmaz."}
+          {" · "}
+          <button onClick={() => setLegalDoc("disclosure")} className="underline" style={{ color: C.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 12 }}>
+            {lang === "en" ? "Privacy Notice (KVKK)" : "KVKK Aydınlatma Metni"}
+          </button>
         </p>
       </footer>
+      {legalDoc && <LegalModal doc={legalDoc} onClose={() => setLegalDoc(null)} />}
     </div>
   );
 };
@@ -993,12 +1083,18 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
   const [error, setError] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-
   const [busy, setBusy] = useState(false);
+  const [ackDisclosure, setAckDisclosure] = useState(false);
+  const [ackConsent, setAckConsent] = useState(false);
+  const [legalDoc, setLegalDoc] = useState(null); // null | "disclosure" | "consent"
 
   const handleSubmit = async () => {
     setError("");
     if (!email || !password) { setError(lang === "en" ? "Please fill in all fields." : "Tüm alanları doldurun."); return; }
+    if (mode === "register" && (!ackDisclosure || !ackConsent)) {
+      setError(lang === "en" ? "Please review and accept the Privacy Notice and Explicit Consent." : "Lütfen Aydınlatma Metni'ni ve Açık Rıza'yı inceleyip onaylayın.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "login") {
@@ -1063,9 +1159,28 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
           <input placeholder={lang === "en" ? "Password" : "Şifre"} type="password" value={password} onChange={e => { setPassword(e.target.value); setError(""); }} className="border rounded-lg px-3 py-2 text-sm" style={{ borderColor: error ? C.danger : C.border }} />
           {error && <p className="text-xs" style={{ color: C.danger }}>{error}</p>}
           {mode === "register" && (
-            <label className="flex items-start gap-2 text-xs" style={{ color: C.textMuted }}>
-              <input type="checkbox" defaultChecked className="mt-0.5" /> KVKK aydınlatma metnini okudum ve onaylıyorum.
-            </label>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-start gap-2 text-xs" style={{ color: C.textMuted }}>
+                <input type="checkbox" checked={ackDisclosure} onChange={(e) => { setAckDisclosure(e.target.checked); setError(""); }} className="mt-0.5" />
+                <span>
+                  {lang === "en" ? "I have read the " : ""}
+                  <button type="button" onClick={() => setLegalDoc("disclosure")} className="underline font-medium" style={{ color: C.primary }}>
+                    {lang === "en" ? "Privacy Notice" : "KVKK Aydınlatma Metni"}
+                  </button>
+                  {lang === "en" ? "." : "'ni okudum."}
+                </span>
+              </label>
+              <label className="flex items-start gap-2 text-xs" style={{ color: C.textMuted }}>
+                <input type="checkbox" checked={ackConsent} onChange={(e) => { setAckConsent(e.target.checked); setError(""); }} className="mt-0.5" />
+                <span>
+                  {lang === "en" ? "I give my " : "Performans verilerimin işlenmesine "}
+                  <button type="button" onClick={() => setLegalDoc("consent")} className="underline font-medium" style={{ color: C.primary }}>
+                    {lang === "en" ? "explicit consent" : "açık rıza"}
+                  </button>
+                  {lang === "en" ? " to the processing of my performance data." : " veriyorum."}
+                </span>
+              </label>
+            </div>
           )}
           <Button onClick={handleSubmit} disabled={busy} className="w-full mt-1">{busy ? "…" : mode === "login" ? (lang === "en" ? "Sign In" : "Giriş Yap") : (lang === "en" ? "Create Account" : "Hesap Oluştur")}</Button>
           <div className="flex gap-2">
@@ -1080,6 +1195,7 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
         </div>
       </Card>
       </div>
+      {legalDoc && <LegalModal doc={legalDoc} onClose={() => setLegalDoc(null)} />}
     </div>
   );
 };
@@ -1432,6 +1548,7 @@ const ResultsHistory = ({ sessions, selfResults = [], onOpenResult, onGoCatalog 
    USER: PROFILE (KVKK veri yönetimi dahil)
    ============================================================ */
 const ProfileScreen = ({ sessions, plan, onGoSubscription, onLogout, onDeleteAccount, setToast }) => {
+  const [legalDoc, setLegalDoc] = useState(null);
   const { lang, t } = useT();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const avg = sessions.length ? Math.round(mean(sessions.map((s) => s.overall))) : "—";
@@ -1492,7 +1609,7 @@ const ProfileScreen = ({ sessions, plan, onGoSubscription, onLogout, onDeleteAcc
           <button onClick={downloadData} className="flex items-center gap-2 text-sm py-2" style={{ color: C.text }}>
             <Download size={16} style={{ color: C.primary }} /> {t("downloadData")}
           </button>
-          <button onClick={() => setToast(lang === "en" ? "The privacy notice will be available in production." : "KVKK aydınlatma metni üretim ortamında görüntülenecektir.")} className="flex items-center gap-2 text-sm py-2" style={{ color: C.text }}>
+          <button onClick={() => setLegalDoc("disclosure")} className="flex items-center gap-2 text-sm py-2" style={{ color: C.text }}>
             <Shield size={16} style={{ color: C.secondary }} /> {t("privacyText")}
           </button>
           <button onClick={() => setConfirmDelete(true)} className="flex items-center gap-2 text-sm py-2" style={{ color: C.danger }}>
@@ -1501,6 +1618,7 @@ const ProfileScreen = ({ sessions, plan, onGoSubscription, onLogout, onDeleteAcc
         </div>
       </Card>
 
+      {legalDoc && <LegalModal doc={legalDoc} onClose={() => setLegalDoc(null)} />}
       <Button variant="ghost" className="w-full flex items-center justify-center gap-2" onClick={onLogout}>
         <LogOut size={16} /> {t("logout")}
       </Button>

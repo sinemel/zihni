@@ -1387,11 +1387,11 @@ const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, on
           </span>
         )}
       </div>
-      {isKid && (
-        <div className="flex justify-center mb-4">
-          <PenguMascot state="greet" size={100} bubble={{ tr: sessions.length === 0 ? "Merhaba! Bugün beraber oynayalım mı? 🐧" : "Tekrar hoş geldin! Bugün ne oynuyoruz? 🐧", en: sessions.length === 0 ? "Hi! Shall we play together today? 🐧" : "Welcome back! What are we playing today? 🐧" }} />
-        </div>
-      )}
+      <div className="flex justify-center mb-4">
+        <PenguMascot state="greet" size={100} bubble={isKid
+          ? { tr: sessions.length === 0 ? "Merhaba! Bugün beraber oynayalım mı? 🐧" : "Tekrar hoş geldin! Bugün ne oynuyoruz? 🐧", en: sessions.length === 0 ? "Hi! Shall we play together today? 🐧" : "Welcome back! What are we playing today? 🐧" }
+          : { tr: sessions.length === 0 ? "Hoş geldin! İlk testinle başlayalım mı? 🐧" : "Tekrar hoş geldin! Bugünkü hedefine hazır mısın? 🐧", en: sessions.length === 0 ? "Welcome! Shall we start with your first test? 🐧" : "Welcome back! Ready for today's goal? 🐧" }} />
+      </div>
       <div
         className="h-1.5 rounded-full mb-4 kg-gradient-anim"
         style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1}, ${C.accent2}, ${C.secondary})`, backgroundSize: "300% 100%" }}
@@ -2181,19 +2181,15 @@ const TrainingResult = ({ title, score, stats, stars, maxStars = 5, mandatoryPas
   return (
   <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
     <Card className="w-full max-w-sm text-center" style={{ animation: "kg-countup 0.4s ease" }}>
-      {kid ? (
-        <div className="mb-1">
-          <PenguMascot
-            state={score >= 60 ? "celebrate" : "encourage"}
-            size={100}
-            bubble={score >= 60
-              ? { tr: "Harika iş çıkardın! 🎉", en: "You did great! 🎉" }
-              : { tr: "Güzel deneme! Bir daha oynayalım mı?", en: "Nice try! Play again?" }}
-          />
-        </div>
-      ) : (
-        <Check size={32} className="mx-auto mb-2" style={{ color: C.success }} />
-      )}
+      <div className="mb-1">
+        <PenguMascot
+          state={score >= 60 ? "celebrate" : "encourage"}
+          size={100}
+          bubble={score >= 60
+            ? (kid ? { tr: "Harika iş çıkardın! 🎉", en: "You did great! 🎉" } : { tr: "Harika bir performans! 🎉", en: "Great performance! 🎉" })
+            : (kid ? { tr: "Güzel deneme! Bir daha oynayalım mı?", en: "Nice try! Play again?" } : { tr: "İyi deneme — tekrarla gelişir!", en: "Good attempt — practice makes progress!" })}
+        />
+      </div>
       <h2 className="font-semibold text-lg mb-3" style={{ color: C.text }}>{title} {lang === "en" ? "completed" : "tamamlandı"}</h2>
       <div className="inline-flex items-baseline gap-1 px-4 py-2 rounded-2xl mb-3" style={{ background: `linear-gradient(135deg, ${C.primary}14, ${C.accent1}14)` }}>
         <span className="text-4xl font-bold" style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{score}</span>
@@ -2229,13 +2225,11 @@ const TrainingReady = ({ ex, lines, onStart, onBack }) => {
   return (
   <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
     <Card className="w-full max-w-sm text-center">
-      {ex.kid ? (
-        <div className="mb-2">
-          <PenguMascot state="greet" size={92} bubble={{ tr: "Hazır mısın? Birlikte oynayalım!", en: "Ready? Let's play together!" }} />
-        </div>
-      ) : (
-        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: `linear-gradient(135deg, ${ex.color}, ${C.accent1})`, fontSize: 26 }}>{ex.icon}</div>
-      )}
+      <div className="mb-2">
+        <PenguMascot state="greet" size={92} bubble={ex.kid
+          ? { tr: "Hazır mısın? Birlikte oynayalım!", en: "Ready? Let's play together!" }
+          : { tr: "Hazır olduğunda başlayalım!", en: "Let's start when you're ready!" }} />
+      </div>
       <h2 className="font-semibold text-lg mb-2" style={{ color: C.text }}>{ex.name}</h2>
       <div className="text-left text-sm rounded-xl p-3 mb-4" style={{ background: C.bg, color: C.textMuted }}>
         {lines.map((l, i) => <p key={i}>• {L(l, lang)}</p>)}
@@ -3789,11 +3783,11 @@ const TrainingCatalog = ({ trainings, ageGroup, program, onStartLevelTest, onSel
   const isKid = ageGroup?.id === "6-9";
   return (
   <div className="p-5 max-w-3xl mx-auto pb-24">
-    {isKid && (
-      <div className="flex justify-center mb-3">
-        <PenguMascot state="greet" size={96} bubble={{ tr: "Merhaba! Bugün hangi oyunu oynayalım? 🐧", en: "Hi! Which game shall we play today? 🐧" }} />
-      </div>
-    )}
+    <div className="flex justify-center mb-3">
+      <PenguMascot state="greet" size={96} bubble={isKid
+        ? { tr: "Merhaba! Bugün hangi oyunu oynayalım? 🐧", en: "Hi! Which game shall we play today? 🐧" }
+        : { tr: "Bugün hangi egzersizle çalışalım? 🐧", en: "Which exercise shall we work on today? 🐧" }} />
+    </div>
     <div className="flex items-center justify-between mb-1">
       <h1 className="text-xl font-semibold" style={{ color: C.text }}>{t("trainingTitle")}</h1>
       {ageGroup && (

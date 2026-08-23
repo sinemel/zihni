@@ -964,6 +964,9 @@ const Landing = ({ onStart, onExpert }) => {
       </nav>
 
       <section style={{ maxWidth: 760, margin: "0 auto", padding: "80px 24px 60px", textAlign: "center", position: "relative" }}>
+        <div style={{ marginBottom: 10 }}>
+          <PenguMascot state="greet" size={116} bubble={{ tr: "Merhaba! Ben Pengu — zihnini birlikte keşfedelim! 🐧", en: "Hi! I'm Pengu — let's explore your mind together! 🐧" }} />
+        </div>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: `${C.primary}12`, border: `1px solid ${C.primary}30`, borderRadius: 100, padding: "6px 14px", marginBottom: 28 }}>
           <span style={{ width: 7, height: 7, borderRadius: "50%", background: C.success, display: "inline-block" }} />
           <span style={{ fontSize: 12, fontWeight: 600, color: C.primary, letterSpacing: "0.4px" }}>

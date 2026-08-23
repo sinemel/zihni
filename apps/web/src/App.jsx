@@ -199,6 +199,13 @@ const GlobalMotionStyles = () => (
     @keyframes kg-gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     @keyframes kg-confetti { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(280px) rotate(360deg); opacity: 0; } }
     @keyframes kg-shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
+    @keyframes nova-hover { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+    @keyframes nova-blink { 0%, 90%, 100% { transform: scaleY(1); } 94% { transform: scaleY(0.08); } }
+    @keyframes nova-bounce { 0%,100% { transform: translateY(0) scale(1); } 30% { transform: translateY(-16px) scale(1.06); } 55% { transform: translateY(0) scale(0.96); } 72% { transform: translateY(-7px) scale(1.02); } }
+    @keyframes nova-tilt { 0%,100% { transform: rotate(0deg); } 40% { transform: rotate(-9deg); } 70% { transform: rotate(5deg); } }
+    @keyframes nova-wave { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(18deg); } 55% { transform: rotate(-10deg); } 80% { transform: rotate(12deg); } }
+    @keyframes nova-antenna { 0%,100% { opacity: 0.55; r: 3.2; } 50% { opacity: 1; r: 4.2; } }
+    @keyframes nova-spark { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-22px) scale(0.4); opacity: 0; } }
     @keyframes kg-grow { 0% { transform: scale(0.12); opacity: 1; } 100% { transform: scale(1); opacity: 0.12; } }
     .kg-card-hover { transition: transform 0.25s ease, box-shadow 0.25s ease; }
     .kg-card-hover:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(91,92,226,0.16), 0 4px 10px rgba(23,25,35,0.06); }
@@ -1857,12 +1864,82 @@ const KID_CATALOG = {
   "reading-test":  { icon: "⏱️", color: "#F43F5E", name: { tr: "Okuma Yarışı",        en: "Reading Race"       }, desc: { tr: "Metni oku ve sorulara cevap ver — ne kadar hızlısın?", en: "Read and answer — how fast are you?" } },
 };
 
+/* ============================================================
+   NOVA-BOT — Nova'nın robot yoldaşı (özgün animasyonlu SVG maskot)
+   Durumlar: idle · thinking · celebrate · encourage · greet
+   ============================================================ */
+const NovaBot = ({ state = "idle", size = 88, bubble = null, className = "" }) => {
+  const { lang } = useT();
+  const bodyAnim =
+    state === "celebrate" ? "nova-bounce 0.9s ease infinite" :
+    state === "thinking"  ? "nova-tilt 2.6s ease-in-out infinite" :
+    state === "greet"     ? "nova-hover 2.4s ease-in-out infinite" :
+    state === "encourage" ? "nova-hover 2.8s ease-in-out infinite" :
+                            "nova-hover 3.2s ease-in-out infinite";
+  const face = { happy: "M -8 4 Q 0 11 8 4", flat: "M -7 6 Q 0 8 7 6", o: null }[
+    state === "encourage" ? "flat" : "happy"] ;
+  const eyeH = state === "thinking" ? 4.6 : 6.2;
+  return (
+    <div className={`inline-flex flex-col items-center ${className}`} style={{ lineHeight: 1 }}>
+      {bubble && (
+        <div className="px-3 py-1.5 rounded-2xl text-xs font-medium mb-1.5"
+          style={{ background: C.surface, color: C.text, border: `1.5px solid ${C.border}`, boxShadow: "0 2px 10px rgba(23,25,35,0.08)", maxWidth: 190, animation: "kg-pop 0.35s ease" }}>
+          {typeof bubble === "object" ? L(bubble, lang) : bubble}
+        </div>
+      )}
+      <svg width={size} height={size} viewBox="-34 -40 68 74" style={{ animation: bodyAnim, transformOrigin: "50% 60%", overflow: "visible" }} aria-hidden="true">
+        {/* anten */}
+        <line x1="0" y1="-28" x2="0" y2="-34" stroke="#2A2D45" strokeWidth="2.4" strokeLinecap="round" />
+        <circle cx="0" cy="-36" r="3.6" fill={C.accent1 || "#7C6FF0"} style={{ animation: "nova-antenna 1.8s ease-in-out infinite" }} />
+        {/* kutlama kıvılcımları */}
+        {state === "celebrate" && (
+          <g>
+            <circle cx="-24" cy="-18" r="2.4" fill="#FFD166" style={{ animation: "nova-spark 1s ease-out infinite" }} />
+            <circle cx="24" cy="-14" r="2" fill={C.secondary} style={{ animation: "nova-spark 1.2s 0.3s ease-out infinite" }} />
+            <circle cx="0" cy="-30" r="1.8" fill={C.primary} style={{ animation: "nova-spark 0.9s 0.15s ease-out infinite" }} />
+          </g>
+        )}
+        {/* gövde */}
+        <ellipse cx="0" cy="0" rx="27" ry="26" fill="#23263B" />
+        <ellipse cx="0" cy="0" rx="27" ry="26" fill="url(#novaSheen)" opacity="0.35" />
+        {/* yüz ekranı */}
+        <ellipse cx="0" cy="1" rx="19" ry="16.5" fill="#0E1024" />
+        {/* gözler */}
+        <g style={{ animation: "nova-blink 4.4s ease-in-out infinite", transformOrigin: "0 0" }}>
+          <ellipse cx="-7.5" cy="-2" rx="3.4" ry={eyeH} fill="#57C9FF" />
+          <ellipse cx="7.5" cy="-2" rx="3.4" ry={eyeH} fill="#57C9FF" />
+          <circle cx="-6.6" cy="-4" r="1" fill="#DFF6FF" />
+          <circle cx="8.4" cy="-4" r="1" fill="#DFF6FF" />
+        </g>
+        {/* ağız */}
+        {face && <path d={face} stroke="#57C9FF" strokeWidth="2.2" fill="none" strokeLinecap="round" />}
+        {/* yanak ışıkları */}
+        <circle cx="-14" cy="4" r="1.8" fill={C.primary} opacity="0.8" />
+        <circle cx="14" cy="4" r="1.8" fill={C.primary} opacity="0.8" />
+        {/* kollar */}
+        <g style={state === "greet" || state === "celebrate" ? { animation: "nova-wave 1.1s ease-in-out infinite", transformOrigin: "-26px 6px" } : {}}>
+          <ellipse cx="-29" cy="8" rx="4.4" ry="6.5" fill="#23263B" />
+        </g>
+        <ellipse cx="29" cy="8" rx="4.4" ry="6.5" fill="#23263B" />
+        {/* alt ışık halkası */}
+        <ellipse cx="0" cy="27" rx="14" ry="3" fill={C.primary} opacity="0.22" />
+        <defs>
+          <radialGradient id="novaSheen" cx="0.35" cy="0.25" r="0.9">
+            <stop offset="0%" stopColor="#8FA0FF" />
+            <stop offset="100%" stopColor="transparent" />
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+  );
+};
+
 function exTheme(ex, ageGroup, lang) {
   if (!ageGroup || ageGroup.id !== "6-9") return ex;
   const k = KID_CATALOG[ex.id];
   if (!k) return ex;
   const L2 = (v) => (v && typeof v === "object" && !Array.isArray(v)) ? (v[lang] ?? v.tr) : v;
-  return { ...ex, icon: k.icon, color: k.color, name: L2(k.name), desc: L2(k.desc) };
+  return { ...ex, kid: true, icon: k.icon, color: k.color, name: L2(k.name), desc: L2(k.desc) };
 }
 
 /* Eşleştirme: çocuklar için hayvan emojileri */
@@ -1906,12 +1983,24 @@ const dayPlan = (day, level) => {
   return [0, 1, 2].map((i) => pool[(day * 3 + i) % pool.length]);
 };
 
-const TrainingResult = ({ title, score, stats, stars, maxStars = 5, mandatoryPassed, onFinish }) => {
+const TrainingResult = ({ title, score, stats, stars, maxStars = 5, mandatoryPassed, onFinish, kid = false }) => {
   const { lang } = useT();
   return (
   <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
     <Card className="w-full max-w-sm text-center" style={{ animation: "kg-countup 0.4s ease" }}>
-      <Check size={32} className="mx-auto mb-2" style={{ color: C.success }} />
+      {kid ? (
+        <div className="mb-1">
+          <NovaBot
+            state={score >= 60 ? "celebrate" : "encourage"}
+            size={96}
+            bubble={score >= 60
+              ? { tr: "Harika iş çıkardın! 🎉", en: "You did great! 🎉" }
+              : { tr: "Güzel deneme! Bir daha oynayalım mı?", en: "Nice try! Play again?" }}
+          />
+        </div>
+      ) : (
+        <Check size={32} className="mx-auto mb-2" style={{ color: C.success }} />
+      )}
       <h2 className="font-semibold text-lg mb-3" style={{ color: C.text }}>{title} {lang === "en" ? "completed" : "tamamlandı"}</h2>
       <div className="inline-flex items-baseline gap-1 px-4 py-2 rounded-2xl mb-3" style={{ background: `linear-gradient(135deg, ${C.primary}14, ${C.accent1}14)` }}>
         <span className="text-4xl font-bold" style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{score}</span>
@@ -1947,7 +2036,13 @@ const TrainingReady = ({ ex, lines, onStart, onBack }) => {
   return (
   <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
     <Card className="w-full max-w-sm text-center">
-      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: `linear-gradient(135deg, ${ex.color}, ${C.accent1})`, fontSize: 26 }}>{ex.icon}</div>
+      {ex.kid ? (
+        <div className="mb-2">
+          <NovaBot state="greet" size={92} bubble={{ tr: "Hazır mısın? Birlikte oynayalım!", en: "Ready? Let's play together!" }} />
+        </div>
+      ) : (
+        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: `linear-gradient(135deg, ${ex.color}, ${C.accent1})`, fontSize: 26 }}>{ex.icon}</div>
+      )}
       <h2 className="font-semibold text-lg mb-2" style={{ color: C.text }}>{ex.name}</h2>
       <div className="text-left text-sm rounded-xl p-3 mb-4" style={{ background: C.bg, color: C.textMuted }}>
         {lines.map((l, i) => <p key={i}>• {L(l, lang)}</p>)}
@@ -1978,7 +2073,7 @@ const SchulteExercise = ({ ex, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => { startRef.current = performance.now(); setStarted(true); }}
     lines={[{ tr: "Gözünüzü tablonun merkezinde tutmaya çalışın.", en: "Try to keep your eyes at the center of the table." }, { tr: "1'den 25'e kadar sayılara sırayla dokunun.", en: "Tap the numbers from 1 to 25 in order." }, { tr: "Ne kadar hızlı, o kadar iyi.", en: "The faster, the better." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Süre", en: "Time" }, `${done.secs} sn`], [{ tr: "Hata", en: "Errors" }, done.errors], [{ tr: "Bulunan", en: "Found" }, "25/25"]]}
     onFinish={() => onFinish({ score: done.score, detail: `${done.secs} sn` })} />;
 
@@ -2050,7 +2145,7 @@ const FlashWordExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => setStarted(true)}
     lines={[{ tr: "Ekranda çok kısa süreliğine bir kelime belirecek.", en: "A word will appear on screen very briefly." }, { tr: "Ardından 4 seçenekten gördüğünüz kelimeyi seçin.", en: "Then pick the word you saw from 4 options." }, { tr: "Doğru yanıtladıkça süre kısalır — algı eşiğinizi zorlayın.", en: "The duration shortens as you answer correctly — push your perception threshold." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Doğruluk", en: "Accuracy" }, `%${done.acc}`], [{ tr: "En kısa süre", en: "Shortest time" }, `${done.best} ms`], [{ tr: "Tur", en: "Rounds" }, TOTAL]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.best} ms threshold` : `${done.best} ms eşik` })} />;
 
@@ -2168,7 +2263,7 @@ const RSVPExercise = ({ ex, ageGroup, initialText, onFinish, onBack }) => {
     </div>
   );
 
-  return <TrainingResult title={ex.name} score={done.score}
+  return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Hız", en: "Speed" }, `${wpm} wpm`], [{ tr: "Anlama", en: "Comprehension" }, `%${done.comp}`], [{ tr: "Kelime", en: "Words" }, textObj.words.length]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${wpm} wpm · ${done.comp}% comprehension` : `${wpm} k/dk · %${done.comp} anlama` })} />;
 };
@@ -2210,7 +2305,7 @@ const PeripheralExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => setStarted(true)}
     lines={[{ tr: "Gözünüzü ortadaki noktadan AYIRMAYIN.", en: "Do NOT take your eyes off the center dot." }, { tr: "Kenarlarda iki sayı çok kısa belirecek.", en: "Two numbers will flash briefly at the edges." }, { tr: "İkisinin toplamını seçin.", en: "Pick their sum." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Doğruluk", en: "Accuracy" }, `%${done.acc}`], [{ tr: "Süre", en: "Duration" }, `${flashDur} ms`], [{ tr: "Tur", en: "Rounds" }, TOTAL]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.acc}% accuracy` : `%${done.acc} doğruluk` })} />;
 
@@ -2550,6 +2645,7 @@ const EyeTrainingExercise = ({ ex, onFinish, onBack }) => {
 
   return (
     <TrainingResult
+      kid={ex.kid}
       title={ex.name}
       score={finalScore}
       stars={stars}
@@ -2582,7 +2678,7 @@ const MatchExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => { startRef.current = performance.now(); setStarted(true); }}
     lines={[{ tr: "Kartlar kapalı başlar; ikisini açıp eşleştirin.", en: "Cards start face down; flip two to match." }, { tr: "Eşleşmeyenler kısa süre sonra tekrar kapanır — yerlerini aklınızda tutun.", en: "Non-matches flip back shortly — remember their positions." }, { tr: "En az hamlede ve en hızlı bitirmeye çalışın.", en: "Try to finish fastest with the fewest moves." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Süre", en: "Time" }, `${done.secs} sn`], [{ tr: "Hamle", en: "Moves" }, done.moves], [{ tr: "Çift", en: "Pairs" }, EMOJIS.length]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.moves} moves · ${done.secs} s` : `${done.moves} hamle · ${done.secs} sn` })} />;
 
@@ -2682,7 +2778,7 @@ const SimilarWordsExercise = ({ ex, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => setStarted(true)}
     lines={[{ tr: "Kutucuklardaki kelimelerden BİRİ diğerlerinden farklıdır.", en: "ONE of the words in the grid is different from the others." }, { tr: "Farklı olan kelimeye olabildiğince hızlı dokunun.", en: "Tap the different word as fast as you can." }, { tr: "Dikkat: kelimeler birbirine çok benzer!", en: "Careful: the words look very similar!" }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Ort. Süre", en: "Avg. time" }, `${done.meanRT} ms`], [{ tr: "Hata", en: "Errors" }, done.errors], [{ tr: "Tur", en: "Rounds" }, TOTAL]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.meanRT} ms avg.` : `${done.meanRT} ms ort.` })} />;
 
@@ -2738,7 +2834,7 @@ const OddEvenExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => setStarted(true)}
     lines={[{ tr: "Ekranda çok kısa süre bir sayı belirecek.", en: "A number will appear on screen very briefly." }, { tr: "Sayının TEK mi ÇİFT mi olduğuna hızla karar verin.", en: "Quickly decide if the number is ODD or EVEN." }, { tr: "Doğru yanıtladıkça süre kısalır.", en: "The duration shortens as you answer correctly." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Doğruluk", en: "Accuracy" }, `%${done.acc}`], [{ tr: "En kısa süre", en: "Shortest time" }, `${done.best} ms`], [{ tr: "Tur", en: "Rounds" }, TOTAL]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.best} ms threshold · ${done.acc}%` : `${done.best} ms eşik · %${done.acc}` })} />;
 
@@ -2843,7 +2939,7 @@ const ArithmeticSprintExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => setStarted(true)}
     lines={[{ tr: "Ekranda bir işlem belirecek (toplama, çıkarma, çarpma).", en: "An operation will appear (addition, subtraction, multiplication)." }, { tr: "Doğru sonucu 4 seçenekten süre dolmadan seçin.", en: "Pick the correct result from 4 options before time runs out." }, { tr: "Doğru yanıtladıkça süre kısalır — temponuzu koruyun.", en: "The window shrinks as you answer correctly — keep your pace." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Doğruluk", en: "Accuracy" }, `%${done.acc}`], [{ tr: "Ort. Süre", en: "Avg. time" }, `${done.meanRT} ms`], [{ tr: "Tur", en: "Rounds" }, TOTAL]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.acc}% · ${done.meanRT} ms avg.` : `%${done.acc} · ${done.meanRT} ms ort.` })} />;
 
@@ -2956,7 +3052,7 @@ const SynonymHuntExercise = ({ ex, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => setStarted(true)}
     lines={[{ tr: "Üstte bir hedef kelime göreceksiniz.", en: "You will see a target word at the top." }, { tr: "Kutulardan hedefle EŞ ANLAMLI olanı bulun.", en: "Find the SYNONYM of the target among the boxes." }, { tr: "Yanlış seçimler hata sayar — hızlı ama dikkatli olun.", en: "Wrong picks count as errors — be fast but careful." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Ort. Süre", en: "Avg. time" }, `${done.meanRT} ms`], [{ tr: "Hata", en: "Errors" }, done.errors], [{ tr: "Tur", en: "Rounds" }, TOTAL]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.meanRT} ms avg. · ${done.errors} errors` : `${done.meanRT} ms ort. · ${done.errors} hata` })} />;
 
@@ -3032,7 +3128,7 @@ const NumberMemoryExercise = ({ ex, ageGroup, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => setStarted(true)}
     lines={[{ tr: "Ekranda kısa süre bir sayı dizisi göreceksiniz.", en: "A digit sequence will be shown briefly." }, { tr: "Kaybolunca diziyi tuş takımıyla aynı sırada girin.", en: "When it disappears, type it back in the same order." }, { tr: "Doğru bildikçe dizi uzar; yanılınca kısalır.", en: "The sequence grows as you succeed and shrinks when you miss." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "En uzun dizi", en: "Longest span" }, done.best], [{ tr: "Doğru", en: "Correct" }, `${done.correctCount}/${TOTAL}`], [{ tr: "Tur", en: "Rounds" }, TOTAL]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `span ${done.best}` : `${done.best} haneli dizi` })} />;
 
@@ -3165,7 +3261,7 @@ const PatternHuntExercise = ({ ex, onFinish, onBack }) => {
   if (!started) return <TrainingReady ex={ex} onBack={onBack} onStart={() => setStarted(true)}
     lines={[{ tr: "3×3 tabloda satır ve sütunlar bir kurala göre dizilir.", en: "The 3×3 grid follows a rule across rows and columns." }, { tr: "Kuralı çözüp eksik (?) hücreye geleni 4 seçenekten bulun.", en: "Crack the rule and pick what fits the missing (?) cell from 4 options." }, { tr: "Kural her turda değişebilir: şekil, adet veya boyut.", en: "The rule can change each round: shape, count or size." }]} />;
 
-  if (done) return <TrainingResult title={ex.name} score={done.score}
+  if (done) return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Doğruluk", en: "Accuracy" }, `%${done.acc}`], [{ tr: "Ort. Süre", en: "Avg. time" }, `${(done.meanRT / 1000).toFixed(1)} sn`], [{ tr: "Tur", en: "Rounds" }, TOTAL]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${done.acc}% pattern accuracy` : `%${done.acc} örüntü doğruluğu` })} />;
 
@@ -3280,6 +3376,7 @@ const GrowShapeExercise = ({ ex, onFinish, onBack }) => {
 
   return (
     <TrainingResult
+      kid={ex.kid}
       title={ex.name}
       score={finalScore}
       stats={[[{ tr: "Süre", en: "Time" }, `${durationS} sn`], [{ tr: "Hız", en: "Speed" }, `${(period / 1000).toFixed(1)} sn/tur`], [{ tr: "Şekil", en: "Shape" }, L(GROW_SHAPES.find((s) => s.id === shape)?.label, lang)]]}
@@ -3387,7 +3484,7 @@ const BlockReadingExercise = ({ ex, ageGroup, initialText, onFinish, onBack }) =
     </div>
   );
 
-  return <TrainingResult title={ex.name} score={done.score}
+  return <TrainingResult kid={ex.kid} title={ex.name} score={done.score}
     stats={[[{ tr: "Hız", en: "Speed" }, `${wpm} wpm`], [{ tr: "Anlama", en: "Comprehension" }, `%${done.comp}`], [{ tr: "Blok", en: "Blocks" }, blocks.length]]}
     onFinish={() => onFinish({ score: done.score, detail: lang === "en" ? `${wpm} wpm · ${done.comp}% comprehension` : `${wpm} k/dk · %${done.comp} anlama` })} />;
 };
@@ -3496,8 +3593,14 @@ const TrainingCatalog = ({ trainings, ageGroup, program, onStartLevelTest, onSel
   const { lang, t } = useT();
   const wpmData = trainings.filter((t) => t.wpm).map((t, i) => ({ name: `Test ${i + 1}`, wpm: t.wpm }));
   const todaysPlan = program.level ? dayPlan(program.day, program.level) : [];
+  const isKid = ageGroup?.id === "6-9";
   return (
   <div className="p-5 max-w-3xl mx-auto pb-24">
+    {isKid && (
+      <div className="flex justify-center mb-3">
+        <NovaBot state="greet" size={84} bubble={{ tr: "Merhaba! Bugün hangi oyunu oynayalım?", en: "Hi! Which game shall we play today?" }} />
+      </div>
+    )}
     <div className="flex items-center justify-between mb-1">
       <h1 className="text-xl font-semibold" style={{ color: C.text }}>{t("trainingTitle")}</h1>
       {ageGroup && (

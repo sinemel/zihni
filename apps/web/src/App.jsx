@@ -73,7 +73,14 @@ const api = {
     apiFetch(`/self-tests/${id}/submit`, { method: "POST", body: JSON.stringify({ answers }) }),
   // Metin kütüphanesi (varsa sunucudan)
   getTexts: (lang) => apiFetch(`/texts?lang=${lang}`),
+  // Kimlik doğrulama (NestJS auth modülü)
+  login: (email, password) =>
+    apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
+  register: (email, password, name) =>
+    apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ email, password, name }) }),
 };
+
+function setApiToken(token) { API_TOKEN = token || null; }
 
 /* Demo kullanıcılar — üretimde JWT/Supabase Auth ile değişir */
 let MOCK_USERS = [
@@ -864,7 +871,7 @@ const Landing = ({ onStart, onExpert }) => {
         <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: `${C.primary}12`, border: `1px solid ${C.primary}30`, borderRadius: 100, padding: "6px 14px", marginBottom: 28 }}>
           <span style={{ width: 7, height: 7, borderRadius: "50%", background: C.success, display: "inline-block" }} />
           <span style={{ fontSize: 12, fontWeight: 600, color: C.primary, letterSpacing: "0.4px" }}>
-            {lang === "en" ? "DEMO · PROTOTYPE · NON-CLINICAL" : "DEMO · PROTOTİP · KLİNİK OLMAYAN"}
+            {lang === "en" ? "NON-CLINICAL SELF-AWARENESS PLATFORM" : "KLİNİK OLMAYAN ÖZ-FARKINDALIK PLATFORMU"}
           </span>
         </div>
 
@@ -984,20 +991,41 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const handleSubmit = () => {
+  const [busy, setBusy] = useState(false);
+
+  const handleSubmit = async () => {
     setError("");
-    if (mode === "login") {
-      const found = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-      if (!found) { setError(lang === "en" ? "Wrong e-mail or password." : "E-posta veya şifre hatalı."); return; }
-      onDone("login", found.role, found.name);
-    } else {
-      if (!email || !password) { setError(lang === "en" ? "Please fill in all fields." : "Tüm alanları doldurun."); return; }
-      const exists = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (exists) { setError(lang === "en" ? "This e-mail is already registered. Please sign in." : "Bu e-posta zaten kayıtlı. Giriş yapın."); return; }
-      const name = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ") || email.split("@")[0];
-      MOCK_USERS = [...MOCK_USERS, { email, password, role: "user", name }];
-      onDone("register", "user", name);
-    }
+    if (!email || !password) { setError(lang === "en" ? "Please fill in all fields." : "Tüm alanları doldurun."); return; }
+    setBusy(true);
+    try {
+      if (mode === "login") {
+        // 1) Gerçek API
+        const res = await api.login(email, password);
+        if (res && res.accessToken) {
+          setApiToken(res.accessToken);
+          onDone("login", res.user?.role?.toLowerCase?.() || "user", res.user?.name || email.split("@")[0]);
+          return;
+        }
+        // 2) Çevrimdışı yedek (yalnızca API erişilemezse)
+        const found = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+        if (!found) { setError(lang === "en" ? "Wrong e-mail or password." : "E-posta veya şifre hatalı."); return; }
+        onDone("login", found.role, found.name);
+      } else {
+        const name = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ") || email.split("@")[0];
+        // 1) Gerçek API
+        const res = await api.register(email, password, name);
+        if (res && res.accessToken) {
+          setApiToken(res.accessToken);
+          onDone("register", "user", res.user?.name || name);
+          return;
+        }
+        // 2) Çevrimdışı yedek
+        const exists = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
+        if (exists) { setError(lang === "en" ? "This e-mail is already registered. Please sign in." : "Bu e-posta zaten kayıtlı. Giriş yapın."); return; }
+        MOCK_USERS = [...MOCK_USERS, { email, password, role: "user", name }];
+        onDone("register", "user", name);
+      }
+    } finally { setBusy(false); }
   };
   return (
     <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
@@ -1036,14 +1064,14 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
               <input type="checkbox" defaultChecked className="mt-0.5" /> KVKK aydınlatma metnini okudum ve onaylıyorum.
             </label>
           )}
-          <Button onClick={handleSubmit} className="w-full mt-1">{mode === "login" ? (lang === "en" ? "Sign In" : "Giriş Yap") : (lang === "en" ? "Create Account" : "Hesap Oluştur")}</Button>
+          <Button onClick={handleSubmit} disabled={busy} className="w-full mt-1">{busy ? "…" : mode === "login" ? (lang === "en" ? "Sign In" : "Giriş Yap") : (lang === "en" ? "Create Account" : "Hesap Oluştur")}</Button>
           <div className="flex gap-2">
             <Button variant="ghost" className="flex-1" onClick={handleSubmit}>Google</Button>
             <Button variant="ghost" className="flex-1" onClick={handleSubmit}>Apple</Button>
           </div>
           {mode === "login" && (
             <p className="text-xs text-center mt-1" style={{ color: C.textMuted }}>
-              {lang === "en" ? "Demo: user / expert / admin @demo.com · password: Demo123!" : "Demo: user / expert / admin @demo.com · şifre: Demo123!"}
+              {lang === "en" ? "Offline trial: user / expert / admin @demo.com · Demo123!" : "Çevrimdışı deneme: user / expert / admin @demo.com · Demo123!"}
             </p>
           )}
         </div>

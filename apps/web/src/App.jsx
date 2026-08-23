@@ -1227,12 +1227,18 @@ const Onboarding = ({ onFinish }) => {
   return (
     <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
       <Card className="w-full max-w-sm text-center" key={step} style={{ animation: "kg-countup 0.4s ease" }}>
-        <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-          style={{ background: `linear-gradient(135deg, ${STEP_COLORS[step]}, ${C.accent1})`, fontSize: 30 }}
-        >
-          {s.icon}
-        </div>
+        {step === 0 ? (
+          <div className="mb-3">
+            <PenguMascot state="greet" size={104} bubble={{ tr: "Merhaba! Ben Pengu, yol arkadaşın! 🐧", en: "Hi! I'm Pengu, your companion! 🐧" }} />
+          </div>
+        ) : (
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            style={{ background: `linear-gradient(135deg, ${STEP_COLORS[step]}, ${C.accent1})`, fontSize: 30 }}
+          >
+            {s.icon}
+          </div>
+        )}
         <h2 className="font-semibold text-lg mb-2" style={{ color: C.text }}>{L(s.title, lang)}</h2>
         <p className="text-sm mb-5" style={{ color: C.textMuted }}>{L(s.text, lang)}</p>
 
@@ -1903,12 +1909,18 @@ const libOf = (t) => t.lib || "genel";
 const TextPicker = ({ accent, onPick, onBack, defaultLib }) => {
   const { lang, t: tt } = useT();
   const [lib, setLib] = useState(defaultLib || "genel");
+  const penguBubble = lib === "cocuk"
+    ? { tr: "Bugün hangi hikâyeyi okuyalım? 📖", en: "Which story shall we read today? 📖" }
+    : { tr: "Bugün ne okuyalım? 📖", en: "What shall we read today? 📖" };
   const byLang = READING_TEXTS.filter((x) => libOf(x) === lib && (x.lang || "tr") === lang);
   const texts = byLang.length ? byLang : READING_TEXTS.filter((x) => libOf(x) === lib && (x.lang || "tr") === "tr");
   const cats = [...new Set(texts.map((t) => t.category))];
   return (
     <div className="min-h-full p-6" style={{ background: C.bg }}>
       <div className="max-w-2xl mx-auto">
+        <div className="flex justify-center mb-3">
+          <PenguMascot state="idle" size={84} bubble={penguBubble} />
+        </div>
         <button onClick={onBack} className="text-xs flex items-center gap-1 mb-3" style={{ color: C.textMuted }}>
           <ArrowLeft size={14} /> Geri
         </button>
@@ -4228,7 +4240,10 @@ const SelfTestIntro = ({ test, onStart, onBack }) => {
   return (
   <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
     <Card className="w-full max-w-sm text-center" style={{ animation: "kg-countup 0.4s ease" }}>
-      <button onClick={onBack} className="text-xs flex items-center gap-1 mb-3" style={{ color: C.textMuted }}><ArrowLeft size={14} /> Geri</button>
+      <button onClick={onBack} className="text-xs flex items-center gap-1 mb-3" style={{ color: C.textMuted }}><ArrowLeft size={14} /> {lang === "en" ? "Back" : "Geri"}</button>
+      <div className="mb-1">
+        <PenguMascot state="idle" size={80} bubble={{ tr: "Doğru ya da yanlış yok — içinden geldiği gibi işaretle 🐧", en: "No right or wrong — answer as you feel 🐧" }} />
+      </div>
       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: `linear-gradient(135deg, ${test.color}, ${C.accent1})`, fontSize: 30 }}>{test.icon}</div>
       <h2 className="font-semibold text-lg mb-2" style={{ color: C.text }}>{L(test.name, lang)}</h2>
       <div className="flex justify-center gap-2 mb-3">
@@ -4456,8 +4471,14 @@ const TEST_ACCENTS = {
 
 const TestCatalog = ({ onSelect, onSelectSelf, ageGroup, onChangeAge }) => {
   const { lang, t } = useT();
+  const isKidCat = ageGroup?.id === "6-9";
   return (
   <div className="p-5 max-w-3xl mx-auto pb-24">
+    <div className="flex justify-center mb-3">
+      <PenguMascot state="greet" size={92} bubble={isKidCat
+        ? { tr: "Hangi oyunu deneyelim? Hepsi çok eğlenceli! 🐧", en: "Which game shall we try? They're all fun! 🐧" }
+        : { tr: "Bugün hangi testi çözelim? 🐧", en: "Which test shall we take today? 🐧" }} />
+    </div>
     <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
       <h1 className="text-xl font-semibold" style={{ color: C.text }}>{t("catalogTitle")}</h1>
       {ageGroup && (
@@ -4542,11 +4563,8 @@ const Instructions = ({ test, onStart, onBack }) => {
   return (
   <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
     <Card className="w-full max-w-sm text-center">
-      <div
-        className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3"
-        style={{ background: `linear-gradient(135deg, ${accent.color}, ${C.accent1})`, fontSize: 26 }}
-      >
-        {accent.glyph}
+      <div className="mb-2">
+        <PenguMascot state="thinking" size={88} bubble={{ tr: "Sessiz bir yer bul, odaklan — başlıyoruz! 🎯", en: "Find a quiet spot and focus — here we go! 🎯" }} />
       </div>
       <h2 className="font-semibold text-lg mb-2" style={{ color: C.text }}>{L(test.name, lang)}</h2>
       {test.age && (
@@ -5025,7 +5043,8 @@ const Processing = () => {
   const { lang } = useT();
   return (
     <div className="min-h-full flex flex-col items-center justify-center gap-4" style={{ background: C.bg }}>
-      <NovaCore size={72} />
+      <PenguMascot state="thinking" size={96} />
+      <NovaCore size={44} />
       <p className="text-sm" style={{ color: C.textMuted }}>{lang === "en" ? "Computing your results…" : "Sonuçlarınız hesaplanıyor…"}</p>
     </div>
   );
@@ -5141,6 +5160,17 @@ const Results = ({ result, onDashboard }) => {
   return (
     <div className="p-5 max-w-3xl mx-auto pb-24" style={{ position: "relative" }}>
       {result.overall >= 75 && <Confetti />}
+      <div className="flex justify-center mb-2">
+        <PenguMascot
+          state={result.overall >= 60 ? "celebrate" : "encourage"}
+          size={96}
+          bubble={result.overall >= 75
+            ? { tr: "Muhteşem bir sonuç! 🎉", en: "Amazing result! 🎉" }
+            : result.overall >= 60
+            ? { tr: "Güzel iş çıkardın! 👏", en: "Nice work! 👏" }
+            : { tr: "Her deneme seni geliştirir — devam! 💪", en: "Every attempt makes you better — keep going! 💪" }}
+        />
+      </div>
       <div className="flex items-center gap-2 mb-1">
         <Check size={18} style={{ color: C.success }} />
         <h1 className="text-lg font-semibold" style={{ color: C.text }}>{t("testCompleted")} — {result.testName}</h1>

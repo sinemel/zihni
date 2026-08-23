@@ -206,6 +206,8 @@ const GlobalMotionStyles = () => (
     @keyframes nova-wave { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(18deg); } 55% { transform: rotate(-10deg); } 80% { transform: rotate(12deg); } }
     @keyframes nova-antenna { 0%,100% { opacity: 0.55; r: 3.2; } 50% { opacity: 1; r: 4.2; } }
     @keyframes nova-spark { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-22px) scale(0.4); opacity: 0; } }
+    @keyframes core-pulse { 0%,100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 4px rgba(124,111,240,0.55)); } 50% { transform: scale(1.12) rotate(45deg); filter: drop-shadow(0 0 14px rgba(124,111,240,0.95)); } }
+    @keyframes core-orbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     @keyframes kg-grow { 0% { transform: scale(0.12); opacity: 1; } 100% { transform: scale(1); opacity: 0.12; } }
     .kg-card-hover { transition: transform 0.25s ease, box-shadow 0.25s ease; }
     .kg-card-hover:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(91,92,226,0.16), 0 4px 10px rgba(23,25,35,0.06); }
@@ -1865,6 +1867,33 @@ const KID_CATALOG = {
 };
 
 /* ============================================================
+   NOVA-CORE — Enerji Çekirdeği (yıldız amblemi)
+   Soyut marka elementi: yükleme, logo, kutlama. Her yaş için uygun.
+   ============================================================ */
+const NovaCore = ({ size = 56, spinning = true }) => (
+  <div style={{ width: size, height: size, position: "relative", display: "inline-block" }}>
+    {spinning && (
+      <svg width={size} height={size} viewBox="-30 -30 60 60" style={{ position: "absolute", inset: 0, animation: "core-orbit 3.4s linear infinite" }} aria-hidden="true">
+        <circle cx="0" cy="-24" r="2.2" fill="#7C6FF0" opacity="0.9" />
+        <circle cx="21" cy="12" r="1.7" fill="#57C9FF" opacity="0.75" />
+        <circle cx="-21" cy="12" r="1.4" fill="#EC6FD8" opacity="0.6" />
+      </svg>
+    )}
+    <svg width={size} height={size} viewBox="-30 -30 60 60" style={{ position: "absolute", inset: 0, animation: "core-pulse 1.9s ease-in-out infinite" }} aria-hidden="true">
+      <path d="M 0 -18 C 3 -6 6 -3 18 0 C 6 3 3 6 0 18 C -3 6 -6 3 -18 0 C -6 -3 -3 -6 0 -18 Z" fill="url(#coreGrad)" />
+      <circle cx="0" cy="0" r="3.4" fill="#FFFFFF" opacity="0.95" />
+      <defs>
+        <linearGradient id="coreGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#8B7DFF" />
+          <stop offset="55%" stopColor="#5B5CE2" />
+          <stop offset="100%" stopColor="#4749C4" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+);
+
+/* ============================================================
    NOVA-BOT — Nova'nın robot yoldaşı (özgün animasyonlu SVG maskot)
    Durumlar: idle · thinking · celebrate · encourage · greet
    ============================================================ */
@@ -1900,19 +1929,19 @@ const NovaBot = ({ state = "idle", size = 88, bubble = null, className = "" }) =
           </g>
         )}
         {/* gövde */}
-        <ellipse cx="0" cy="0" rx="27" ry="26" fill="#23263B" />
+        <ellipse cx="0" cy="0" rx="27" ry="26" fill="#262A47" />
         <ellipse cx="0" cy="0" rx="27" ry="26" fill="url(#novaSheen)" opacity="0.35" />
         {/* yüz ekranı */}
-        <ellipse cx="0" cy="1" rx="19" ry="16.5" fill="#0E1024" />
+        <ellipse cx="0" cy="1" rx="19" ry="16.5" fill="#12102B" />
         {/* gözler */}
         <g style={{ animation: "nova-blink 4.4s ease-in-out infinite", transformOrigin: "0 0" }}>
-          <ellipse cx="-7.5" cy="-2" rx="3.4" ry={eyeH} fill="#57C9FF" />
-          <ellipse cx="7.5" cy="-2" rx="3.4" ry={eyeH} fill="#57C9FF" />
-          <circle cx="-6.6" cy="-4" r="1" fill="#DFF6FF" />
-          <circle cx="8.4" cy="-4" r="1" fill="#DFF6FF" />
+          <ellipse cx="-7.5" cy="-2" rx="3.4" ry={eyeH} fill="#8B7DFF" />
+          <ellipse cx="7.5" cy="-2" rx="3.4" ry={eyeH} fill="#8B7DFF" />
+          <circle cx="-6.6" cy="-4" r="1" fill="#EFEBFF" />
+          <circle cx="8.4" cy="-4" r="1" fill="#EFEBFF" />
         </g>
         {/* ağız */}
-        {face && <path d={face} stroke="#57C9FF" strokeWidth="2.2" fill="none" strokeLinecap="round" />}
+        {face && <path d={face} stroke="#8B7DFF" strokeWidth="2.2" fill="none" strokeLinecap="round" />}
         {/* yanak ışıkları */}
         <circle cx="-14" cy="4" r="1.8" fill={C.primary} opacity="0.8" />
         <circle cx="14" cy="4" r="1.8" fill={C.primary} opacity="0.8" />
@@ -4831,15 +4860,15 @@ const MemoryTestRunner = ({ test, onFinish, onAbort }) => {
   );
 };
 
-const Processing = () => (
-  <div className="min-h-full flex flex-col items-center justify-center gap-3" style={{ background: C.bg }}>
-    <div
-      className="w-12 h-12 rounded-full border-4 animate-spin"
-      style={{ borderColor: C.border, borderTopColor: C.primary, borderRightColor: C.accent1, borderBottomColor: C.accent2 }}
-    />
-    <p className="text-sm" style={{ color: C.textMuted }}>Sonuçlarınız hesaplanıyor…</p>
-  </div>
-);
+const Processing = () => {
+  const { lang } = useT();
+  return (
+    <div className="min-h-full flex flex-col items-center justify-center gap-4" style={{ background: C.bg }}>
+      <NovaCore size={72} />
+      <p className="text-sm" style={{ color: C.textMuted }}>{lang === "en" ? "Computing your results…" : "Sonuçlarınız hesaplanıyor…"}</p>
+    </div>
+  );
+};
 
 /* ============================================================
    USER: TEST ABORTED (kesinti/recovery — spec md. 45)

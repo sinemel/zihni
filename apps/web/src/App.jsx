@@ -4645,6 +4645,7 @@ const TestRunner = ({ test, onFinish, onAbort }) => {
 
   const trial = trials[index];
   const [blockIntro, setBlockIntro] = useState(() => (test.type === "distractor-cpt" ? 0 : null));
+  const introShownRef = useRef(new Set(test.type === "distractor-cpt" ? [0] : []));
   const distractTimersRef = useRef([]);
   const BASE_WINDOW =
     test.type === "stroop" ? 2200 :
@@ -4657,7 +4658,8 @@ const TestRunner = ({ test, onFinish, onAbort }) => {
   useEffect(() => {
     if (index >= trials.length) return;
     // Blok arası ekranı: yeni bloğa girerken 1.6 sn tanıtım göster, sayaç durdurulur.
-    if (test.type === "distractor-cpt" && trial && trial.blockStart && blockIntro === null) {
+    if (test.type === "distractor-cpt" && trial && trial.blockStart && blockIntro === null && !introShownRef.current.has(trial.block)) {
+      introShownRef.current.add(trial.block);
       setBlockIntro(trial.block);
       return;
     }

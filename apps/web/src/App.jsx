@@ -32,6 +32,9 @@ const C = {
 
 const BRAND = "Kognita";
 
+/* Lansman kararı: planlar/abonelik kapalı — açmak için true yapın */
+const BILLING_ENABLED = false;
+
 /* ============================================================
    API İSTEMCİSİ — "değer sunucuda" bağlantı katmanı
    API erişilebilirse sunucu sonuçları kullanılır; erişilemezse
@@ -1264,7 +1267,7 @@ const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, on
         style={{ background: `linear-gradient(90deg, ${C.primary}, ${C.accent1}, ${C.accent2}, ${C.secondary})`, backgroundSize: "300% 100%" }}
       />
 
-      {plan === "FREE" && (
+      {BILLING_ENABLED && plan === "FREE" && (
         <div
           className="rounded-2xl p-5 mb-4 flex items-center justify-between gap-3 kg-gradient-anim"
           style={{ background: `linear-gradient(120deg, ${C.primary}, ${C.accent1}, ${C.accent2})`, backgroundSize: "200% 200%" }}
@@ -1473,6 +1476,7 @@ const ProfileScreen = ({ sessions, plan, onGoSubscription, onLogout, onDeleteAcc
         <MetricCard label={t("best")} value={best} tone={C.success} />
       </div>
 
+      {BILLING_ENABLED && (
       <Card className="mb-4 flex items-center justify-between" style={{ borderLeft: `3px solid ${planInfo.color}` }}>
         <div>
           <p className="text-xs" style={{ color: C.textMuted }}>{t("yourSub")}</p>
@@ -1480,6 +1484,7 @@ const ProfileScreen = ({ sessions, plan, onGoSubscription, onLogout, onDeleteAcc
         </div>
         <Button variant="ghost" onClick={onGoSubscription}>{t("seePlans")}</Button>
       </Card>
+      )}
 
       <Card className="mb-4">
         <h3 className="text-sm font-medium mb-3" style={{ color: C.text }}>{t("dataPrivacy")}</h3>
@@ -5092,7 +5097,7 @@ const TopNav = ({ role, setRole, screen, setScreen, hideDuringTest, notification
             <div className="w-7 h-7 rounded-lg" style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})` }} />
             <span className="font-semibold" style={{ color: C.text }}>{BRAND}</span>
           </div>
-          {role === "user" && planInfo && (
+          {BILLING_ENABLED && role === "user" && planInfo && (
             <button
               onClick={() => setScreen("subscription")}
               className="px-2 py-0.5 rounded-full text-xs font-semibold kg-btn-pop"
@@ -5996,7 +6001,7 @@ export default function App() {
         setSessions((s) => [...s, r]);
         addNotification(lang === "en" ? "Your test result is ready." : "Test sonucunuz oluşturuldu.");
         markActivity();
-        if (!promoShownRef.current && plan === "FREE" && sessions.length === 0) {
+        if (BILLING_ENABLED && !promoShownRef.current && plan === "FREE" && sessions.length === 0) {
           promoShownRef.current = true;
           setTimeout(() => setTrialPromo(true), 2500);
         }
@@ -6080,7 +6085,7 @@ export default function App() {
         />
       )}
 
-      {screen === "subscription" && (
+      {screen === "subscription" && BILLING_ENABLED && (
         <SubscriptionScreen
           plan={plan} setPlan={setPlan}
           setToast={setToast} addNotification={addNotification}

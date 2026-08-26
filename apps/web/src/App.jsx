@@ -32,6 +32,13 @@ const C = {
 
 const BRAND = "Zihni";
 
+/* Marka amblemi — tek yerden yönetilir; harf BRAND'in ilk karakteridir */
+const LogoMark = ({ size = 32, radius = 10, fontSize = 16 }) => (
+  <div style={{ width: size, height: size, borderRadius: radius, background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+    <span style={{ color: "#fff", fontSize, fontWeight: 700 }}>{BRAND.charAt(0)}</span>
+  </div>
+);
+
 /* Lansman kararı: planlar/abonelik kapalı — açmak için true yapın */
 const BILLING_ENABLED = false;
 
@@ -958,9 +965,7 @@ const Landing = ({ onStart, onExpert }) => {
       <nav style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(247,248,252,0.85)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${C.border}` }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div style={{ width: 32, height: 32, borderRadius: 10, background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "#fff", fontSize: 16, fontWeight: 700 }}>K</span>
-            </div>
+            <LogoMark size={32} radius={10} fontSize={16} />
             <span style={{ fontWeight: 700, fontSize: 18, color: C.text, letterSpacing: "-0.3px" }}>{BRAND}</span>
           </div>
           <div className="flex items-center gap-3">
@@ -1079,9 +1084,7 @@ const Landing = ({ onStart, onExpert }) => {
 
       <footer style={{ borderTop: `1px solid ${C.border}`, padding: "28px 24px", textAlign: "center" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 8 }}>
-          <div style={{ width: 24, height: 24, borderRadius: 7, background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>K</span>
-          </div>
+          <LogoMark size={24} radius={7} fontSize={12} />
           <span style={{ fontSize: 13, fontWeight: 600, color: C.textMuted }}>{BRAND}</span>
         </div>
         <p style={{ fontSize: 12, color: C.textMuted, margin: 0 }}>
@@ -5373,7 +5376,7 @@ const TopNav = ({ role, setRole, screen, setScreen, hideDuringTest, notification
       <div className="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => setScreen(role === "user" ? "dashboard" : role === "expert" ? "expert-dashboard" : "admin-dashboard")}>
-            <div className="w-7 h-7 rounded-lg" style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})` }} />
+            <LogoMark size={28} radius={8} fontSize={13} />
             <span className="font-semibold" style={{ color: C.text }}>{BRAND}</span>
           </div>
           {BILLING_ENABLED && role === "user" && planInfo && (
@@ -5808,7 +5811,7 @@ const ReportPreview = ({ client, report, result, onClose }) => {
         <div className="kg-print-area rounded-2xl p-8" style={{ background: "#fff" }}>
           <div className="flex items-center justify-between mb-8 pb-4 border-b" style={{ borderColor: C.border }}>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg" style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})` }} />
+              <LogoMark size={32} radius={10} fontSize={15} />
               <span className="font-semibold text-lg" style={{ color: C.text }}>{BRAND}</span>
             </div>
             <span className="text-xs" style={{ color: C.textMuted }}>{new Date(report.date).toLocaleDateString("tr-TR")}</span>
@@ -6116,7 +6119,7 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
             <div className="kg-print-area rounded-2xl p-6" style={{ background: "#fff" }}>
               <div className="flex items-center justify-between mb-5 pb-4 border-b" style={{ borderColor: C.border }}>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg" style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})` }} />
+                  <LogoMark size={32} radius={10} fontSize={15} />
                   <span className="font-semibold text-lg" style={{ color: C.text }}>{BRAND}</span>
                 </div>
                 <span className="text-xs" style={{ color: C.textMuted }}>{new Date().toLocaleDateString("tr-TR")}</span>

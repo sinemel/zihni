@@ -1,4 +1,4 @@
-// Kognita — prisma/seed.ts
+// Zihni — prisma/seed.ts
 // Çalıştırma: npx prisma db seed  (veya package.json'daki "prisma.seed" script'i üzerinden)
 // Gerekli paketler: bcryptjs, ts-node (veya tsx)
 
@@ -69,7 +69,7 @@ async function main() {
       email: "admin@example.com",
       passwordHash,
       role: Role.ADMIN,
-      profile: { create: { firstName: "Admin", lastName: "Kognita" } },
+      profile: { create: { firstName: "Admin", lastName: "Zihni" } },
     },
   });
 

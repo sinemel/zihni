@@ -1,4 +1,4 @@
-# Kognita (çalışma adı)
+# Zihni
 
 Türkçe bilişsel performans + hızlı okuma platformu. **Klinik tanı koymaz; sonuçlar klinik değerlendirmenin yerine geçmez** — bu, ürünün her katmanında değişmez kuraldır.
 

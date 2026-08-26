@@ -30,7 +30,7 @@ const C = {
   border: "#E5E7EB",
 };
 
-const BRAND = "Kognita";
+const BRAND = "Zihni";
 
 /* Lansman kararı: planlar/abonelik kapalı — açmak için true yapın */
 const BILLING_ENABLED = false;
@@ -6149,7 +6149,7 @@ const ADMIN_USERS = [
   { id: "u5", name: "Canan Öz", email: "canan.oz@mail.com", role: "EXPERT", plan: "EXPERT", joined: "2026-05-22", active: true },
   { id: "u6", name: "Mert Kaya", email: "mert.kaya@mail.com", role: "USER", plan: "PRO", joined: "2026-07-12", active: true },
   { id: "u7", name: "Zeynep Aksoy", email: "zeynep.aksoy@mail.com", role: "USER", plan: "FREE", joined: "2026-08-01", active: true },
-  { id: "u8", name: "Admin Kognita", email: "admin@example.com", role: "ADMIN", plan: "ENTERPRISE", joined: "2026-05-01", active: true },
+  { id: "u8", name: "Admin Zihni", email: "admin@example.com", role: "ADMIN", plan: "ENTERPRISE", joined: "2026-05-01", active: true },
 ];
 const ROLE_COLORS = { USER: "#5B5CE2", EXPERT: "#8B5CF6", ADMIN: "#EF4444" };
 const ROLE_LABELS = { USER: "Kullanıcı", EXPERT: "Uzman", ADMIN: "Admin" };

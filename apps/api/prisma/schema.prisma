@@ -1,4 +1,4 @@
-// Kognita — starter Prisma schema
+// Zihni — starter Prisma schema
 // Place at prisma/schema.prisma in the monorepo. Refine field types/constraints as needed.
 
 generator client {

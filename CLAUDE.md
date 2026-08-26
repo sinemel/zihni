@@ -1,4 +1,4 @@
-# Kognita — Bilişsel Performans Değerlendirme Platformu
+# Zihni — Bilişsel Performans Değerlendirme Platformu
 
 Bu dosya Claude Code'un proje bağlamını her oturumda otomatik okuması için hazırlanmıştır.
 Kod yazmadan önce bu dosyayı ve varsa `kognita-prototype.jsx` dosyasını incele.
@@ -54,7 +54,7 @@ Warning:    #F59E0B
 Danger:     #EF4444
 ```
 Kart: 16px radius, soft shadow, bol whitespace. Font: Inter veya benzeri modern sans-serif.
-Marka adı: **Kognita** — başka bir ürünün adı/logosu/birebir tasarımı kopyalanmaz.
+Marka adı: **Zihni** — başka bir ürünün adı/logosu/birebir tasarımı kopyalanmaz.
 
 ## Veritabanı Tabloları (Prisma şeması olarak kurulacak)
 

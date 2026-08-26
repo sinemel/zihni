@@ -5489,23 +5489,20 @@ const TopNav = ({ role, setRole, screen, setScreen, hideDuringTest, notification
    Format esini: batarya raporu düzeni (yatay çubuk + düzey tablosu) —
    içerik %100 kendi testlerimiz. Klinik dil yok; uyarı metni zorunlu.
    ============================================================ */
-const ComprehensiveReport = ({ sessions, trainings = [], currentUser, onBack }) => {
+const BatteryReportBody = ({ sessions, trainings = [] }) => {
   const { lang } = useT();
 
-  // Her testin EN SON oturumu
   const latestByTest = useMemo(() => {
     const map = new Map();
     [...sessions].sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((se) => map.set(se.testId, se));
     return [...map.values()];
   }, [sessions]);
 
-  // Okuma hızı (varsa) — reading-test egzersizinden son wpm
   const lastReading = useMemo(() => {
     const r = [...trainings].reverse().find((t) => t.exerciseId === "reading-test" && t.wpm);
     return r || null;
   }, [trainings]);
 
-  // Bilişsel alan özeti: tüm oturumlardaki alt skorların ortalaması
   const domainAvgs = useMemo(() => {
     const acc = {};
     latestByTest.forEach((se) => {
@@ -5522,36 +5519,9 @@ const ComprehensiveReport = ({ sessions, trainings = [], currentUser, onBack }) 
   }, [latestByTest, lang]);
 
   const chartData = latestByTest.map((se) => ({ name: se.testName, value: se.overall })).reverse();
-  const today = new Date().toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", { day: "numeric", month: "long", year: "numeric" });
-
-  if (latestByTest.length === 0) {
-    return (
-      <div className="p-6 max-w-2xl mx-auto text-center">
-        <button onClick={onBack} className="text-xs flex items-center gap-1 mb-4" style={{ color: C.textMuted }}><ArrowLeft size={14} /> {lang === "en" ? "Back" : "Geri"}</button>
-        <PenguMascot state="encourage" size={96} bubble={{ tr: "Rapor için önce en az bir test tamamlamalısın 🐧", en: "Complete at least one test first for a report 🐧" }} />
-      </div>
-    );
-  }
 
   return (
-    <div className="p-5 max-w-3xl mx-auto pb-24 kg-report-print">
-      <div className="flex items-center justify-between mb-4 kg-no-print">
-        <button onClick={onBack} className="text-xs flex items-center gap-1" style={{ color: C.textMuted }}><ArrowLeft size={14} /> {lang === "en" ? "Back" : "Geri"}</button>
-        <Button onClick={() => window.print()} className="flex items-center gap-1.5"><Download size={14} /> {lang === "en" ? "Print / PDF" : "Yazdır / PDF"}</Button>
-      </div>
-
-      {/* Başlık */}
-      <Card className="mb-4 text-center">
-        <h1 className="text-lg font-bold" style={{ color: C.text }}>
-          {lang === "en" ? "Comprehensive Evaluation Report" : "Kapsamlı Değerlendirme Raporu"}
-        </h1>
-        <p className="text-xs mt-1" style={{ color: C.textMuted }}>
-          {currentUser?.name || "—"} · {today} · {latestByTest.length} {lang === "en" ? "tests" : "test"}
-          {lastReading ? ` · ${lastReading.wpm} ${lang === "en" ? "WPM reading" : "KDS okuma"}` : ""}
-        </p>
-      </Card>
-
-      {/* Yatay çubuk grafik */}
+    <>
       <Card className="mb-4">
         <h3 className="text-sm font-medium mb-3" style={{ color: C.text }}>
           {lang === "en" ? "Applied Tests — Results" : "Uygulanan Testlerin Değerlendirme Sonuçları"}
@@ -5571,7 +5541,6 @@ const ComprehensiveReport = ({ sessions, trainings = [], currentUser, onBack }) 
         </div>
       </Card>
 
-      {/* Düzey tablosu */}
       <Card className="mb-4" style={{ padding: 0, overflow: "hidden" }}>
         <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
           <thead>
@@ -5605,7 +5574,6 @@ const ComprehensiveReport = ({ sessions, trainings = [], currentUser, onBack }) 
         </table>
       </Card>
 
-      {/* Bilişsel alan özeti */}
       <Card className="mb-4">
         <h3 className="text-sm font-medium mb-3" style={{ color: C.text }}>
           {lang === "en" ? "Cognitive Domain Summary" : "Bilişsel Alan Özeti"}
@@ -5626,7 +5594,6 @@ const ComprehensiveReport = ({ sessions, trainings = [], currentUser, onBack }) 
         </div>
       </Card>
 
-      {/* Düzey açıklaması */}
       <Card className="mb-4">
         <div className="flex flex-wrap gap-2">
           {LEVEL_BANDS.map((b, i) => (
@@ -5637,12 +5604,48 @@ const ComprehensiveReport = ({ sessions, trainings = [], currentUser, onBack }) 
         </div>
       </Card>
 
-      {/* Zorunlu klinik uyarı */}
       <p className="text-[10px] leading-relaxed" style={{ color: C.textMuted }}>
         {lang === "en"
           ? "This report is a self-awareness tool. It does not constitute a medical or psychological diagnosis and does not replace clinical evaluation. Levels are relative indicators computed from in-app performance; consult a qualified professional for any concern."
           : "Bu rapor bir öz-farkındalık aracıdır. Tıbbi veya psikolojik tanı niteliği taşımaz; klinik değerlendirmenin yerine geçmez. Düzeyler, uygulama içi performanstan hesaplanan göreli göstergelerdir; herhangi bir endişeniz için uzman bir profesyonele başvurunuz."}
       </p>
+    </>
+  );
+};
+
+const ComprehensiveReport = ({ sessions, trainings = [], currentUser, onBack }) => {
+  const { lang } = useT();
+  const testCount = new Set(sessions.map((se) => se.testId)).size;
+  const lastReading = [...trainings].reverse().find((t) => t.exerciseId === "reading-test" && t.wpm) || null;
+  const today = new Date().toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", { day: "numeric", month: "long", year: "numeric" });
+
+  if (sessions.length === 0) {
+    return (
+      <div className="p-6 max-w-2xl mx-auto text-center">
+        <button onClick={onBack} className="text-xs flex items-center gap-1 mb-4" style={{ color: C.textMuted }}><ArrowLeft size={14} /> {lang === "en" ? "Back" : "Geri"}</button>
+        <PenguMascot state="encourage" size={96} bubble={{ tr: "Rapor için önce en az bir test tamamlamalısın 🐧", en: "Complete at least one test first for a report 🐧" }} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-5 max-w-3xl mx-auto pb-24 kg-report-print">
+      <div className="flex items-center justify-between mb-4 kg-no-print">
+        <button onClick={onBack} className="text-xs flex items-center gap-1" style={{ color: C.textMuted }}><ArrowLeft size={14} /> {lang === "en" ? "Back" : "Geri"}</button>
+        <Button onClick={() => window.print()} className="flex items-center gap-1.5"><Download size={14} /> {lang === "en" ? "Print / PDF" : "Yazdır / PDF"}</Button>
+      </div>
+
+      <Card className="mb-4 text-center">
+        <h1 className="text-lg font-bold" style={{ color: C.text }}>
+          {lang === "en" ? "Comprehensive Evaluation Report" : "Kapsamlı Değerlendirme Raporu"}
+        </h1>
+        <p className="text-xs mt-1" style={{ color: C.textMuted }}>
+          {currentUser?.name || "—"} · {today} · {testCount} {lang === "en" ? "tests" : "test"}
+          {lastReading ? ` · ${lastReading.wpm} ${lang === "en" ? "WPM reading" : "KDS okuma"}` : ""}
+        </p>
+      </Card>
+
+      <BatteryReportBody sessions={sessions} trainings={trainings} />
     </div>
   );
 };
@@ -5970,6 +5973,27 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
     ? [client.score - 12, client.score - 5, client.score].map((v) => ({ overall: clamp(v) }))
     : [];
 
+  const [batteryOpen, setBatteryOpen] = useState(false);
+  // Demo batarya: danışanın skoru etrafında deterministik dağılım (id tohumlu).
+  // ÜRETİM: GET /sessions?userId=<client> ile gerçek oturumlar gelecek.
+  const clientBattery = useMemo(() => {
+    if (client.score == null) return [];
+    const seed = [...String(client.id)].reduce((a, c) => a + c.charCodeAt(0), 0);
+    return TEST_CATALOG.map((t, i) => {
+      const wobble = (((seed * (i + 3)) % 29) - 14); // -14..+14 deterministik
+      const ov = clamp(client.score + wobble);
+      return {
+        id: `demo-${client.id}-${t.id}`,
+        testId: t.id,
+        testName: L(t.name, "tr"),
+        overall: ov,
+        subscores: { attention: clamp(ov + 4), speed: clamp(ov - 5), impulseControl: clamp(ov - 2), consistency: clamp(ov + 2), accuracy: clamp(ov + 1) },
+        stats: { total: 16, correct: Math.round((16 * ov) / 100), omissions: 2, commissions: 1, meanRT: 430, sdRT: 65 },
+        date: new Date(Date.now() - i * 86400000).toISOString(),
+      };
+    });
+  }, [client.id, client.score]);
+
   return (
     <div className="p-5 max-w-3xl mx-auto pb-24">
       <button onClick={onBack} className="text-xs flex items-center gap-1 mb-3" style={{ color: C.textMuted }}><ArrowLeft size={14} />Danışanlara Dön</button>
@@ -6049,6 +6073,9 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
         <Card>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-medium" style={{ color: C.text }}>Raporlar</h3>
+            <Button onClick={() => setBatteryOpen(true)} disabled={client.score == null} className="mr-2">
+              <BarChart3 size={14} className="inline mr-1" />Kapsamlı Batarya Raporu
+            </Button>
             <Button variant="secondary" onClick={generateReport} disabled={client.score == null}>
               <FileText size={14} className="inline mr-1" />Yeni Rapor Oluştur
             </Button>
@@ -6077,6 +6104,35 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
       )}
       {reportPreview && (
         <ReportPreview client={client} report={reportPreview} result={mockResult} onClose={() => setReportPreview(null)} />
+      )}
+
+      {batteryOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: "rgba(23,25,35,0.6)" }}>
+          <div className="max-w-3xl mx-auto my-6 px-4">
+            <div className="flex justify-end gap-2 mb-3 kg-no-print">
+              <Button variant="ghost" onClick={() => setBatteryOpen(false)}>Kapat</Button>
+              <Button onClick={() => window.print()}>Yazdır / PDF Olarak Kaydet</Button>
+            </div>
+            <div className="kg-print-area rounded-2xl p-6" style={{ background: "#fff" }}>
+              <div className="flex items-center justify-between mb-5 pb-4 border-b" style={{ borderColor: C.border }}>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg" style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.accent1})` }} />
+                  <span className="font-semibold text-lg" style={{ color: C.text }}>{BRAND}</span>
+                </div>
+                <span className="text-xs" style={{ color: C.textMuted }}>{new Date().toLocaleDateString("tr-TR")}</span>
+              </div>
+              <h1 className="text-lg font-bold mb-1" style={{ color: C.text }}>Kapsamlı Batarya Raporu</h1>
+              <div className="grid grid-cols-2 gap-4 mb-5 text-sm">
+                <div><span style={{ color: C.textMuted }}>Danışan</span><p className="font-medium" style={{ color: C.text }}>{client.name}</p></div>
+                <div><span style={{ color: C.textMuted }}>Uygulanan Test</span><p className="font-medium" style={{ color: C.text }}>{clientBattery.length}</p></div>
+              </div>
+              <BatteryReportBody sessions={clientBattery} trainings={[]} />
+              <p className="text-[10px] mt-3 italic" style={{ color: C.textMuted }}>
+                Demo veri — üretimde danışanın gerçek oturumları API'den yüklenecektir.
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

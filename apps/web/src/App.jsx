@@ -416,6 +416,17 @@ const TEST_CATALOG = [
   },
 ];
 
+/* Kapsamlı rapor düzey bantları — klinik dil bilinçli olarak kullanılmaz:
+   "RİSKLİ" yerine "Öncelikli Gelişim Alanı" (aynı bilgi, damgasız) */
+const LEVEL_BANDS = [
+  { min: 85, label: { tr: "Çok İyi", en: "Very Good" }, color: "#22C55E", bg: "#22C55E22" },
+  { min: 70, label: { tr: "Ortalama Üstü", en: "Above Average" }, color: "#0EA5E9", bg: "#0EA5E922" },
+  { min: 55, label: { tr: "Ortalama", en: "Average" }, color: "#6B7280", bg: "#6B728022" },
+  { min: 40, label: { tr: "Gelişime Açık", en: "Developing" }, color: "#F59E0B", bg: "#F59E0B22" },
+  { min: 0,  label: { tr: "Öncelikli Gelişim Alanı", en: "Priority Development Area" }, color: "#F97316", bg: "#F9731622" },
+];
+const bandFor = (score) => LEVEL_BANDS.find((b) => score >= b.min) || LEVEL_BANDS[LEVEL_BANDS.length - 1];
+
 const SUBSCORE_LABELS = {
   attention: { tr: "Dikkat", en: "Attention" },
   speed: { tr: "Hız", en: "Speed" },
@@ -1491,13 +1502,20 @@ const UserDashboard = ({ sessions, trainings = [], plan, streak, onGoCatalog, on
 /* ============================================================
    USER: RESULTS HISTORY (ayrı Sonuçlar ekranı)
    ============================================================ */
-const ResultsHistory = ({ sessions, selfResults = [], onOpenResult, onGoCatalog }) => {
+const ResultsHistory = ({ sessions, selfResults = [], onOpenResult, onGoCatalog, onOpenReport }) => {
   const { lang, t } = useT();
   const avg = sessions.length ? Math.round(mean(sessions.map((s) => s.overall))) : 0;
   const best = sessions.length ? Math.max(...sessions.map((s) => s.overall)) : 0;
   return (
     <div className="p-5 max-w-3xl mx-auto pb-24">
-      <h1 className="text-xl font-semibold mb-4" style={{ color: C.text }}>{t("myResults")}</h1>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <h1 className="text-xl font-semibold" style={{ color: C.text }}>{t("myResults")}</h1>
+        {sessions.length > 0 && onOpenReport && (
+          <Button onClick={onOpenReport} className="flex items-center gap-1.5">
+            <FileText size={14} /> {lang === "en" ? "Comprehensive Report" : "Kapsamlı Rapor"}
+          </Button>
+        )}
+      </div>
       {sessions.length === 0 ? (
         <Card className="text-center py-10">
           <p style={{ color: C.textMuted }}>{t("noTestsYet")}</p>
@@ -5466,6 +5484,169 @@ const TopNav = ({ role, setRole, screen, setScreen, hideDuringTest, notification
   );
 };
 
+/* ============================================================
+   KAPSAMLI DEĞERLENDİRME RAPORU
+   Format esini: batarya raporu düzeni (yatay çubuk + düzey tablosu) —
+   içerik %100 kendi testlerimiz. Klinik dil yok; uyarı metni zorunlu.
+   ============================================================ */
+const ComprehensiveReport = ({ sessions, trainings = [], currentUser, onBack }) => {
+  const { lang } = useT();
+
+  // Her testin EN SON oturumu
+  const latestByTest = useMemo(() => {
+    const map = new Map();
+    [...sessions].sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((se) => map.set(se.testId, se));
+    return [...map.values()];
+  }, [sessions]);
+
+  // Okuma hızı (varsa) — reading-test egzersizinden son wpm
+  const lastReading = useMemo(() => {
+    const r = [...trainings].reverse().find((t) => t.exerciseId === "reading-test" && t.wpm);
+    return r || null;
+  }, [trainings]);
+
+  // Bilişsel alan özeti: tüm oturumlardaki alt skorların ortalaması
+  const domainAvgs = useMemo(() => {
+    const acc = {};
+    latestByTest.forEach((se) => {
+      Object.entries(se.subscores || {}).forEach(([k, v]) => {
+        if (!acc[k]) acc[k] = [];
+        acc[k].push(v);
+      });
+    });
+    return Object.entries(acc).map(([k, arr]) => ({
+      key: k,
+      label: SUBSCORE_LABELS[k] ? L(SUBSCORE_LABELS[k], lang) : k,
+      value: Math.round(arr.reduce((a, b) => a + b, 0) / arr.length),
+    })).sort((a, b) => b.value - a.value);
+  }, [latestByTest, lang]);
+
+  const chartData = latestByTest.map((se) => ({ name: se.testName, value: se.overall })).reverse();
+  const today = new Date().toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", { day: "numeric", month: "long", year: "numeric" });
+
+  if (latestByTest.length === 0) {
+    return (
+      <div className="p-6 max-w-2xl mx-auto text-center">
+        <button onClick={onBack} className="text-xs flex items-center gap-1 mb-4" style={{ color: C.textMuted }}><ArrowLeft size={14} /> {lang === "en" ? "Back" : "Geri"}</button>
+        <PenguMascot state="encourage" size={96} bubble={{ tr: "Rapor için önce en az bir test tamamlamalısın 🐧", en: "Complete at least one test first for a report 🐧" }} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-5 max-w-3xl mx-auto pb-24 kg-report-print">
+      <div className="flex items-center justify-between mb-4 kg-no-print">
+        <button onClick={onBack} className="text-xs flex items-center gap-1" style={{ color: C.textMuted }}><ArrowLeft size={14} /> {lang === "en" ? "Back" : "Geri"}</button>
+        <Button onClick={() => window.print()} className="flex items-center gap-1.5"><Download size={14} /> {lang === "en" ? "Print / PDF" : "Yazdır / PDF"}</Button>
+      </div>
+
+      {/* Başlık */}
+      <Card className="mb-4 text-center">
+        <h1 className="text-lg font-bold" style={{ color: C.text }}>
+          {lang === "en" ? "Comprehensive Evaluation Report" : "Kapsamlı Değerlendirme Raporu"}
+        </h1>
+        <p className="text-xs mt-1" style={{ color: C.textMuted }}>
+          {currentUser?.name || "—"} · {today} · {latestByTest.length} {lang === "en" ? "tests" : "test"}
+          {lastReading ? ` · ${lastReading.wpm} ${lang === "en" ? "WPM reading" : "KDS okuma"}` : ""}
+        </p>
+      </Card>
+
+      {/* Yatay çubuk grafik */}
+      <Card className="mb-4">
+        <h3 className="text-sm font-medium mb-3" style={{ color: C.text }}>
+          {lang === "en" ? "Applied Tests — Results" : "Uygulanan Testlerin Değerlendirme Sonuçları"}
+        </h3>
+        <div style={{ width: "100%", height: Math.max(180, chartData.length * 44) }}>
+          <ResponsiveContainer>
+            <BarChart data={chartData} layout="vertical" margin={{ left: 8, right: 32, top: 4, bottom: 4 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={C.border} />
+              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: C.textMuted }} />
+              <YAxis type="category" dataKey="name" width={150} tick={{ fontSize: 10, fill: C.text }} />
+              <Tooltip />
+              <Bar dataKey="value" radius={[0, 6, 6, 0]} label={{ position: "right", fontSize: 11, fill: C.text }}>
+                {chartData.map((d, i) => <Cell key={i} fill={bandFor(d.value).color} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Düzey tablosu */}
+      <Card className="mb-4" style={{ padding: 0, overflow: "hidden" }}>
+        <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: C.bg }}>
+              {[{ tr: "TEST", en: "TEST" }, { tr: "DÜZEY", en: "LEVEL" }, { tr: "PUAN", en: "SCORE" }].map((h, i) => (
+                <th key={i} className="text-left px-4 py-2.5 font-semibold" style={{ color: C.textMuted, borderBottom: `1.5px solid ${C.border}` }}>{L(h, lang)}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {latestByTest.map((se) => {
+              const band = bandFor(se.overall);
+              return (
+                <tr key={se.testId}>
+                  <td className="px-4 py-2.5" style={{ color: C.text, borderBottom: `1px solid ${C.border}` }}>{se.testName}</td>
+                  <td className="px-4 py-2.5 font-medium" style={{ color: band.color, borderBottom: `1px solid ${C.border}` }}>{L(band.label, lang)}</td>
+                  <td className="px-4 py-2.5" style={{ borderBottom: `1px solid ${C.border}` }}>
+                    <span className="px-2.5 py-1 rounded-md font-bold" style={{ background: band.bg, color: band.color }}>{se.overall}</span>
+                  </td>
+                </tr>
+              );
+            })}
+            {lastReading && (
+              <tr>
+                <td className="px-4 py-2.5" style={{ color: C.text }}>{lang === "en" ? "Reading Speed" : "Okuma Hızı"}</td>
+                <td className="px-4 py-2.5 font-medium" style={{ color: C.primary }}>{lang === "en" ? "Measured" : "Ölçüldü"}</td>
+                <td className="px-4 py-2.5"><span className="px-2.5 py-1 rounded-md font-bold" style={{ background: `${C.primary}22`, color: C.primary }}>{lastReading.wpm} {lang === "en" ? "WPM" : "KDS"}</span></td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </Card>
+
+      {/* Bilişsel alan özeti */}
+      <Card className="mb-4">
+        <h3 className="text-sm font-medium mb-3" style={{ color: C.text }}>
+          {lang === "en" ? "Cognitive Domain Summary" : "Bilişsel Alan Özeti"}
+        </h3>
+        <div className="flex flex-col gap-2.5">
+          {domainAvgs.map((d) => {
+            const band = bandFor(d.value);
+            return (
+              <div key={d.key} className="flex items-center gap-3">
+                <span className="text-xs w-32 shrink-0" style={{ color: C.text }}>{d.label}</span>
+                <div className="flex-1 h-2.5 rounded-full" style={{ background: C.bg }}>
+                  <div className="h-2.5 rounded-full" style={{ width: `${d.value}%`, background: band.color, transition: "width 0.6s ease" }} />
+                </div>
+                <span className="text-xs font-semibold w-8 text-right" style={{ color: band.color }}>{d.value}</span>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* Düzey açıklaması */}
+      <Card className="mb-4">
+        <div className="flex flex-wrap gap-2">
+          {LEVEL_BANDS.map((b, i) => (
+            <span key={i} className="px-2.5 py-1 rounded-md text-[10px] font-medium" style={{ background: b.bg, color: b.color }}>
+              {b.min}+ · {L(b.label, lang)}
+            </span>
+          ))}
+        </div>
+      </Card>
+
+      {/* Zorunlu klinik uyarı */}
+      <p className="text-[10px] leading-relaxed" style={{ color: C.textMuted }}>
+        {lang === "en"
+          ? "This report is a self-awareness tool. It does not constitute a medical or psychological diagnosis and does not replace clinical evaluation. Levels are relative indicators computed from in-app performance; consult a qualified professional for any concern."
+          : "Bu rapor bir öz-farkındalık aracıdır. Tıbbi veya psikolojik tanı niteliği taşımaz; klinik değerlendirmenin yerine geçmez. Düzeyler, uygulama içi performanstan hesaplanan göreli göstergelerdir; herhangi bir endişeniz için uzman bir profesyonele başvurunuz."}
+      </p>
+    </div>
+  );
+};
+
 const BottomNav = ({ screen, setScreen }) => {
   const { t } = useT();
   return (
@@ -6333,6 +6514,16 @@ export default function App() {
           selfResults={selfResults}
           onGoCatalog={() => setScreen("catalog")}
           onOpenResult={(s) => { setResult(s); setScreen("results"); }}
+          onOpenReport={() => setScreen("full-report")}
+        />
+      )}
+
+      {screen === "full-report" && (
+        <ComprehensiveReport
+          sessions={sessions}
+          trainings={trainings}
+          currentUser={currentUser}
+          onBack={() => setScreen("history")}
         />
       )}
 

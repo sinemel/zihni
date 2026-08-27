@@ -176,8 +176,15 @@ const LegalModal = ({ doc = "disclosure", onClose }) => {
   );
 };
 
-/* Demo kullanıcılar — üretimde JWT/Supabase Auth ile değişir */
-let MOCK_USERS = [
+/* Üretim tespiti: Next.js/webpack build sırasında process.env.NODE_ENV'i metin
+   olarak değiştirip ölü kod elemesi yapar — üretim paketinde bu blok tamamen silinir.
+   typeof koruması, build'siz tarayıcı önizlemesinde ("process tanımsız") hata vermeden
+   IS_PROD=false sonucu üretir, geliştirme/demo deneyimi bozulmaz. */
+const IS_PROD = (typeof process !== "undefined" && process.env && process.env.NODE_ENV === "production");
+
+/* Demo kullanıcılar — yalnızca geliştirme/demo ortamında var olur.
+   Üretimde: gerçek kimlik doğrulama zorunludur, sahte hesap girişi mümkün değildir. */
+let MOCK_USERS = IS_PROD ? [] : [
   { email: "user@demo.com",   password: "Demo123!", role: "user",   name: "Sinem Kullanıcı" },
   { email: "expert@demo.com", password: "Demo123!", role: "expert", name: "Dr. Ayşe Uzman" },
   { email: "admin@demo.com",  password: "Demo123!", role: "admin",  name: "Admin" },
@@ -1212,7 +1219,7 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
             <Button variant="ghost" className="flex-1" onClick={handleSubmit}>Google</Button>
             <Button variant="ghost" className="flex-1" onClick={handleSubmit}>Apple</Button>
           </div>
-          {mode === "login" && (
+          {mode === "login" && !IS_PROD && (
             <p className="text-xs text-center mt-1" style={{ color: C.textMuted }}>
               {lang === "en" ? "Offline trial: user / expert / admin @demo.com · Demo123!" : "Çevrimdışı deneme: user / expert / admin @demo.com · Demo123!"}
             </p>
@@ -4325,6 +4332,20 @@ const SelfTestRunner = ({ test, onExit }) => {
     return { sum, band, pctInRange };
   };
 
+  // Sunucudan gelen ham sonucu, yerel computeOutcome ile AYNI şekle dönüştürür
+  // (render kodu tek bir şekil bekler; kaynak API veya yerel fark etmez)
+  const hydrateOutcome = (raw) => {
+    if (!raw) return null;
+    if (test.type === "binary") return { sides: raw.sides };
+    if (test.type === "quiz") return { correct: raw.correct, wrong: raw.wrong, acc: raw.acc };
+    if (test.type === "likert-dims") {
+      const balanced = lang === "en" ? "You are at a balanced level in this dimension." : "Bu boyutta dengeli bir düzeydesiniz.";
+      return { dims: raw.dims.map((d) => ({ key: d.key, label: L(d.label, lang), pct: d.pct, blurb: d.blurb ? L(d.blurb, lang) : balanced })) };
+    }
+    const pctInRange = Math.round(((raw.sum - total) / (total * 4)) * 100);
+    return { sum: raw.sum, band: raw.band, pctInRange };
+  };
+
   const answer = (v) => {
     const na = [...answers];
     na[qi] = v;
@@ -4332,10 +4353,26 @@ const SelfTestRunner = ({ test, onExit }) => {
     if (qi + 1 < total) {
       setTimeout(() => setQi(qi + 1), 180);
     } else {
-      setOutcome(computeOutcome(na));
-      setPhase("result");
+      setPhase("grading");
+      (async () => {
+        // Değerlendirme mantığı (bant eşikleri, doğru cevaplar) öncelikle sunucuda çalışır.
+        // API erişilemezse yerel hesaplama devam eder — çevrimdışı sürekliliği bozmaz.
+        const server = await api.submitSelfTest(test.id, na);
+        const hydrated = server && server.outcome ? hydrateOutcome(server.outcome) : null;
+        setOutcome(hydrated || computeOutcome(na));
+        setPhase("result");
+      })();
     }
   };
+
+  if (phase === "grading") {
+    return (
+      <div className="min-h-full flex flex-col items-center justify-center gap-3" style={{ background: C.bg }}>
+        <NovaCore size={64} />
+        <p className="text-sm" style={{ color: C.textMuted }}>{lang === "en" ? "Evaluating your answers…" : "Yanıtlarınız değerlendiriliyor…"}</p>
+      </div>
+    );
+  }
 
   if (phase === "result" && outcome) {
     const summaryText =
@@ -6716,7 +6753,8 @@ export default function App() {
           test={activeSelfTest}
           onExit={(summary) => {
             if (summary && summary.id) {
-              if (summary.answers) api.submitSelfTest(summary.testId, summary.answers); // fire-and-forget
+              // Not: skorlama artık SelfTestRunner içinde, sonuç ekranı gösterilmeden ÖNCE
+              // sunucuya gönderilip bekleniyor — burada tekrar göndermeye gerek yok.
               setSelfResults((prev) => [...prev, summary]);
               addNotification(lang === "en" ? "Your self-assessment result was saved." : "Öz değerlendirme sonucunuz kaydedildi.");
             }

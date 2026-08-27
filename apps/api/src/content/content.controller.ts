@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard, CurrentUser } from '../auth/auth.guards';
 import { ContentService } from './content.service';
 
@@ -9,6 +10,8 @@ const asLang = (v?: string): 'tr' | 'en' => (v === 'en' ? 'en' : 'tr');
 export class ContentController {
   constructor(private readonly content: ContentService) {}
 
+  /* Görev 5a — metin kütüphanesi kazıma freni: IP başına dakikada 10 listeleme */
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @Get('texts')
   listTexts(@Query('lang') lang?: string, @Query('lib') lib?: string) {
     return this.content.listTexts(asLang(lang), lib);

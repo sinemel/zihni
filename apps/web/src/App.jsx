@@ -128,6 +128,35 @@ const LEGAL_TEXTS = {
            en: "Requests may be sent to [DPO E-MAIL] or in writing to [ADDRESS]. Applications are resolved free of charge within 30 days at the latest." } },
     ],
   },
+  terms: {
+    title: { tr: "Kullanım Şartları", en: "Terms of Use" },
+    sections: [
+      { h: { tr: "1. Taraflar ve Kabul", en: "1. Parties & Acceptance" },
+        p: { tr: "İşbu Kullanım Şartları, [ŞİRKET UNVANI] (\"Zihni\", \"Platform\") ile Platform'u kullanan kişi (\"Kullanıcı\") arasındadır. Kayıt olarak veya Platform'u kullanarak bu şartları kabul etmiş sayılırsınız.",
+           en: "These Terms are between [COMPANY NAME] (\"Zihni\", \"Platform\") and the person using the Platform (\"User\"). By registering or using the Platform you are deemed to accept these Terms." } },
+      { h: { tr: "2. Hizmetin Niteliği", en: "2. Nature of the Service" },
+        p: { tr: "Zihni; bilişsel performans görevleri, öz değerlendirmeler ve zihinsel egzersizler sunan klinik olmayan bir öz-farkındalık platformudur. Platform tıbbi veya psikolojik tanı koymaz; sonuçlar klinik değerlendirmenin yerine geçmez ve tedavi kararlarına tek başına dayanak yapılamaz.",
+           en: "Zihni is a non-clinical self-awareness platform offering cognitive performance tasks, self-assessments and mental exercises. The Platform does not provide medical or psychological diagnosis; results do not replace clinical evaluation and must not be the sole basis for treatment decisions." } },
+      { h: { tr: "3. Hesap ve Güvenlik", en: "3. Account & Security" },
+        p: { tr: "Hesap bilgilerinizin gizliliğinden ve hesabınız üzerinden yapılan işlemlerden siz sorumlusunuz. Hesap bilgilerinin üçüncü kişilerle paylaşılması ve bir hesabın birden fazla kişi tarafından kullanılması yasaktır.",
+           en: "You are responsible for keeping your credentials confidential and for all activity under your account. Sharing credentials with third parties or using one account by multiple people is prohibited." } },
+      { h: { tr: "4. Yasaklı Kullanımlar — Tersine Mühendislik ve Veri Kazıma", en: "4. Prohibited Uses — Reverse Engineering & Scraping" },
+        p: { tr: "Aşağıdakiler açıkça YASAKTIR: (a) Uygulamanın, API'nin veya herhangi bir bileşenin kaynak koduna dönüştürülmesi (decompile), tersine mühendisliğe tabi tutulması, parçalarına ayrılması; (b) test içeriklerinin, soru bankalarının, değerlendirme yaklaşımlarının, yorum metinlerinin veya metin kütüphanesinin manuel ya da otomatik yollarla (kazıma/scraping, bot, örümcek, toplu indirme) çıkarılması, kopyalanması, arşivlenmesi veya türev çalışmalarda kullanılması; (c) API'ye arayüz dışından yetkisiz erişim, hız sınırlarının veya teknik koruma önlemlerinin aşılmaya çalışılması; (d) Platform'un işleyişini bozacak otomasyon, yük veya güvenlik testlerinin yazılı izin olmaksızın yürütülmesi. Bu maddenin ihlali, hesabın derhâl feshine ve her türlü yasal yola başvurulmasına neden olabilir.",
+           en: "The following are expressly PROHIBITED: (a) decompiling, reverse engineering or disassembling the application, the API or any component; (b) extracting, copying, archiving or reusing test content, question banks, evaluation approaches, interpretive texts or the reading library by manual or automated means (scraping, bots, spiders, bulk download); (c) unauthorised access to the API outside the interface, or attempts to bypass rate limits or technical protection measures; (d) running automation, load or security tests that disrupt the Platform without written permission. Violation may result in immediate account termination and pursuit of all legal remedies." } },
+      { h: { tr: "5. Fikri Mülkiyet", en: "5. Intellectual Property" },
+        p: { tr: "Platform'daki tüm içerik — testler, egzersizler, sorular, yorum metinleri, görsel tasarım, \"Zihni\" markası ve Pengu maskotu dahil — [ŞİRKET UNVANI]'na aittir veya lisansla kullanılmaktadır. Kişisel kullanım dışında çoğaltılamaz, dağıtılamaz, ticari amaçla kullanılamaz.",
+           en: "All content on the Platform — including tests, exercises, questions, interpretive texts, visual design, the \"Zihni\" mark and the Pengu mascot — belongs to [COMPANY NAME] or is used under licence. It may not be reproduced, distributed or used commercially beyond personal use." } },
+      { h: { tr: "6. Sorumluluğun Sınırlandırılması", en: "6. Limitation of Liability" },
+        p: { tr: "Platform \"olduğu gibi\" sunulur. Sonuçların belirli bir amaca uygunluğu garanti edilmez. Yürürlükteki zorunlu mevzuat saklı kalmak üzere, Platform'un kullanımından doğan dolaylı zararlardan [ŞİRKET UNVANI] sorumlu tutulamaz.",
+           en: "The Platform is provided \"as is\". Fitness of results for a particular purpose is not guaranteed. Subject to mandatory applicable law, [COMPANY NAME] is not liable for indirect damages arising from use of the Platform." } },
+      { h: { tr: "7. Değişiklik ve Fesih", en: "7. Changes & Termination" },
+        p: { tr: "Şartlar güncellenebilir; önemli değişiklikler uygulama içinde duyurulur. Şartların ihlali hâlinde hesap askıya alınabilir veya feshedilebilir. Hesabınızı dilediğiniz zaman Profil bölümünden silebilirsiniz.",
+           en: "These Terms may be updated; material changes are announced in-app. Accounts may be suspended or terminated for violations. You may delete your account at any time from the Profile section." } },
+      { h: { tr: "8. Uygulanacak Hukuk", en: "8. Governing Law" },
+        p: { tr: "İşbu şartlar Türkiye Cumhuriyeti hukukuna tabidir; uyuşmazlıklarda [ŞEHİR] mahkemeleri ve icra daireleri yetkilidir.",
+           en: "These Terms are governed by the laws of the Republic of Türkiye; the courts and enforcement offices of [CITY] have jurisdiction over disputes." } },
+    ],
+  },
   consent: {
     title: { tr: "Açık Rıza Metni", en: "Explicit Consent Statement" },
     sections: [
@@ -150,7 +179,7 @@ const LegalModal = ({ doc = "disclosure", onClose }) => {
       <div className="w-full max-w-lg rounded-2xl flex flex-col" style={{ background: C.surface, maxHeight: "84vh" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 pt-4 pb-2">
           <div className="flex gap-2">
-            {[["disclosure", { tr: "Aydınlatma", en: "Notice" }], ["consent", { tr: "Açık Rıza", en: "Consent" }]].map(([k, lbl]) => (
+            {[["disclosure", { tr: "Aydınlatma", en: "Notice" }], ["consent", { tr: "Açık Rıza", en: "Consent" }], ["terms", { tr: "Şartlar", en: "Terms" }]].map(([k, lbl]) => (
               <button key={k} onClick={() => setActive(k)} className="px-3 py-1.5 rounded-lg text-xs font-medium"
                 style={active === k ? { background: C.primary, color: "#fff" } : { background: "#F3F4F6", color: C.textMuted }}>
                 {L(lbl, lang)}
@@ -1100,6 +1129,10 @@ const Landing = ({ onStart, onExpert }) => {
           <button onClick={() => setLegalDoc("disclosure")} className="underline" style={{ color: C.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 12 }}>
             {lang === "en" ? "Privacy Notice (KVKK)" : "KVKK Aydınlatma Metni"}
           </button>
+          {" · "}
+          <button onClick={() => setLegalDoc("terms")} className="underline" style={{ color: C.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 12 }}>
+            {lang === "en" ? "Terms of Use" : "Kullanım Şartları"}
+          </button>
         </p>
       </footer>
       {legalDoc && <LegalModal doc={legalDoc} onClose={() => setLegalDoc(null)} />}
@@ -1196,6 +1229,10 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
                 <input type="checkbox" checked={ackDisclosure} onChange={(e) => { setAckDisclosure(e.target.checked); setError(""); }} className="mt-0.5" />
                 <span>
                   {lang === "en" ? "I have read the " : ""}
+                  <button type="button" onClick={() => setLegalDoc("terms")} className="underline font-medium" style={{ color: C.primary }}>
+                    {lang === "en" ? "Terms of Use" : "Kullanım Şartları"}
+                  </button>
+                  {lang === "en" ? " and the " : "'nı ve "}
                   <button type="button" onClick={() => setLegalDoc("disclosure")} className="underline font-medium" style={{ color: C.primary }}>
                     {lang === "en" ? "Privacy Notice" : "KVKK Aydınlatma Metni"}
                   </button>
@@ -1662,6 +1699,9 @@ const ProfileScreen = ({ sessions, plan, onGoSubscription, onLogout, onDeleteAcc
           </button>
           <button onClick={() => setLegalDoc("disclosure")} className="flex items-center gap-2 text-sm py-2" style={{ color: C.text }}>
             <Shield size={16} style={{ color: C.secondary }} /> {t("privacyText")}
+          </button>
+          <button onClick={() => setLegalDoc("terms")} className="flex items-center gap-2 text-sm py-2" style={{ color: C.text }}>
+            <FileText size={16} style={{ color: C.secondary }} /> {lang === "en" ? "Terms of Use" : "Kullanım Şartları"}
           </button>
           <button onClick={() => setConfirmDelete(true)} className="flex items-center gap-2 text-sm py-2" style={{ color: C.danger }}>
             <Trash2 size={16} /> {t("deleteAcc")}

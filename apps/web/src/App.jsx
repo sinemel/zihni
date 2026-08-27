@@ -6532,9 +6532,21 @@ export default function App() {
         // Minimum 900ms "hesaplanıyor" ekranı (yerel fallback göz kırpmasın)
         await new Promise((res) => setTimeout(res, Math.max(0, 900 - (performance.now() - t0))));
         if (cancelled) return;
-        const r = server && server.overall != null
-          ? { id: server.id || uid(), testId: activeTest.id, testName: activeTest.name, date: server.date || new Date().toISOString(), overall: server.overall, subscores: server.subscores, stats: server.stats, blockStats: server.blockStats ?? null, source: "api" }
-          : { ...computeResult(activeTest, lastEvents), source: "local" };
+        let r = null;
+        if (server && server.overall != null) {
+          r = { id: server.id || uid(), testId: activeTest.id, testName: activeTest.name, date: server.date || new Date().toISOString(), overall: server.overall, subscores: server.subscores, stats: server.stats, blockStats: server.blockStats ?? null, source: "api" };
+        } else if (!IS_PROD) {
+          // Yalnızca geliştirme/önizleme: yerel yedek hesaplama.
+          // Üretim build'inde bu dal ölü koddur; Terser computeResult/computeSubscores
+          // fonksiyonlarını bundle'dan tamamen siler — formüller istemciye hiç gitmez.
+          r = { ...computeResult(activeTest, lastEvents), source: "local" };
+        }
+        if (!r) {
+          // Üretim + API erişilemez: skorlama yapılamaz, ham olaylar bellekte korunur,
+          // kullanıcı "Tekrar Dene" ile aynı oturumu yeniden gönderebilir.
+          setScreen("score-error");
+          return;
+        }
         setResult(r);
         setSessions((s) => [...s, r]);
         addNotification(lang === "en" ? "Your test result is ready." : "Test sonucunuz oluşturuldu.");
@@ -6782,6 +6794,30 @@ export default function App() {
       )}
 
       {screen === "processing" && <Processing />}
+
+      {screen === "score-error" && (
+        <div className="min-h-full flex items-center justify-center p-6" style={{ background: C.bg }}>
+          <Card className="w-full max-w-sm text-center">
+            <div className="mb-2">
+              <PenguMascot state="encourage" size={92} bubble={{ tr: "Küçük bir bağlantı sorunu var 🐧", en: "A small connection hiccup 🐧" }} />
+            </div>
+            <h2 className="font-semibold text-lg mb-2" style={{ color: C.text }}>
+              {lang === "en" ? "Couldn't reach the server" : "Sunucuya ulaşılamadı"}
+            </h2>
+            <p className="text-sm mb-4" style={{ color: C.textMuted }}>
+              {lang === "en"
+                ? "Your answers are safe in memory. Check your connection and try again — nothing will be lost."
+                : "Yanıtlarınız bellekte güvende. Bağlantınızı kontrol edip tekrar deneyin — hiçbir şey kaybolmayacak."}
+            </p>
+            <Button className="w-full mb-2" onClick={() => setScreen("processing")}>
+              {lang === "en" ? "Try Again" : "Tekrar Dene"}
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => setScreen("dashboard")}>
+              {lang === "en" ? "Back to Home" : "Ana Ekrana Dön"}
+            </Button>
+          </Card>
+        </div>
+      )}
 
       {screen === "results" && result && <Results result={result} onDashboard={() => setScreen("dashboard")} />}
 

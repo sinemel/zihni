@@ -205,11 +205,12 @@ const LegalModal = ({ doc = "disclosure", onClose }) => {
   );
 };
 
-/* Üretim tespiti: Next.js/webpack build sırasında process.env.NODE_ENV'i metin
-   olarak değiştirip ölü kod elemesi yapar — üretim paketinde bu blok tamamen silinir.
-   typeof koruması, build'siz tarayıcı önizlemesinde ("process tanımsız") hata vermeden
-   IS_PROD=false sonucu üretir, geliştirme/demo deneyimi bozulmaz. */
-const IS_PROD = (typeof process !== "undefined" && process.env && process.env.NODE_ENV === "production");
+/* Üretim tespiti: koşul TAMAMEN statik olmalı ki Next.js/webpack build'de
+   process.env.NODE_ENV'i "production" metniyle değiştirince minifier ölü kod
+   elemesi yapabilsin ve demo kimlik bilgileri üretim paketinden TAMAMEN silinsin.
+   DİKKAT: araya typeof/process.env gibi runtime kontrolleri eklemeyin — koşul
+   statikliğini kaybeder ve Demo123 stringleri bundle'a sızar (doğrulama 2026-09-01). */
+const IS_PROD = process.env.NODE_ENV === "production";
 
 /* Demo kullanıcılar — yalnızca geliştirme/demo ortamında var olur.
    Üretimde: gerçek kimlik doğrulama zorunludur, sahte hesap girişi mümkün değildir. */

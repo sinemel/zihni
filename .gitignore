@@ -1,0 +1,22 @@
+# Sırlar — ASLA commit'lenmez
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Bağımlılıklar / build
+node_modules/
+dist/
+build/
+.next/
+out/
+coverage/
+
+# Prisma
+apps/api/prisma/migrations/**/migration_lock.toml.bak
+
+# Editör / OS
+.DS_Store
+.idea/
+.vscode/
+*.log

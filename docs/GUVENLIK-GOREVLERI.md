@@ -67,3 +67,6 @@ curl -s -i -H "Origin: https://kotu-site.example" localhost:3000/texts | grep -i
 - `docs/DEPLOY.md`'deki deploy sonrası kontrol listesine şu iki maddeyi ekle:
   - [ ] Canlıda `*.js.map` erişilemiyor
   - [ ] Canlı API başka origin'den çağrılamıyor (tarayıcı konsolunda CORS hatası)
+
+## İlgili
+- Çıkışta veri temizliği ve token kalıcılığı için bkz. `gorev-oturum-kaliciligi.md` Bölüm 4.

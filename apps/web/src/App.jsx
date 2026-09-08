@@ -48,9 +48,23 @@ const BILLING_ENABLED = false;
    prototip yerel hesaplamayla kesintisiz çalışmaya devam eder.
    ============================================================ */
 const API_BASE = (typeof window !== "undefined" && window.KOGNITA_API_URL) || "http://localhost:3000";
-let API_TOKEN = null; // Üretimde: Supabase Auth oturumundan JWT
+/* Oturum kalıcılığı (docs/gorev-oturum-kaliciligi.md, Bölüm 1):
+   access token bellekte + localStorage'da tutulur; sayfa yenilenince geri okunur.
+   Refresh token da localStorage'da saklanır çünkü API onu Bearer/cookie ile değil
+   gövdeden (`refreshToken` alanı) bekler — httpOnly cookie'ye taşınması Bölüm 1 notu. */
+const TOKEN_KEY = "zihni.accessToken";
+const REFRESH_KEY = "zihni.refreshToken";
+const storage = {
+  get(key) { try { return window.localStorage.getItem(key); } catch { return null; } },
+  set(key, val) { try { if (val) window.localStorage.setItem(key, val); else window.localStorage.removeItem(key); } catch { /* özel mod / kapalı depolama */ } },
+};
+let API_TOKEN = (typeof window !== "undefined" && storage.get(TOKEN_KEY)) || null;
+let REFRESH_TOKEN = (typeof window !== "undefined" && storage.get(REFRESH_KEY)) || null;
+const hasStoredToken = () => typeof window !== "undefined" && !!storage.get(TOKEN_KEY);
 
-async function apiFetch(path, options = {}) {
+/* Durum kodu döndüren düşük seviye istek: { status, data }.
+   status 0 → ağ yok / zaman aşımı. 401 ayrımı Bölüm 2 (geri yükleme) için gerekli. */
+async function apiRequest(path, options = {}) {
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 4000);
@@ -64,14 +78,31 @@ async function apiFetch(path, options = {}) {
       },
     });
     clearTimeout(timer);
-    if (!res.ok) return null;
-    return await res.json();
+    let data = null;
+    try { data = await res.json(); } catch { data = null; }
+    return { status: res.status, data };
   } catch (e) {
-    return null; // Ağ yok / API kapalı → yerel akış devam eder
+    return { status: 0, data: null }; // Ağ yok / API kapalı → yerel akış devam eder
   }
 }
 
+async function apiFetch(path, options = {}) {
+  const { status, data } = await apiRequest(path, options);
+  return status >= 200 && status < 300 ? data : null;
+}
+
 const api = {
+  // Oturum geri yükleme / kullanıcı verileri (Bölüm 2-3)
+  me: () => apiRequest("/users/me"),
+  refresh: (refreshToken) =>
+    apiFetch("/auth/refresh", { method: "POST", body: JSON.stringify({ refreshToken }) }),
+  listSessions: () => apiFetch("/sessions"),
+  listTrainings: () => apiFetch("/trainings"),
+  listSelfResults: () => apiFetch("/self-tests-results/me"),
+  programToday: () => apiFetch("/program/today"),
+  // Seviye testi sonucu → sunucuda 21 günlük program oluştur (yenilemede geri gelsin)
+  setLevel: (wpm, comp) =>
+    apiFetch("/program/level", { method: "POST", body: JSON.stringify({ wpm, comp }) }),
   // Bilişsel test: ham event'leri gönder, sunucu skorunu al
   submitSession: (testId, testType, age, events) =>
     apiFetch("/sessions", { method: "POST", body: JSON.stringify({ testId, testType, age, events }) }),
@@ -90,7 +121,41 @@ const api = {
     apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ email, password, name }) }),
 };
 
-function setApiToken(token) { API_TOKEN = token || null; }
+/* Bölüm 1 + 4: token'ı bellekte ve localStorage'da birlikte günceller.
+   `null` → her iki anahtar da silinir (çıkışta temizlik). */
+function setApiToken(token, refreshToken) {
+  API_TOKEN = token || null;
+  REFRESH_TOKEN = token ? (refreshToken || REFRESH_TOKEN) : null;
+  storage.set(TOKEN_KEY, API_TOKEN);
+  storage.set(REFRESH_KEY, REFRESH_TOKEN);
+}
+
+/* Bölüm 2: saklı token ile oturumu geri yükler.
+   Döner: kullanıcı nesnesi (GET /users/me) ya da null.
+   401 → refresh token ile bir kez yenilemeyi dener; olmazsa token'ı sessizce siler.
+   Ağ hatası (status 0) → token'a dokunmaz, null döner (çevrimdışı; kullanıcı tekrar dener). */
+async function restoreSession() {
+  if (!API_TOKEN) return null;
+  let r = await api.me();
+  if (r.status === 401 && REFRESH_TOKEN) {
+    const fresh = await api.refresh(REFRESH_TOKEN);
+    if (fresh && fresh.accessToken) {
+      setApiToken(fresh.accessToken, fresh.refreshToken);
+      r = await api.me();
+    }
+  }
+  if (r.status >= 200 && r.status < 300 && r.data) return r.data;
+  if (r.status === 401 || r.status === 403) setApiToken(null);
+  return null;
+}
+
+/* Sunucudaki User+Profile kaydını uygulamanın currentUser şekline çevirir. */
+const toClientUser = (u) => ({
+  id: u.id,
+  email: u.email,
+  name: [u.profile?.firstName, u.profile?.lastName].filter(Boolean).join(" ") || (u.email || "").split("@")[0],
+  role: (u.role || "USER").toLowerCase() === "super_admin" ? "admin" : (u.role || "USER").toLowerCase(),
+});
 
 /* ============================================================
    KVKK METİNLERİ — TASLAK
@@ -1167,7 +1232,7 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
         // 1) Gerçek API
         const res = await api.login(email, password);
         if (res && res.accessToken) {
-          setApiToken(res.accessToken);
+          setApiToken(res.accessToken, res.refreshToken);
           onDone("login", res.user?.role?.toLowerCase?.() || "user", res.user?.name || email.split("@")[0]);
           return;
         }
@@ -1180,7 +1245,7 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
         // 1) Gerçek API
         const res = await api.register(email, password, name);
         if (res && res.accessToken) {
-          setApiToken(res.accessToken);
+          setApiToken(res.accessToken, res.refreshToken);
           onDone("register", "user", res.user?.name || name);
           return;
         }
@@ -5379,10 +5444,33 @@ const timeAgo = (t) => {
   return `${Math.floor(h / 24)} gün önce`;
 };
 
+/* Demo bildirimler: yalnızca çevrimdışı (mock) girişte gösterilir.
+   API girişinde ve çıkışta liste boştur (docs/gorev-oturum-kaliciligi.md, Bölüm 4). */
 const INITIAL_NOTIFICATIONS = [
   { id: "n1", text: "Uzmanınız yeni bir değerlendirme gönderdi.", time: Date.now() - 1000 * 60 * 60 * 5, read: false },
   { id: "n2", text: "Yeni testiniz hazır.", time: Date.now() - 1000 * 60 * 60 * 26, read: true },
 ];
+
+/* Bölüm 4: çıkışta sıfırlama değerleri — useState başlangıçlarıyla BİREBİR aynı olmalı. */
+const INITIAL_STREAK = () => ({ count: 0, days: [false, false, false, false, false, false, false], last: null });
+const INITIAL_PROGRAM = () => ({ level: null, day: 1, completedToday: [], completedDays: 0 });
+
+/* Bölüm 3: streak sunucuda tutulmaz; oturum/antrenman/öz-değerlendirme tarihlerinden türetilir.
+   count = bugün ya da dün biten kesintisiz aktif gün sayısı; days = bu haftanın Pzt..Paz aktivite izi. */
+const deriveStreak = (dates) => {
+  const dayKey = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x.getTime(); };
+  const active = new Set(dates.filter(Boolean).map(dayKey));
+  const s = INITIAL_STREAK();
+  if (active.size === 0) return s;
+  const DAY = 86400000;
+  const today = dayKey(new Date());
+  let cursor = active.has(today) ? today : active.has(today - DAY) ? today - DAY : null;
+  while (cursor !== null && active.has(cursor)) { s.count += 1; cursor -= DAY; }
+  const monday = today - ((new Date(today).getDay() + 6) % 7) * DAY;
+  s.days = s.days.map((_, i) => active.has(monday + i * DAY));
+  s.last = active.has(today) ? new Date(today).toDateString() : null;
+  return s;
+};
 
 /* ============================================================
    GÜNLÜK SERİ (streak)
@@ -6541,13 +6629,102 @@ export default function App() {
   const [trainings, setTrainings] = useState([]);
   const [activeTraining, setActiveTraining] = useState(null);
   const [libraryText, setLibraryText] = useState(null);
-  const [program, setProgram] = useState({ level: null, day: 1, completedToday: [], completedDays: 0 });
-  const [streak, setStreak] = useState({ count: 0, days: [false, false, false, false, false, false, false], last: null });
+  const [program, setProgram] = useState(INITIAL_PROGRAM);
+  const [streak, setStreak] = useState(INITIAL_STREAK);
   const [streakShow, setStreakShow] = useState(false);
   const [activeSelfTest, setActiveSelfTest] = useState(null);
   const [selfResults, setSelfResults] = useState([]);
   const [trialPromo, setTrialPromo] = useState(false);
   const promoShownRef = useRef(false);
+  // Bölüm 2: saklı token varsa landing'i göstermeden önce oturumu geri yüklemeyi bekle
+  const [booting, setBooting] = useState(hasStoredToken);
+
+  /* Bölüm 3 — kullanıcı verilerini sunucudan yükler (login ve geri yükleme aynı fonksiyonu çağırır). */
+  const loadUserData = async () => {
+    if (!API_TOKEN) return;
+    const [srvSessions, srvTrainings, srvSelf, srvProgram] = await Promise.all([
+      api.listSessions(), api.listTrainings(), api.listSelfResults(), api.programToday(),
+    ]);
+    const nextSessions = Array.isArray(srvSessions) ? srvSessions.map((s) => {
+      const t = TEST_CATALOG.find((x) => x.id === s.testId);
+      return { id: s.id, testId: s.testId, testName: t ? L(t.name, lang) : s.testId, date: s.createdAt, overall: s.overall, subscores: s.subscores, stats: s.stats, blockStats: null, source: "api" };
+    }) : [];
+    const nextTrainings = Array.isArray(srvTrainings) ? srvTrainings.map((tr) => {
+      const ex = TRAINING_CATALOG.find((x) => x.id === tr.exerciseId);
+      const name = ex ? L(ex.name, lang) : tr.exerciseId === "reading-test" ? "Seviye Belirleme Testi" : tr.exerciseId;
+      return { id: tr.id, exerciseId: tr.exerciseId, name, date: tr.createdAt, score: tr.score, detail: tr.detail, wpm: tr.wpm, comp: tr.comp };
+    }) : [];
+    const nextSelf = Array.isArray(srvSelf) ? [...srvSelf].reverse().map((r) => {
+      const st = SELF_TESTS.find((x) => x.id === r.selfTestId);
+      return { id: r.id, testId: r.selfTestId, name: st ? L(st.name, lang) : r.selfTestId, icon: st?.icon || "📝", color: st?.color || C.primary, date: r.createdAt, summaryText: r.summaryText };
+    }) : [];
+    setSessions(nextSessions);
+    setTrainings(nextTrainings);
+    setSelfResults(nextSelf);
+    setProgram(srvProgram && srvProgram.level
+      ? { level: srvProgram.level, day: srvProgram.day || 1, completedToday: srvProgram.completedToday || [], completedDays: srvProgram.completedDays || 0 }
+      : INITIAL_PROGRAM());
+    setStreak(deriveStreak([...nextSessions, ...nextTrainings, ...nextSelf].map((x) => x.date)));
+  };
+
+  /* Bölüm 4 — çıkışta temizlik: sonraki kullanıcı öncekinin verisini görmemeli.
+     Sıralama: token → veri state'leri → en son ekran. */
+  const handleLogout = () => {
+    setApiToken(null);
+    setSessions([]);
+    setSelfResults([]);
+    setTrainings([]);
+    setCurrentUser(null);
+    setResult(null);
+    setLastEvents(null);
+    setNotifications([]);
+    setStreak(INITIAL_STREAK());
+    setProgram(INITIAL_PROGRAM());
+    setActiveTest(null);
+    setActiveTraining(null);
+    setActiveSelfTest(null);
+    setLibraryText(null);
+    setStreakShow(false);
+    setTrialPromo(false);
+    promoShownRef.current = false;
+    setRole("user");
+    setScreen("landing");
+  };
+
+  const enterForRole = (r) => setScreen(r === "expert" ? "expert-dashboard" : r === "admin" ? "admin-dashboard" : "dashboard");
+
+  /* Bölüm 2 — açılışta oturumu geri yükle */
+  useEffect(() => {
+    if (!booting) return;
+    let cancelled = false;
+    (async () => {
+      const me = await restoreSession();
+      if (cancelled) return;
+      if (me) {
+        const u = toClientUser(me);
+        setCurrentUser(u);
+        setRole(u.role);
+        setNotifications([]);
+        await loadUserData();
+        if (cancelled) return;
+        enterForRole(u.role);
+      }
+      setBooting(false);
+    })();
+    return () => { cancelled = true; };
+  }, [booting]);
+
+  /* Doğrulama 6 — başka sekmede çıkış yapılırsa bu sekme de düşsün */
+  useEffect(() => {
+    const onStorage = (e) => { if (e.key === TOKEN_KEY && !e.newValue && currentUser) handleLogout(); };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [currentUser]);
+
+  /* Doğrulama 5 — result null iken sonuç ekranına gidilirse kataloğa yönlendir */
+  useEffect(() => {
+    if (screen === "results" && !result) setScreen("catalog");
+  }, [screen, result]);
 
   const markActivity = () => {
     const today = new Date().toDateString();
@@ -6617,7 +6794,13 @@ export default function App() {
           notifications={notifications} setNotifications={setNotifications} plan={plan} lang={lang} setLang={setLang} />
       )}
 
-      {screen === "landing" && (
+      {booting && screen === "landing" && (
+        <div className="min-h-screen flex items-center justify-center" style={{ background: C.bg }}>
+          <p className="text-sm" style={{ color: C.textMuted }}>{lang === "en" ? "Restoring your session…" : "Oturumunuz geri yükleniyor…"}</p>
+        </div>
+      )}
+
+      {!booting && screen === "landing" && (
         <Landing onStart={() => setScreen("auth")} onExpert={() => setScreen("auth-expert")} />
       )}
 
@@ -6625,13 +6808,26 @@ export default function App() {
         <AuthScreen
           expertMode={screen === "auth-expert"}
           onBack={() => setScreen("landing")}
-          onDone={(mode, detectedRole, name) => {
+          onDone={async (mode, detectedRole, name) => {
             setCurrentUser({ name, role: detectedRole });
             setRole(detectedRole);
+            if (API_TOKEN) {
+              // Gerçek API girişi: profil + veriler sunucudan; demo bildirimler kullanılmaz
+              setNotifications([]);
+              const r = await api.me();
+              if (r.status >= 200 && r.status < 300 && r.data) {
+                const u = toClientUser(r.data);
+                setCurrentUser(u);
+                setRole(u.role);
+                detectedRole = u.role;
+              }
+              await loadUserData();
+            } else {
+              // Çevrimdışı (mock) giriş: demo bildirimler
+              setNotifications(INITIAL_NOTIFICATIONS);
+            }
             if (mode === "register") { setScreen("onboarding"); return; }
-            if (detectedRole === "expert") setScreen("expert-dashboard");
-            else if (detectedRole === "admin") setScreen("admin-dashboard");
-            else setScreen("dashboard");
+            enterForRole(detectedRole);
           }}
         />
       )}
@@ -6682,8 +6878,8 @@ export default function App() {
           plan={plan}
           onGoSubscription={() => setScreen("subscription")}
           setToast={setToast}
-          onLogout={() => setScreen("landing")}
-          onDeleteAccount={() => { setSessions([]); setNotifications([]); setScreen("landing"); setToast("Hesabınız ve tüm verileriniz silindi."); }}
+          onLogout={handleLogout}
+          onDeleteAccount={() => { handleLogout(); setToast(lang === "en" ? "Your account and all data were deleted." : "Hesabınız ve tüm verileriniz silindi."); }}
         />
       )}
 
@@ -6716,6 +6912,7 @@ export default function App() {
             let lvl = r.wpm < 120 ? "Başlangıç" : r.wpm <= 200 ? "Orta" : "İleri";
             if (r.comp < 60 && lvl !== "Başlangıç") lvl = lvl === "İleri" ? "Orta" : "Başlangıç";
             setProgram({ level: lvl, day: 1, completedToday: [], completedDays: 0 });
+            api.setLevel(r.wpm, r.comp); // fire-and-forget: Bölüm 3 — program sunucuda da kurulur
             setTrainings((prev) => [...prev, { id: uid(), exerciseId: "reading-test", name: "Seviye Belirleme Testi", date: new Date().toISOString(), ...r }]);
             markActivity();
             setScreen("training");

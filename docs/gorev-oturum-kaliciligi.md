@@ -3,8 +3,8 @@
 Bu dosya Claude Code ile yürütülür. Sıra önemli; her bölümün doğrulaması yapılmadan sonrakine geçilmez.
 İlgili dosya: `apps/web/src/App.jsx` (tek dosyalık uygulama). Backend: `apps/api` (NestJS, JWT).
 
-**Durum (2026-09-08):** Bölüm 1-4 uygulandı, `next build` temiz. Doğrulama 2, 4 ve 6 çevrimdışı ortamda
-(API kapalı) tarayıcıda yapıldı. Doğrulama 1, 3 ve 5 çalışan bir API + PostgreSQL gerektirir; henüz yapılmadı.
+**Durum (2026-09-08):** Bölüm 1-4 uygulandı, `next build` temiz. Doğrulama 1-6'nın tamamı yerel API +
+PostgreSQL ile tarayıcıda yapıldı ve geçti (ayrıntı Bölüm 5). Bu sırada API'de üç hata bulunup düzeltildi (Bölüm 6).
 
 ## Önceki durum (sorun)
 
@@ -48,6 +48,8 @@ Paralel çekilir: `GET /sessions`, `GET /trainings`, `GET /self-tests-results/me
   (bugün ya da dün biten kesintisiz gün sayısı + bu haftanın Pzt..Paz izi).
 - Gerçek API girişinde profil `GET /users/me`'den alınır (`toClientUser`); bildirim listesi boş başlar.
   Demo bildirimler (`INITIAL_NOTIFICATIONS`) yalnızca çevrimdışı mock girişte kullanılır.
+- Kayıt formu artık `firstName`/`lastName` gönderir (API `RegisterDto` bunları zorunlu tutar; eski tek `name`
+  alanı 400 dönüyor ve kayıt sessizce çevrimdışı mock'a düşüyordu).
 
 ## Bölüm 4 — Çıkışta temizlik
 
@@ -83,29 +85,69 @@ Uygulama notları:
 
 ## Bölüm 5 — Doğrulama
 
-Her madde tarayıcıda yapılır; `npm run dev -- -p 3001` (web) ve `npm run start:dev` (api) açık olmalı.
-API olmadan yalnızca 2, 4 ve 6 anlamlıdır.
+Her madde tarayıcıda yapılır; web `npm run dev -- -p 3001`, API `npm run start:dev` ve PostgreSQL açık olmalı
+(yerel kurulum: Bölüm 7). Test hesapları: `test-a@zihni.local` ve `test-b@zihni.local` (yalnızca yerel veritabanında).
 
-1. **Yenileme:** Giriş yap, dashboard'da F5'e bas. Kullanıcı girişte kalmalı, geçmiş oturumlar listelenmeli. *(API gerekir — bekliyor)*
-2. **Süresi dolmuş token:** `localStorage`'daki `zihni.accessToken` değerini bozuk bir string ile değiştirip yenile.
-   API açıkken: token sessizce silinip landing'e düşmeli. API kapalıyken: landing görünmeli, token korunmalı,
-   konsolda yalnızca `ERR_CONNECTION_REFUSED` olmalı, yakalanmamış hata olmamalı. ✅ *(API kapalı senaryo yapıldı)*
-3. **Veri yükleme:** Bir test tamamla, yenile. Sonuç geçmişte görünmeli (bellekten değil `GET /sessions`'tan). *(API gerekir — bekliyor)*
-4. **Çıkış:** Çıkış Yap'a bas. `localStorage`'da `zihni.*` anahtarı kalmamalı; ana bileşenin state'inde
-   `currentUser`, `result`, `lastEvents` `null`; `sessions`/`trainings`/`selfResults`/`notifications` boş dizi;
-   `streak` ve `program` başlangıç değerinde olmalı. ✅ *(React fiber state'i okunarak doğrulandı)*
-5. **İkinci hesap (veri sızıntısı kontrolü):** A hesabıyla giriş yap, bir test ve bir antrenman tamamla, çıkış yap.
-   Aynı sekmede yeni bir B hesabıyla giriş yap. B'de: *(API gerekir — bekliyor)*
-   - Geçmiş ve antrenman listeleri boş olmalı, A'nın sonuçları görünmemeli.
-   - Dashboard'daki streak sayacı **0** olmalı (🔥 rozeti hiç görünmemeli).
-   - Günlük antrenman kartı **Gün 1** göstermeli, tamamlanmış egzersiz işareti olmamalı.
-   - Bildirim listesi **boş** olmalı; A'ya ait ya da demo bildirim kalmamalı.
-   - Sonuç ekranına doğrudan gidilirse (`result` null) uygulama çökmemeli, kataloğa yönlendirmeli.
-6. **Çapraz sekme:** İki sekmede aynı hesapla açıkken birinde çıkış yap; diğer sekme anında (storage olayı)
-   ya da yenilenince landing'e düşmeli. *(Kod eklendi; iki sekmeli manuel test bekliyor)*
+1. **Yenileme:** A ile giriş yap, dashboard'da F5'e bas. Kullanıcı girişte kalmalı, geçmiş oturumlar listelenmeli.
+   ✅ Yenilemeden sonra "Merhaba Test", 🔥 1 gün, Test Geçmişi'nde Sürdürülebilir Dikkat 66/100, program Orta Gün 1/21.
+2. **Süresi dolmuş token:** `zihni.accessToken` değerini bozuk bir string ile değiştirip yenile.
+   API açıkken: 401 → token sessizce silinir, landing görünür. ✅ (`localStorage` boş, konsolda yalnızca 401 kaynak hatası)
+   API kapalıyken: landing görünür, token korunur. ✅
+3. **Veri yükleme:** Sonuç geçmişi bellekten değil `GET /sessions`'tan gelmeli. ✅ A'nın oturumu, antrenmanı ve
+   programı API üzerinden (`POST /sessions`, `/trainings`, `/program/level`) oluşturuldu; yenilemeden sonra
+   dashboard ve Hızlı Okuma ekranında sunucudaki değerlerle görünüyor (Schulte ✅ işaretli).
+4. **Çıkış:** Çıkış Yap → `localStorage` boş; React state'inde `currentUser` null, listeler boş, `streak`/`program`
+   başlangıçta. ✅ (React fiber state'i okunarak doğrulandı)
+5. **İkinci hesap (veri sızıntısı kontrolü):** A çıkış yaptıktan sonra aynı sekmede B ile giriş. ✅
+   - Geçmiş ve antrenman listeleri boş, A'nın sonuçları yok. ✅
+   - Streak sayacı 0, 🔥 rozeti görünmüyor. ✅
+   - `program` state'i `{ level: null, day: 1 }`; seviye belirlenmediği için Hızlı Okuma ekranı "Seviyenizi
+     Belirleyin" kartını gösteriyor (Gün 1 kartı ancak seviye testinden sonra görünür). ✅
+   - Bildirim listesi boş, zil rozeti yok. ✅
+   - Sonuç ekranına `result` null iken gidilirse kataloğa yönlendirme kodu var; tarayıcıda ayrıca tetiklenmedi.
+6. **Çapraz sekme:** İkinci sekmede aynı adres açıldı, A'nın oturumu geri yüklendi. Birinci sekmede çıkış yapılınca
+   ikinci sekme `storage` olayıyla anında landing'e düştü. ✅
+
+## Bölüm 6 — Doğrulama sırasında bulunan API hataları (düzeltildi)
+
+- `auth.guards.ts` — `@CurrentUser('id')` alan adını yok sayıp tüm kullanıcı nesnesini döndürüyordu; `program`,
+  `sessions`, `trainings` ve `self-tests` uçları Prisma'ya `userId` olarak nesne verip 500 dönüyordu.
+- `billing.service.ts` — iyzico istemcisi sınıf alanında kuruluyordu; `IYZICO_API_KEY` boşken API açılışta
+  çöküyordu. İstemci artık tembel kurulur, anahtar yoksa yalnızca ödeme ucu hata verir.
+- `prisma/seed-content.ts` — `content.seed.json` yolu yanlıştı (`../content/` → `../src/content/`).
+
+## Bölüm 7 — Yerel API kurulumu (Docker olmadan)
+
+Makinede Docker yok; PostgreSQL 18 ikilileri `C:\Program Files\PostgreSQL\18\bin` altında ama servis kurulu değil.
+Sistemi değiştirmeden, kullanıcı alanında bir küme çalıştırılır:
+
+```bash
+PG="/c/Program Files/PostgreSQL/18/bin"; D="$LOCALAPPDATA/zihni-pgdata"
+printf 'kognita_dev_password' > /tmp/pgpass.txt
+"$PG/initdb.exe" -D "$D" -U kognita -A scram-sha-256 --pwfile=/tmp/pgpass.txt -E UTF8 --locale=C
+"$PG/pg_ctl.exe" -D "$D" -o "-p 5433 -c listen_addresses=localhost" -l "$D/pg.log" start
+PGPASSWORD=kognita_dev_password "$PG/psql.exe" -h localhost -p 5433 -U kognita -d postgres -c "CREATE DATABASE kognita;"
+```
+
+`apps/api/.env` (repoya girmez, `.gitignore`'da):
+```
+DATABASE_URL=postgresql://kognita:kognita_dev_password@localhost:5433/kognita?schema=public
+DIRECT_URL=postgresql://kognita:kognita_dev_password@localhost:5433/kognita?schema=public
+JWT_SECRET=dev-only-jwt-secret-degistir
+JWT_REFRESH_SECRET=dev-only-refresh-secret-degistir
+CORS_ORIGINS=http://localhost:3001
+PORT=3000
+```
+
+```bash
+cd apps/api && npm ci && npx prisma generate && npx prisma db push && npm run prisma:seed && npm run start:dev
+```
+Not: npm 11 kurulum betiklerini engeller; `prisma generate` elle çalıştırılır. Kümeyi durdurmak için
+`"$PG/pg_ctl.exe" -D "$D" stop`.
 
 ## Bitince
 
 - Değişiklikleri tek commit yap: `web: oturum kalıcılığı + çıkışta tam state temizliği (Görev oturum-kalıcılığı)` ✅
-  (dal: `feature/oturum-kaliciligi`, repo: https://github.com/sinemel/zihni)
-- `docs/GUVENLIK-GOREVLERI.md`'nin sonuna çapraz referans eklendi: "Çıkışta veri temizliği için bkz. `gorev-oturum-kaliciligi.md` Bölüm 4." ✅
+  (`main`'e birleştirildi, repo: https://github.com/sinemel/zihni)
+- Bölüm 6 API düzeltmeleri + kayıt formu düzeltmesi: `fix(api): CurrentUser alan seçimi, iyzico tembel kurulum, seed yolu; web: register DTO uyumu`
+- `docs/GUVENLIK-GOREVLERI.md`'nin sonuna çapraz referans eklendi. ✅

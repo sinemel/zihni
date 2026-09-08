@@ -117,8 +117,9 @@ const api = {
   // Kimlik doğrulama (NestJS auth modülü)
   login: (email, password) =>
     apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
-  register: (email, password, name) =>
-    apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ email, password, name }) }),
+  // RegisterDto: firstName + lastName zorunlu (tek `name` alanı 400 döner ve akış sessizce mock'a düşerdi)
+  register: (email, password, firstName, lastName) =>
+    apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ email, password, firstName, lastName }) }),
 };
 
 /* Bölüm 1 + 4: token'ı bellekte ve localStorage'da birlikte günceller.
@@ -1243,7 +1244,7 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
       } else {
         const name = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ") || email.split("@")[0];
         // 1) Gerçek API
-        const res = await api.register(email, password, name);
+        const res = await api.register(email, password, firstName.trim() || name, lastName.trim() || "-");
         if (res && res.accessToken) {
           setApiToken(res.accessToken, res.refreshToken);
           onDone("register", "user", res.user?.name || name);

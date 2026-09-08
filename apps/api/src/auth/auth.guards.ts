@@ -31,7 +31,8 @@ export class RolesGuard implements CanActivate {
 
 // Kullanım: @Roles("ADMIN", "SUPER_ADMIN")  @UseGuards(JwtAuthGuard, RolesGuard)
 
-export const CurrentUser = createParamDecorator((_data: unknown, ctx: ExecutionContext) => {
+export const CurrentUser = createParamDecorator((data: string | undefined, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest();
-  return request.user;
+  // @CurrentUser("id") gibi alan adı verilirse yalnızca o alanı döndür (program/sessions/content denetleyicileri buna dayanır)
+  return data ? request.user?.[data] : request.user;
 });

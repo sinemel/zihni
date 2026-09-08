@@ -3,7 +3,7 @@
  * Çalıştırma: npx ts-node prisma/seed-content.ts  (DIRECT_URL ile)
  */
 import { PrismaClient } from '@prisma/client';
-import * as seed from '../content/content.seed.json';
+import * as seed from '../src/content/content.seed.json';
 
 const prisma = new PrismaClient();
 

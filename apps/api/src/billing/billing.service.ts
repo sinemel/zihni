@@ -17,11 +17,22 @@ const PLAN_PRICING_REF: Record<PaidPlan, string | undefined> = {
 
 @Injectable()
 export class BillingService {
-  private iyzipay = new Iyzipay({
-    apiKey: process.env.IYZICO_API_KEY,
-    secretKey: process.env.IYZICO_SECRET_KEY,
-    uri: process.env.IYZICO_BASE_URL || "https://sandbox-api.iyzipay.com",
-  });
+  /* iyzico istemcisi tembel oluşturulur: anahtarlar tanımlı değilse (yerel geliştirme,
+     faturalama kapalı) uygulama açılışta çökmez; yalnızca ödeme ucu çağrılınca hata verir. */
+  private _iyzipay: any = null;
+  private get iyzipay(): any {
+    if (!this._iyzipay) {
+      if (!process.env.IYZICO_API_KEY || !process.env.IYZICO_SECRET_KEY) {
+        throw new BadRequestException("Ödeme sağlayıcı yapılandırılmamış (IYZICO_API_KEY / IYZICO_SECRET_KEY).");
+      }
+      this._iyzipay = new Iyzipay({
+        apiKey: process.env.IYZICO_API_KEY,
+        secretKey: process.env.IYZICO_SECRET_KEY,
+        uri: process.env.IYZICO_BASE_URL || "https://sandbox-api.iyzipay.com",
+      });
+    }
+    return this._iyzipay;
+  }
 
   constructor(private prisma: PrismaService) {}
 

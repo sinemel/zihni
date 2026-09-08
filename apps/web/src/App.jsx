@@ -49,17 +49,16 @@ const BILLING_ENABLED = false;
    ============================================================ */
 const API_BASE = (typeof window !== "undefined" && window.KOGNITA_API_URL) || "http://localhost:3000";
 /* Oturum kalıcılığı (docs/gorev-oturum-kaliciligi.md, Bölüm 1):
-   access token bellekte + localStorage'da tutulur; sayfa yenilenince geri okunur.
-   Refresh token da localStorage'da saklanır çünkü API onu Bearer/cookie ile değil
-   gövdeden (`refreshToken` alanı) bekler — httpOnly cookie'ye taşınması Bölüm 1 notu. */
+   access token (15 dk) bellekte + localStorage'da tutulur; sayfa yenilenince geri okunur.
+   Refresh token JS'e hiç gelmez: API onu httpOnly cookie (`zihni_refresh`, path=/auth) olarak
+   verir; tarayıcı /auth/refresh ve /auth/logout isteklerine kendisi ekler (credentials: "include"). */
 const TOKEN_KEY = "zihni.accessToken";
-const REFRESH_KEY = "zihni.refreshToken";
 const storage = {
   get(key) { try { return window.localStorage.getItem(key); } catch { return null; } },
   set(key, val) { try { if (val) window.localStorage.setItem(key, val); else window.localStorage.removeItem(key); } catch { /* özel mod / kapalı depolama */ } },
 };
 let API_TOKEN = (typeof window !== "undefined" && storage.get(TOKEN_KEY)) || null;
-let REFRESH_TOKEN = (typeof window !== "undefined" && storage.get(REFRESH_KEY)) || null;
+if (typeof window !== "undefined") storage.set("zihni.refreshToken", null); // eski sürümün localStorage kalıntısını temizle
 const hasStoredToken = () => typeof window !== "undefined" && !!storage.get(TOKEN_KEY);
 
 /* Durum kodu döndüren düşük seviye istek: { status, data }.
@@ -70,6 +69,7 @@ async function apiRequest(path, options = {}) {
     const timer = setTimeout(() => controller.abort(), 4000);
     const res = await fetch(`${API_BASE}${path}`, {
       ...options,
+      credentials: "include", // refresh cookie'si yalnızca /auth/* için gönderilir (path=/auth)
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
@@ -94,8 +94,8 @@ async function apiFetch(path, options = {}) {
 const api = {
   // Oturum geri yükleme / kullanıcı verileri (Bölüm 2-3)
   me: () => apiRequest("/users/me"),
-  refresh: (refreshToken) =>
-    apiFetch("/auth/refresh", { method: "POST", body: JSON.stringify({ refreshToken }) }),
+  refresh: () => apiFetch("/auth/refresh", { method: "POST" }),   // cookie ile
+  logout: () => apiFetch("/auth/logout", { method: "POST" }),     // sunucuda refresh iptali + cookie silme
   listSessions: () => apiFetch("/sessions"),
   listTrainings: () => apiFetch("/trainings"),
   listSelfResults: () => apiFetch("/self-tests-results/me"),
@@ -124,30 +124,33 @@ const api = {
 
 /* Bölüm 1 + 4: token'ı bellekte ve localStorage'da birlikte günceller.
    `null` → her iki anahtar da silinir (çıkışta temizlik). */
-function setApiToken(token, refreshToken) {
+function setApiToken(token) {
   API_TOKEN = token || null;
-  REFRESH_TOKEN = token ? (refreshToken || REFRESH_TOKEN) : null;
   storage.set(TOKEN_KEY, API_TOKEN);
-  storage.set(REFRESH_KEY, REFRESH_TOKEN);
 }
 
 /* Bölüm 2: saklı token ile oturumu geri yükler.
    Döner: kullanıcı nesnesi (GET /users/me) ya da null.
-   401 → refresh token ile bir kez yenilemeyi dener; olmazsa token'ı sessizce siler.
+   401 → refresh cookie'si ile bir kez yenilemeyi dener; olmazsa token'ı sessizce siler.
    Ağ hatası (status 0) → token'a dokunmaz, null döner (çevrimdışı; kullanıcı tekrar dener). */
-async function restoreSession() {
-  if (!API_TOKEN) return null;
-  let r = await api.me();
-  if (r.status === 401 && REFRESH_TOKEN) {
-    const fresh = await api.refresh(REFRESH_TOKEN);
-    if (fresh && fresh.accessToken) {
-      setApiToken(fresh.accessToken, fresh.refreshToken);
-      r = await api.me();
+let restoreInFlight = null; // eşzamanlı çağrılar (StrictMode çift effect) tek isteğe bağlanır; refresh rotasyonu yarışa girmez
+function restoreSession() {
+  if (!API_TOKEN) return Promise.resolve(null);
+  if (restoreInFlight) return restoreInFlight;
+  restoreInFlight = (async () => {
+    let r = await api.me();
+    if (r.status === 401) {
+      const fresh = await api.refresh();
+      if (fresh && fresh.accessToken) {
+        setApiToken(fresh.accessToken);
+        r = await api.me();
+      }
     }
-  }
-  if (r.status >= 200 && r.status < 300 && r.data) return r.data;
-  if (r.status === 401 || r.status === 403) setApiToken(null);
-  return null;
+    if (r.status >= 200 && r.status < 300 && r.data) return r.data;
+    if (r.status === 401 || r.status === 403) setApiToken(null);
+    return null;
+  })().finally(() => { restoreInFlight = null; });
+  return restoreInFlight;
 }
 
 /* Sunucudaki User+Profile kaydını uygulamanın currentUser şekline çevirir. */
@@ -1233,7 +1236,7 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
         // 1) Gerçek API
         const res = await api.login(email, password);
         if (res && res.accessToken) {
-          setApiToken(res.accessToken, res.refreshToken);
+          setApiToken(res.accessToken);
           onDone("login", res.user?.role?.toLowerCase?.() || "user", res.user?.name || email.split("@")[0]);
           return;
         }
@@ -1246,7 +1249,7 @@ const AuthScreen = ({ onDone, onBack, expertMode = false }) => {
         // 1) Gerçek API
         const res = await api.register(email, password, firstName.trim() || name, lastName.trim() || "-");
         if (res && res.accessToken) {
-          setApiToken(res.accessToken, res.refreshToken);
+          setApiToken(res.accessToken);
           onDone("register", "user", res.user?.name || name);
           return;
         }
@@ -6671,6 +6674,7 @@ export default function App() {
   /* Bölüm 4 — çıkışta temizlik: sonraki kullanıcı öncekinin verisini görmemeli.
      Sıralama: token → veri state'leri → en son ekran. */
   const handleLogout = () => {
+    if (API_TOKEN) api.logout(); // fire-and-forget: sunucuda refresh iptali; hata dönse de yerel temizlik yapılır
     setApiToken(null);
     setSessions([]);
     setSelfResults([]);

@@ -5,6 +5,7 @@ Bu dosya Claude Code ile yürütülür. Sıra önemli; her bölümün doğrulama
 
 **Durum (2026-09-08):** Bölüm 1-4 uygulandı, `next build` temiz. Doğrulama 1-6'nın tamamı yerel API +
 PostgreSQL ile tarayıcıda yapıldı ve geçti (ayrıntı Bölüm 5). Bu sırada API'de üç hata bulunup düzeltildi (Bölüm 6).
+Sonraki adım da tamamlandı: refresh token httpOnly cookie'ye taşındı, `POST /auth/logout` ile sunucu tarafı iptal eklendi (Bölüm 8).
 
 ## Önceki durum (sorun)
 
@@ -16,14 +17,13 @@ PostgreSQL ile tarayıcıda yapıldı ve geçti (ayrıntı Bölüm 5). Bu sırad
 
 ## Bölüm 1 — Token'ı kalıcı yap
 
-1. `setApiToken(token, refreshToken)` token'ları belleğe ve `localStorage`'a birlikte yazar:
-   `zihni.accessToken` ve `zihni.refreshToken`. `null` gelirse iki anahtar da silinir.
-2. Modül yüklenirken (ilk render'dan önce) `API_TOKEN` ve `REFRESH_TOKEN` `localStorage`'dan okunur.
+1. `setApiToken(token)` access token'ı belleğe ve `localStorage`'a (`zihni.accessToken`) yazar; `null` gelirse siler.
+2. Modül yüklenirken (ilk render'dan önce) `API_TOKEN` `localStorage`'dan okunur.
    `localStorage` erişimi `try/catch` ile sarılıdır (özel mod, kapalı depolama).
-3. **Karar:** Refresh token da `localStorage`'da tutulur, çünkü API onu `POST /auth/refresh` gövdesindeki
-   `refreshToken` alanından okur (`ExtractJwt.fromBodyField`). Access token 15 dk ömürlü olduğundan refresh
-   olmadan kalıcılık pratikte işe yaramaz. httpOnly cookie'ye geçiş API tarafında ayrı bir görevdir
-   (cookie-parser + strateji değişikliği); o zaman `zihni.refreshToken` anahtarı kaldırılır.
+3. **Karar (güncel):** Refresh token JS'e hiç gelmez. API onu `zihni_refresh` adlı httpOnly cookie olarak verir
+   (`Path=/auth`, 30 gün, geliştirmede `SameSite=Lax`, üretimde `SameSite=None; Secure`). Web tarafı `fetch`'e
+   `credentials: "include"` ekler; tarayıcı cookie'yi yalnızca `/auth/*` isteklerine kendisi iliştirir.
+   Eski sürümün `zihni.refreshToken` anahtarı açılışta temizlenir. Ayrıntı: Bölüm 8.
 
 ## Bölüm 2 — Yenilemede oturumu geri yükle
 
@@ -78,8 +78,8 @@ Uygulama notları:
   Böylece iki yerde farklı literal olması riski yoktur.
 - Sıralama: önce token, sonra veri state'leri, en son `setScreen("landing")`.
 - "Hesabımı ve Verilerimi Sil" akışı aynı `handleLogout()`'u çağırır (sunucu tarafı silme ucu henüz yok).
-- Sunucuda refresh token iptali (`POST /auth/logout`) henüz yok; eklendiğinde `handleLogout` başında
-  fire-and-forget çağrılır, hata dönse bile yerel temizlik yapılır.
+- `handleLogout` başında `POST /auth/logout` fire-and-forget çağrılır (sunucuda refresh iptali + cookie silme);
+  hata dönse bile yerel temizlik yapılır.
 - Çapraz sekme: `storage` olayı dinlenir; `zihni.accessToken` başka sekmede silinirse bu sekme de çıkış yapar.
 - `screen === "results"` iken `result` null ise bir `useEffect` kataloğa yönlendirir.
 
@@ -145,9 +145,34 @@ cd apps/api && npm ci && npx prisma generate && npx prisma db push && npm run pr
 Not: npm 11 kurulum betiklerini engeller; `prisma generate` elle çalıştırılır. Kümeyi durdurmak için
 `"$PG/pg_ctl.exe" -D "$D" stop`.
 
+## Bölüm 8 — Refresh token httpOnly cookie + sunucu tarafı çıkış
+
+API (`apps/api/src/auth/*`, `main.ts`):
+- `cookie-parser` eklendi. `/auth/register` ve `/auth/login` yanıt gövdesinde yalnızca `accessToken` döner;
+  refresh token `Set-Cookie: zihni_refresh=…; HttpOnly; Path=/auth; Max-Age=30 gün` ile verilir.
+- `JwtRefreshStrategy` token'ı yalnızca cookie'den okur (gövde/başlık kabul edilmez).
+- `User.refreshTokenHash` (SHA-256) eklendi. Her token üretiminde özet güncellenir → **tek aktif refresh oturumu**:
+  yeni bir cihazdan giriş, eski cihazın refresh token'ını geçersiz kılar (eski access token 15 dk daha çalışır).
+- `POST /auth/refresh`: cookie'deki token DB özetiyle eşleşmeli; yeni çift üretilir (rotasyon), eski token ölür.
+- `POST /auth/logout` (guard yok, süresi dolmuş access token ile de çalışır): cookie'deki token bu kullanıcının
+  aktif token'ıysa özet `null` yapılır, cookie silinir. Token yoksa da 200 döner; istemci her durumda yerel temizlik yapar.
+- `GET /users/me` yanıtından `refreshTokenHash` çıkarılır.
+
+Doğrulama (curl + tarayıcı, yerel API):
+- Login yanıtında `Set-Cookie … HttpOnly; Path=/auth; SameSite=Lax`; gövdede refresh token yok. ✅
+- Cookie ile `/auth/refresh` → 200 + yeni access token; cookie'siz → 401. ✅
+- `/auth/logout` → 200, DB'de özet `NULL`; aynı eski cookie ile `/auth/refresh` → 401. ✅
+- Tarayıcı: girişten sonra `localStorage`'da yalnızca `zihni.accessToken`, `document.cookie` boş (httpOnly). ✅
+- Tarayıcı: access token bozulup yenilenince `/users/me` 401 → cookie ile `/auth/refresh` 200 → kullanıcı girişte kalıyor. ✅
+- Tarayıcı: çıkıştan sonra bozuk access token ile yenileme → refresh 401 (cookie silinmiş) → landing. ✅
+
+Üretim notu: web (Vercel) ve API (Railway) ayrı site olduğundan cookie `SameSite=None; Secure` ile verilir;
+bu yalnızca HTTPS'te çalışır ve `CORS_ORIGINS` tam origin'i içermelidir (bkz. `docs/DEPLOY.md`).
+
 ## Bitince
 
 - Değişiklikleri tek commit yap: `web: oturum kalıcılığı + çıkışta tam state temizliği (Görev oturum-kalıcılığı)` ✅
   (`main`'e birleştirildi, repo: https://github.com/sinemel/zihni)
-- Bölüm 6 API düzeltmeleri + kayıt formu düzeltmesi: `fix(api): CurrentUser alan seçimi, iyzico tembel kurulum, seed yolu; web: register DTO uyumu`
+- Bölüm 6 API düzeltmeleri + kayıt formu düzeltmesi: `fix(api): CurrentUser alan seçimi, iyzico tembel kurulum, seed yolu; web: register DTO uyumu` ✅
+- Bölüm 8: `auth: refresh token httpOnly cookie'de, rotasyon + POST /auth/logout ile sunucu tarafı iptal`
 - `docs/GUVENLIK-GOREVLERI.md`'nin sonuna çapraz referans eklendi. ✅

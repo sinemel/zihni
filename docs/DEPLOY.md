@@ -55,3 +55,12 @@ cd apps/web && npm run build   # hata yoksa deploy'a hazır
 - Çevrimdışı mock hesaplar: API varken devreye girmez; tamamen kaldırma = Supabase Auth tam geçişinde
 - 3 test "Yakında" kilidiyle katalogda (yol haritası görünümü — lansman kararı size ait)
 - PDF raporu window.print (gerçek PDF: lansman sonrası ilk ay)
+
+## 6. Refresh cookie (auth) — deploy notları
+- API refresh token'ı `zihni_refresh` httpOnly cookie'si ile verir (`Path=/auth`). Üretimde `NODE_ENV=production`
+  olmalı: cookie `SameSite=None; Secure` ile gönderilir, bu yalnızca HTTPS'te çalışır.
+- Web ve API ayrı domain'de olduğundan `CORS_ORIGINS` web'in tam origin'ini içermeli (joker yok); aksi halde
+  tarayıcı cookie'yi göndermez ve `/auth/refresh` 401 döner.
+- Migration: `users.refreshTokenHash` (nullable) kolonu — `npx prisma migrate deploy` / `db push`.
+- Kontrol: girişten sonra DevTools → Application → Cookies'te `zihni_refresh` HttpOnly işaretli olmalı;
+  `localStorage`'da yalnızca `zihni.accessToken` bulunmalı.

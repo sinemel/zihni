@@ -104,8 +104,11 @@ const api = {
   setLevel: (wpm, comp) =>
     apiFetch("/program/level", { method: "POST", body: JSON.stringify({ wpm, comp }) }),
   // Bilişsel test: ham event'leri gönder, sunucu skorunu al
-  submitSession: (testId, testType, age, events) =>
-    apiFetch("/sessions", { method: "POST", body: JSON.stringify({ testId, testType, age, events }) }),
+  // CreateSessionDto: { testId, ageGroupId, lang?, events } — yaş grubu nesne değil, id olarak gider.
+  // Eski `age` nesnesi/`testType` gövdesi API'de 400 ("ageGroupId must be a string") döndürüyor ve
+  // akış sessizce yerel skorlamaya (source: "local") düşüyordu.
+  submitSession: (testId, testType, age, events, lang) =>
+    apiFetch("/sessions", { method: "POST", body: JSON.stringify({ testId, ageGroupId: age?.id ?? age, lang, events }) }),
   // Egzersiz sonucu kaydet (fire-and-forget)
   submitTraining: (exerciseId, score, detail, wpm) =>
     apiFetch("/trainings", { method: "POST", body: JSON.stringify({ exerciseId, score, detail, wpm }) }),
@@ -6751,7 +6754,7 @@ export default function App() {
       (async () => {
         const t0 = performance.now();
         // Önce sunucudan skorlamayı dene ("değer sunucuda")
-        const server = await api.submitSession(activeTest.id, activeTest.type, activeTest.age, lastEvents);
+        const server = await api.submitSession(activeTest.id, activeTest.type, activeTest.age, lastEvents, lang);
         // Minimum 900ms "hesaplanıyor" ekranı (yerel fallback göz kırpmasın)
         await new Promise((res) => setTimeout(res, Math.max(0, 900 - (performance.now() - t0))));
         if (cancelled) return;

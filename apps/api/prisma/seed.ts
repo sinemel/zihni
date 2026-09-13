@@ -15,6 +15,7 @@ const TEST_DEFS = [
   { slug: "visual-search", name: "Görsel Dikkat", description: "Hedef sembolü ızgarada bulun.", difficulty: "Orta", config: { type: "visual-search", trials: 10 } },
   { slug: "auditory", name: "İşitsel Dikkat", description: "Yüksek tonda dokunun, kalın tonda dokunmayın.", difficulty: "Zor", config: { type: "auditory", trials: 14 } },
   { slug: "cognitive-flexibility", name: "Bilişsel Esneklik", description: "Değişen kurala uyum sağlayın.", difficulty: "Zor", config: { type: "cognitive-flexibility", trials: 16 } },
+  { slug: "distractor-cpt", name: "Çeldiricili Dikkat Testi", description: "Görsel ve işitsel çeldiriciler altında hedefe odaklanın.", difficulty: "Zor", config: { type: "distractor-cpt", trials: 32 } },
 ];
 
 const FIRST_NAMES = ["Ahmet", "Elif", "Mert", "Zeynep", "Ayşe", "Can", "Deniz", "Ece", "Burak", "Selin", "Emre", "Gizem", "Kerem", "Naz"];

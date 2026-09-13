@@ -55,6 +55,7 @@ model User {
   CognitiveSession CognitiveSession[]
   TrainingSession  TrainingSession[]
   UserProgram      UserProgram[]
+  clientRecords    Client[] // uzmanların bu kullanıcıyı danışan olarak kaydettiği kayıtlar (e-posta ile eşleşir)
 
   @@map("users")
 }
@@ -93,10 +94,17 @@ model Client {
   email       String?
   phone       String?
   birthDate   DateTime?
+  // Danışanın uygulamadaki hesabı (e-posta eşleşmesiyle bağlanır). Bağlıysa uzman
+  // danışanın gerçek test oturumlarını (cognitive_sessions) görebilir; atamalar
+  // danışan testi bitirince otomatik COMPLETED olur.
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   assignments Assignment[]
   reports     Report[]
   createdAt   DateTime     @default(now())
 
+  @@index([expertId])
+  @@index([userId])
   @@map("clients")
 }
 

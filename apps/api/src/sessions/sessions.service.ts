@@ -62,6 +62,13 @@ export class SessionsService {
       select: { id: true, testId: true, overall: true, subscores: true, stats: true, createdAt: true },
     });
 
+    // Uzman ataması: bu kullanıcı bir danışan olarak bağlıysa ve bu test için bekleyen
+    // atama varsa otomatik COMPLETED yap (uzman panelinde "Tamamlandı" görünür).
+    await this.prisma.assignment.updateMany({
+      where: { status: 'PENDING', client: { userId }, test: { slug: test.id } },
+      data: { status: 'COMPLETED' },
+    });
+
     return session;
   }
 

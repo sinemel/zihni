@@ -14,6 +14,7 @@ Yan kazanım: skor sahteciliği imkânsızlaşır (uzman/B2B güvenilirliği).
 | content | GET /texts, /texts/:id, POST /texts/:id/grade | Metinler DB'den; **cevap indexleri istemciye gitmez**, puanlama sunucuda |
 | content | GET/POST /self-tests… | 9 anket DB'den (dil parametresiyle çözülmüş); outcome+summary sunucuda |
 | program | GET /program/today, POST /program/level, POST/GET /trainings | Seviye ataması, 21 günlük plan, gün ilerletme |
+| experts | GET/POST /experts/clients, GET/PATCH/DELETE /experts/clients/:id, GET /experts/clients/:id/sessions, GET/POST /experts/assignments, PATCH/DELETE /experts/assignments/:id | Uzman paneli: danışan + atama CRUD (EXPERT rolü, `RolesGuard`); danışanın gerçek oturumları |
 
 ## Kurulum sırası (Claude Code)
 1. `schema-additions.prisma` içeriğini `schema.prisma`'ya ekle (+ User ters ilişkileri)
@@ -21,6 +22,17 @@ Yan kazanım: skor sahteciliği imkânsızlaşır (uzman/B2B güvenilirliği).
 3. `npx ts-node prisma/seed-content.ts`
 4. AppModule imports: `SessionsModule, ContentModule, ProgramModule`
 5. `tsconfig.json`: `"resolveJsonModule": true` (seed.json importları için)
+
+## Uzman paneli (experts) — davranış notları
+- Tüm `/experts/*` uçları `JwtAuthGuard + RolesGuard(EXPERT|ADMIN|SUPER_ADMIN)` arkasında; kapsam istekteki
+  kullanıcının `Expert` profiliyle sınırlı (başka uzmanın danışanı 404 döner, profil yoksa 403).
+- `Client.userId`: danışan e-postası kayıtlı bir kullanıcıyla eşleşiyorsa hesap bağlanır — danışan oluşturulurken
+  (mevcut kullanıcı) ya da kullanıcı sonradan kayıt olurken (`POST /auth/register`). Bağ yalnızca e-postaya dayanır.
+- `GET /experts/clients/:id/sessions` bağlı hesabın `cognitive_sessions` kayıtlarını döner; bağ yoksa `[]`.
+- `POST /experts/assignments` `testId` olarak katalog slug'ı alır (`Test.slug`); tabloda satır yoksa katalogdan
+  oluşturur. Danışanın hesabı bağlıysa `notifications` tablosuna `ASSIGNMENT` kaydı düşer.
+- Bekleyen atama, danışan aynı testi uygulamada bitirince (`POST /sessions`) otomatik `COMPLETED` olur.
+- Formların boş string gönderdiği `email/birthDate/dueDate` alanları "yok" sayılır (`EmptyToUndefined`).
 
 ## Güvenlik notları
 - Tüm endpointler JwtAuthGuard arkasında

@@ -1,15 +1,20 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { IsArray, IsIn, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsIn, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { JwtAuthGuard, CurrentUser } from '../auth/auth.guards';
 import { SessionsService } from './sessions.service';
 
 class RawEventDto {
-  correct!: boolean;
+  // ValidationPipe whitelist: dekoratörsüz alanlar gövdeden SİLİNİR; `correct` dekoratörsüz
+  // kaldığında her olay yanlış sayılıyor ve accuracy/correct hep 0 çıkıyordu.
+  @IsBoolean() correct!: boolean;
   @IsOptional() errorType?: 'omission' | 'commission' | null;
   @IsOptional() reactionTime?: number | null;
   @IsOptional() switchTrial?: boolean;
   @IsOptional() span?: number;
+  // distractor-cpt: 0=temel, 1=görsel, 2=işitsel, 3=kombine — whitelist için dekoratör şart,
+  // aksi halde blockStats dört blokta da 0 çıkıyor.
+  @IsOptional() block?: number | null;
 }
 
 class CreateSessionDto {

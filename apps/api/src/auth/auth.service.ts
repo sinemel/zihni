@@ -53,6 +53,13 @@ export class AuthService {
       },
     });
 
+    // Bir uzman bu e-postayla daha önce danışan kaydı açtıysa hesabı ona bağla
+    // (uzman paneli gerçek oturumları görebilsin, atamalar otomatik tamamlansın).
+    await this.prisma.client.updateMany({
+      where: { userId: null, email: { equals: dto.email, mode: "insensitive" } },
+      data: { userId: user.id },
+    });
+
     return this.issueTokens(user);
   }
 

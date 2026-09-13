@@ -10,6 +10,7 @@ import { SessionsModule } from "./sessions/sessions.module";
 import { ScoringModule } from "./scoring/scoring.module";
 import { ProgramModule } from "./program/program.module";
 import { BillingModule } from "./billing/billing.module";
+import { ExpertsModule } from "./experts/experts.module";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { BillingModule } from "./billing/billing.module";
     ScoringModule,
     ProgramModule,
     BillingModule,
+    ExpertsModule,
   ],
   providers: [
     /* ThrottlerGuard'ı global guard yap: her uç otomatik korunur */

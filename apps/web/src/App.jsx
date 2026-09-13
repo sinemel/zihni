@@ -123,6 +123,13 @@ const api = {
   // RegisterDto: firstName + lastName zorunlu (tek `name` alanı 400 döner ve akış sessizce mock'a düşerdi)
   register: (email, password, firstName, lastName) =>
     apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ email, password, firstName, lastName }) }),
+  // Uzman paneli (EXPERT rolü): danışan + atama CRUD, danışanın gerçek oturumları
+  listClients: () => apiFetch("/experts/clients"),
+  createClient: (body) => apiFetch("/experts/clients", { method: "POST", body: JSON.stringify(body) }),
+  clientSessions: (clientId) => apiFetch(`/experts/clients/${clientId}/sessions`),
+  listAssignments: () => apiFetch("/experts/assignments"),
+  createAssignment: (body) => apiFetch("/experts/assignments", { method: "POST", body: JSON.stringify(body) }),
+  updateAssignment: (id, body) => apiFetch(`/experts/assignments/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
 };
 
 /* Bölüm 1 + 4: token'ı bellekte ve localStorage'da birlikte günceller.
@@ -5890,15 +5897,46 @@ const INITIAL_ASSIGNMENTS = [
   { id: "a3", clientId: "c3", testId: "stroop", testName: "Stroop Benzeri Görev", dueDate: "2026-08-25", note: "Lütfen sessiz bir ortamda tamamlayın.", status: "PENDING", createdAt: "2026-08-18" },
 ];
 
+/* API kayıtlarını uzman panelinin yerel şekline çevirir (INITIAL_CLIENTS / INITIAL_ASSIGNMENTS ile aynı alanlar). */
+const testNameOf = (testId, fallback) => { const t = TEST_CATALOG.find((x) => x.id === testId); return t ? L(t.name, "tr") : (fallback || testId); };
+const toClientRow = (c) => ({
+  id: c.id,
+  name: `${c.firstName} ${c.lastName}`.trim(),
+  email: c.email || "",
+  phone: c.phone || "",
+  birthDate: c.birthDate ? String(c.birthDate).slice(0, 10) : "",
+  userId: c.userId || null, // bağlı uygulama hesabı (e-posta eşleşmesi); null ise gerçek oturum yok
+  lastTest: c.lastSession ? testNameOf(c.lastSession.testId) : null,
+  score: c.lastSession ? c.lastSession.overall : null,
+  date: c.lastSession ? c.lastSession.createdAt : null,
+  source: "api",
+});
+const toAssignmentRow = (a) => ({
+  id: a.id,
+  clientId: a.clientId,
+  testId: a.testId,
+  testName: testNameOf(a.testId, a.testName),
+  dueDate: a.dueDate ? String(a.dueDate).slice(0, 10) : "",
+  note: a.note || "",
+  status: a.status,
+  createdAt: a.createdAt ? String(a.createdAt).slice(0, 10) : "",
+});
+const toSessionRow = (s) => ({
+  id: s.id, testId: s.testId, testName: testNameOf(s.testId), date: s.createdAt,
+  overall: s.overall, subscores: s.subscores, stats: s.stats, blockStats: s.stats?.blockStats ?? null, source: "api",
+});
+
 /* ============================================================
    EXPERT PANEL — modals
    ============================================================ */
 const NewClientModal = ({ onClose, onCreate }) => {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", birthDate: "" });
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const submit = () => {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const submit = async () => {
     if (!form.firstName.trim() || !form.lastName.trim()) return;
-    onCreate({
+    const local = {
       id: uid(),
       name: `${form.firstName.trim()} ${form.lastName.trim()}`,
       email: form.email,
@@ -5907,7 +5945,17 @@ const NewClientModal = ({ onClose, onCreate }) => {
       lastTest: null,
       score: null,
       date: null,
-    });
+    };
+    if (API_TOKEN) {
+      // Gerçek API: sunucu kaydı döner; e-posta kayıtlı bir kullanıcıya aitse hesap otomatik bağlanır
+      setSaving(true);
+      const srv = await api.createClient({ firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: form.email, phone: form.phone, birthDate: form.birthDate });
+      setSaving(false);
+      if (!srv) { setError("Danışan kaydedilemedi. Bilgileri kontrol edip tekrar deneyin."); return; }
+      onCreate(toClientRow(srv));
+    } else {
+      onCreate(local);
+    }
     onClose();
   };
   return (
@@ -5922,7 +5970,8 @@ const NewClientModal = ({ onClose, onCreate }) => {
         <FormField label="Doğum Tarihi">
           <input type="date" value={form.birthDate} onChange={update("birthDate")} className={inputClass} style={inputStyle} />
         </FormField>
-        <Button onClick={submit} className="w-full mt-1">Danışanı Ekle</Button>
+        {error && <p className="text-xs" style={{ color: C.danger }}>{error}</p>}
+        <Button onClick={submit} disabled={saving} className="w-full mt-1">{saving ? "Kaydediliyor…" : "Danışanı Ekle"}</Button>
       </div>
     </Modal>
   );
@@ -5933,19 +5982,30 @@ const AssignTestModal = ({ client, onClose, onAssign }) => {
   const [testId, setTestId] = useState(implementedTests[0]?.id || "");
   const [dueDate, setDueDate] = useState("");
   const [note, setNote] = useState("");
-  const submit = () => {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const submit = async () => {
     const test = implementedTests.find((t) => t.id === testId);
     if (!test) return;
-    onAssign({
-      id: uid(),
-      clientId: client.id,
-      testId: test.id,
-      testName: L(test.name, "tr"),
-      dueDate,
-      note,
-      status: "PENDING",
-      createdAt: new Date().toISOString().slice(0, 10),
-    });
+    if (API_TOKEN) {
+      // Gerçek API: atama sunucuda; danışanın hesabı bağlıysa bildirim de sunucuda oluşturulur
+      setSaving(true);
+      const srv = await api.createAssignment({ clientId: client.id, testId: test.id, dueDate, note });
+      setSaving(false);
+      if (!srv) { setError("Atama kaydedilemedi. Tekrar deneyin."); return; }
+      onAssign(toAssignmentRow(srv));
+    } else {
+      onAssign({
+        id: uid(),
+        clientId: client.id,
+        testId: test.id,
+        testName: L(test.name, "tr"),
+        dueDate,
+        note,
+        status: "PENDING",
+        createdAt: new Date().toISOString().slice(0, 10),
+      });
+    }
     onClose();
   };
   return (
@@ -5963,7 +6023,8 @@ const AssignTestModal = ({ client, onClose, onAssign }) => {
           <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} placeholder="Testi sessiz ortamda tamamlayınız."
             className={inputClass} style={inputStyle} />
         </FormField>
-        <Button onClick={submit} className="w-full mt-1">Testi Ata ve Bildir</Button>
+        {error && <p className="text-xs" style={{ color: C.danger }}>{error}</p>}
+        <Button onClick={submit} disabled={saving} className="w-full mt-1">{saving ? "Kaydediliyor…" : "Testi Ata ve Bildir"}</Button>
       </div>
     </Modal>
   );
@@ -6119,9 +6180,32 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
   const clientAssignments = assignments.filter((a) => a.clientId === client.id);
   const clientReports = reports.filter((r) => r.clientId === client.id);
 
-  const completeAssignment = (assignmentId) => {
-    const overall = 55 + Math.floor(Math.random() * 40);
+  // Gerçek API: danışanın bağlı hesabındaki bilişsel test oturumları (GET /experts/clients/:id/sessions).
+  // null = henüz yüklenmedi / API yok; [] = hesap bağlı değil ya da oturum yok.
+  const [clientSessions, setClientSessions] = useState(null);
+  useEffect(() => {
+    if (!API_TOKEN) { setClientSessions(null); return; }
+    let cancelled = false;
+    api.clientSessions(client.id).then((rows) => {
+      if (cancelled) return;
+      setClientSessions(Array.isArray(rows) ? rows.map(toSessionRow) : []);
+    });
+    return () => { cancelled = true; };
+  }, [client.id]);
+  const latestSession = clientSessions && clientSessions.length ? clientSessions[clientSessions.length - 1] : null;
+  const hasResults = latestSession ? true : client.score != null;
+
+  const completeAssignment = async (assignmentId) => {
     const a = clientAssignments.find((x) => x.id === assignmentId);
+    if (API_TOKEN) {
+      const srv = await api.updateAssignment(assignmentId, { status: "COMPLETED" });
+      if (!srv) { setToast("Atama güncellenemedi."); return; }
+      setAssignments((prev) => prev.map((x) => (x.id === assignmentId ? toAssignmentRow(srv) : x)));
+      setToast(`"${a?.testName}" tamamlandı olarak işaretlendi.`);
+      return;
+    }
+    // Çevrimdışı prototip: sahte skor üret
+    const overall = 55 + Math.floor(Math.random() * 40);
     setAssignments((prev) => prev.map((x) => (x.id === assignmentId ? { ...x, status: "COMPLETED" } : x)));
     setClients((prev) => prev.map((c) => (c.id === client.id
       ? { ...c, lastTest: a?.testName || c.lastTest, score: overall, date: new Date().toISOString().slice(0, 10) }
@@ -6130,13 +6214,18 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
   };
 
   const generateReport = () => {
-    const report = { id: uid(), clientId: client.id, date: new Date().toISOString(), testName: client.lastTest || "—", overall: client.score ?? 0, note: "" };
+    const report = { id: uid(), clientId: client.id, date: new Date().toISOString(), testName: mockResult.testName || "—", overall: mockResult.overall ?? 0, note: "" };
     setReports((prev) => [...prev, report]);
     addNotification("Uzmanınız yeni bir değerlendirme gönderdi.");
     setReportPreview(report);
   };
 
-  const mockResult = {
+  const mockResult = latestSession ? {
+    testName: latestSession.testName,
+    overall: latestSession.overall,
+    subscores: latestSession.subscores,
+    stats: latestSession.stats,
+  } : {
     testName: client.lastTest || "Test bekleniyor",
     overall: client.score ?? 0,
     subscores: client.score != null
@@ -6145,15 +6234,18 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
     stats: { total: 16, correct: Math.round((16 * (client.score ?? 0)) / 100), omissions: 2, commissions: 1, meanRT: 430, sdRT: 65 },
   };
 
-  const historySessions = client.score != null
-    ? [client.score - 12, client.score - 5, client.score].map((v) => ({ overall: clamp(v) }))
-    : [];
+  const historySessions = clientSessions && clientSessions.length
+    ? clientSessions
+    : client.score != null && !API_TOKEN
+      ? [client.score - 12, client.score - 5, client.score].map((v) => ({ overall: clamp(v) }))
+      : [];
 
   const [batteryOpen, setBatteryOpen] = useState(false);
   // Demo batarya: danışanın skoru etrafında deterministik dağılım (id tohumlu).
   // ÜRETİM: GET /sessions?userId=<client> ile gerçek oturumlar gelecek.
   const clientBattery = useMemo(() => {
-    if (client.score == null) return [];
+    if (clientSessions && clientSessions.length) return clientSessions;
+    if (client.score == null || API_TOKEN) return [];
     const seed = [...String(client.id)].reduce((a, c) => a + c.charCodeAt(0), 0);
     return TEST_CATALOG.map((t, i) => {
       const wobble = (((seed * (i + 3)) % 29) - 14); // -14..+14 deterministik
@@ -6168,7 +6260,7 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
         date: new Date(Date.now() - i * 86400000).toISOString(),
       };
     });
-  }, [client.id, client.score]);
+  }, [client.id, client.score, clientSessions]);
 
   return (
     <div className="p-5 max-w-3xl mx-auto pb-24">
@@ -6227,7 +6319,7 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
       )}
 
       {tab === "sonuclar" && (
-        client.score == null ? (
+        !hasResults ? (
           <Card className="text-center py-8"><p style={{ color: C.textMuted }}>Bu danışan henüz bir test tamamlamadı.</p></Card>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -6249,10 +6341,10 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
         <Card>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-medium" style={{ color: C.text }}>Raporlar</h3>
-            <Button onClick={() => setBatteryOpen(true)} disabled={client.score == null} className="mr-2">
+            <Button onClick={() => setBatteryOpen(true)} disabled={!hasResults} className="mr-2">
               <BarChart3 size={14} className="inline mr-1" />Kapsamlı Batarya Raporu
             </Button>
-            <Button variant="secondary" onClick={generateReport} disabled={client.score == null}>
+            <Button variant="secondary" onClick={generateReport} disabled={!hasResults}>
               <FileText size={14} className="inline mr-1" />Yeni Rapor Oluştur
             </Button>
           </div>
@@ -6303,9 +6395,11 @@ const ExpertClientDetail = ({ client, setClients, assignments, setAssignments, r
                 <div><span style={{ color: C.textMuted }}>Uygulanan Test</span><p className="font-medium" style={{ color: C.text }}>{clientBattery.length}</p></div>
               </div>
               <BatteryReportBody sessions={clientBattery} trainings={[]} />
-              <p className="text-[10px] mt-3 italic" style={{ color: C.textMuted }}>
-                Demo veri — üretimde danışanın gerçek oturumları API'den yüklenecektir.
-              </p>
+              {!(clientSessions && clientSessions.length) && (
+                <p className="text-[10px] mt-3 italic" style={{ color: C.textMuted }}>
+                  Demo veri — üretimde danışanın gerçek oturumları API'den yüklenecektir.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -6674,6 +6768,15 @@ export default function App() {
     setStreak(deriveStreak([...nextSessions, ...nextTrainings, ...nextSelf].map((x) => x.date)));
   };
 
+  /* Uzman paneli verileri (EXPERT rolü): danışanlar + atamalar sunucudan. Çevrimdışı/mock girişte demo veri kalır. */
+  const loadExpertData = async () => {
+    if (!API_TOKEN) return;
+    const [srvClients, srvAssignments] = await Promise.all([api.listClients(), api.listAssignments()]);
+    setClients(Array.isArray(srvClients) ? srvClients.map(toClientRow) : []);
+    setAssignments(Array.isArray(srvAssignments) ? srvAssignments.map(toAssignmentRow) : []);
+    setReports([]);
+  };
+
   /* Bölüm 4 — çıkışta temizlik: sonraki kullanıcı öncekinin verisini görmemeli.
      Sıralama: token → veri state'leri → en son ekran. */
   const handleLogout = () => {
@@ -6688,6 +6791,10 @@ export default function App() {
     setNotifications([]);
     setStreak(INITIAL_STREAK());
     setProgram(INITIAL_PROGRAM());
+    setClients(INITIAL_CLIENTS);
+    setAssignments(INITIAL_ASSIGNMENTS);
+    setReports([]);
+    setActiveClientId(null);
     setActiveTest(null);
     setActiveTraining(null);
     setActiveSelfTest(null);
@@ -6713,7 +6820,7 @@ export default function App() {
         setCurrentUser(u);
         setRole(u.role);
         setNotifications([]);
-        await loadUserData();
+        await (u.role === "expert" ? loadExpertData() : loadUserData());
         if (cancelled) return;
         enterForRole(u.role);
       }
@@ -6829,7 +6936,7 @@ export default function App() {
                 setRole(u.role);
                 detectedRole = u.role;
               }
-              await loadUserData();
+              await (detectedRole === "expert" ? loadExpertData() : loadUserData());
             } else {
               // Çevrimdışı (mock) giriş: demo bildirimler
               setNotifications(INITIAL_NOTIFICATIONS);

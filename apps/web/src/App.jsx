@@ -6654,7 +6654,7 @@ export default function App() {
     ]);
     const nextSessions = Array.isArray(srvSessions) ? srvSessions.map((s) => {
       const t = TEST_CATALOG.find((x) => x.id === s.testId);
-      return { id: s.id, testId: s.testId, testName: t ? L(t.name, lang) : s.testId, date: s.createdAt, overall: s.overall, subscores: s.subscores, stats: s.stats, blockStats: null, source: "api" };
+      return { id: s.id, testId: s.testId, testName: t ? L(t.name, lang) : s.testId, date: s.createdAt, overall: s.overall, subscores: s.subscores, stats: s.stats, blockStats: s.stats?.blockStats ?? null, source: "api" };
     }) : [];
     const nextTrainings = Array.isArray(srvTrainings) ? srvTrainings.map((tr) => {
       const ex = TRAINING_CATALOG.find((x) => x.id === tr.exerciseId);
@@ -6760,7 +6760,7 @@ export default function App() {
         if (cancelled) return;
         let r = null;
         if (server && server.overall != null) {
-          r = { id: server.id || uid(), testId: activeTest.id, testName: activeTest.name, date: server.date || new Date().toISOString(), overall: server.overall, subscores: server.subscores, stats: server.stats, blockStats: server.blockStats ?? null, source: "api" };
+          r = { id: server.id || uid(), testId: activeTest.id, testName: activeTest.name, date: server.date || new Date().toISOString(), overall: server.overall, subscores: server.subscores, stats: server.stats, blockStats: server.blockStats ?? server.stats?.blockStats ?? null, source: "api" };
         } else if (!IS_PROD) {
           // Yalnızca geliştirme/önizleme: yerel yedek hesaplama.
           // Üretim build'inde bu dal ölü koddur; Terser computeResult/computeSubscores

@@ -12,6 +12,9 @@ class RawEventDto {
   @IsOptional() reactionTime?: number | null;
   @IsOptional() switchTrial?: boolean;
   @IsOptional() span?: number;
+  // distractor-cpt: 0=temel, 1=görsel, 2=işitsel, 3=kombine — whitelist için dekoratör şart,
+  // aksi halde blockStats dört blokta da 0 çıkıyor.
+  @IsOptional() block?: number | null;
 }
 
 class CreateSessionDto {
